@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:04:16 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/09 19:35:21 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/11 17:23:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include <stdbool.h>
 #include "tokens.h"
-#include "libft.h"
+#include "../libft/libft.h"
 
 typedef struct s_token
 {
@@ -24,9 +24,9 @@ typedef struct s_token
 
 typedef enum e_quote_state
 {
-	STATE_SINGLE_QUOTE = 1,
+	STATE_NO_QUOTE,
+	STATE_SINGLE_QUOTE,
 	STATE_DOUBLE_QUOTE,
-	STATE_NO_QUOTE
 } t_quote_state;
 
 typedef struct s_lexer{
@@ -34,12 +34,13 @@ typedef struct s_lexer{
     long pos;
     long length;
     char current_char;
-    bool in_quotes;
     t_quote_state quote_state;
 } t_lexer;
 
-t_lexer *init_lexer(char *source);
+void	init_lexer(t_lexer *lexer, char *source);
 void	destroy_lexer(t_lexer **lexer_ref);
+t_lexer	*create_lexer();
+
 
 #define LEXER_H
 #endif
