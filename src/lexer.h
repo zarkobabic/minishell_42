@@ -6,40 +6,32 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:04:16 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/11 17:23:07 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/13 00:48:12 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 
 #include <stdbool.h>
-#include "tokens.h"
+#include "token.h"
 #include "../libft/libft.h"
-
-typedef struct s_token
-{
-	char *value;
-	t_token_type type;
-} t_token;
-
-typedef enum e_quote_state
-{
-	STATE_NO_QUOTE,
-	STATE_SINGLE_QUOTE,
-	STATE_DOUBLE_QUOTE,
-} t_quote_state;
 
 typedef struct s_lexer{
     char *source;
     long pos;
     long length;
     char current_char;
-    t_quote_state quote_state;
+	long token_start_pos; //starting position of token for strings
 } t_lexer;
 
+//lexer_lifecycle
+t_lexer	*create_lexer();
 void	init_lexer(t_lexer *lexer, char *source);
 void	destroy_lexer(t_lexer **lexer_ref);
-t_lexer	*create_lexer();
+//lexer_operations
+void	lexer_advance(t_lexer *lexer);
+void	lexer_skip_whitespaces(t_lexer *lexer);
+t_token *get_next_token(t_lexer *lexer);
 
 
 #define LEXER_H
