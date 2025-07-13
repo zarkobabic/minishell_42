@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:15:19 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/12 14:44:53 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/13 01:35:37 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_lexer	*create_lexer(void)
 /// @param lexer Pointer to lexer which should be used for lexing,
 /// if NULL the function will just return without doing anything
 /// @param source Source buffer for reading, if NULL it will set
-/// lexer character to '\0'
+/// lexer character to '\0' and lexer source to NULL
 void	init_lexer(t_lexer *lexer, char *source)
 {
 	if (!lexer)

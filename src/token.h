@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokens.h                                           :+:      :+:    :+:   */
+/*   token.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 18:43:42 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 00:06:59 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/13 02:14:05 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,15 @@ typedef struct s_token
 } t_token;
 
 // tokens
+
 t_token	*create_token(t_token_type type);
 t_token_add_error	token_add_value(t_token *token, const char *src, size_t len, t_component_type string_component_type);
 void	free_token(t_token **token);
 void	print_token(t_token *token);
+t_token *token_create_simple_with_value(t_token_type type, const char *src, size_t len, t_component_type string_component_type);
+
 // composite_tokens
+
 t_string_component *token_composite_new_string_component(char *value, t_component_type component_type);
 bool	token_composite_add_component(t_token *token, char *value, t_component_type component_type);
 void	token_composite_delete_list(t_token *token);

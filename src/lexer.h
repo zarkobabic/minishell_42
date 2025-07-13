@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:04:16 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 00:48:12 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/13 01:23:57 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,13 @@ typedef struct s_lexer{
 } t_lexer;
 
 //lexer_lifecycle
+
 t_lexer	*create_lexer();
 void	init_lexer(t_lexer *lexer, char *source);
 void	destroy_lexer(t_lexer **lexer_ref);
+
 //lexer_operations
+
 void	lexer_advance(t_lexer *lexer);
 void	lexer_skip_whitespaces(t_lexer *lexer);
 t_token *get_next_token(t_lexer *lexer);

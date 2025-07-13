@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:30:59 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/12 01:08:51 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/13 02:05:13 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,12 @@ static t_token	*lexer_handle_single_quote(t_lexer *lexer)
 	if(!lexer->current_char)
 		return NULL; //TODO: Error unclosed quote
 	else if(lexer->current_char == '\'')
-		return create_token(&lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, TOKEN_IDENTIFIER);
+		return token_create_simple_with_value(TOKEN_SINGLE_QUOTE, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_NOT_COMPOSITE);
 }
 
 static t_token *lexer_handle_double_quote(t_lexer *lexer)
 {
-	if(state) //
+	//TODO: Napisati ovu funkciju za double quotes da isparsira sve sto treba
 }
 
 //TODO: Check when you finish parsing have you left in some of the states for quotes or double quotes,
@@ -75,7 +75,7 @@ t_token *get_next_token(t_lexer *lexer)
 		else if(lexer->current_char == '\"')
 			return lexer_handle_double_quote(lexer);
 	}
-	return create_token(&lexer->source[lexer->pos], 0, TOKEN_EOF);
+	return create_token(TOKEN_EOF);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:17:05 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 00:47:42 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/13 02:13:40 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,18 @@ void	free_token(t_token **token)
 	*token = NULL;
 }
 
+t_token *token_create_simple_with_value(t_token_type type, const char *src, size_t len, t_component_type string_component_type)
+{
+	t_token *token;
+
+	token = create_token(type);
+	if(!token)
+		return (NULL);
+	if(token_add_value(token, src, len, string_component_type) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
+		return (free_token(&token), NULL);
+	return token;
+}
+
 void	print_token(t_token *token)
 {
 	t_string_component *temp;
@@ -102,6 +114,6 @@ void	print_token(t_token *token)
 			temp = temp->next;
 		}
 	}
-	else if(token->type == TOKEN_IDENTIFIER)
-		printf("TOKEN: IDENTIFIER, type: %d,value: %s\n", token->type, token->value.simple_value);
+	else
+		printf("TOKEN_SIMPLE: type: %d,value: %s\n", token->type, token->value.simple_value);
 }
