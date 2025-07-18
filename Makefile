@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LFLAGS = -lreadline
+LFLAGS = -L/opt/homebrew/opt/readline/lib -lhistory -lreadline 
 NAME = minishell
 LIBFT_DIR = libft/
 LIBFT = $(LIBFT_DIR)libft.a
@@ -11,7 +11,12 @@ INCLUDES = -I$(LIBFT_DIR) -I$(INCLUDES_FOLDER)
 REMOVE = rm -rf
 DEBUG_ENABLED = -g
 
-MY_C_SOURCES =	repl.c \
+MY_C_SOURCES =	lexer_lifecycle.c \
+				lexer_operations.c \
+				parser.c \
+				repl.c \
+				token_composite.c \
+				token.c \
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
 

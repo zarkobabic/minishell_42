@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:17:05 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 02:13:40 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/17 22:52:37 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_token	*create_token(t_token_type type)
 	new_token = (t_token *)malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
-	if(type == TOKEN_DOUBLE_QUOTE)
+	if(type == TOKEN_IDENTIFIER)
 	{
 		new_token->value.composite_value.components_head  = NULL;
 		new_token->value.composite_value.components_tail  = NULL;
@@ -64,7 +64,7 @@ t_token_add_error	token_add_value(t_token *token, const char *src, size_t len, t
 		return TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED;
 	ft_memcpy(new_value, src, len);
 	new_value[len] = '\0';
-	if(token->type == TOKEN_DOUBLE_QUOTE)
+	if(token->type == TOKEN_IDENTIFIER)
 	{
 		if(!token_composite_add_component(token, new_value, string_component_type))
 			return (free(new_value), TOKEN_ADD_ERROR_STRING_COMPONENT_ALLOCATION_FAILED);
@@ -80,7 +80,7 @@ void	free_token(t_token **token)
 {
 	if (!token || !(*token))
 		return ;
-	else if ((*token)->type == TOKEN_DOUBLE_QUOTE)
+	else if ((*token)->type == TOKEN_IDENTIFIER)
 		token_composite_delete_list(*token);
 	else if((*token)->value.simple_value)
 		free((*token)->value.simple_value);
@@ -88,14 +88,22 @@ void	free_token(t_token **token)
 	*token = NULL;
 }
 
-t_token *token_create_simple_with_value(t_token_type type, const char *src, size_t len, t_component_type string_component_type)
+/// @brief Creates simple token then try to add simple value to it 
+/// by allocating len element from the source and terminating it 
+/// and set the token value to be that newly created string 
+/// @param type type of the token to be created
+/// @param src source for the value
+/// @param len length of the value
+/// @return SUCCESS: Simple token that has type passed as argument, 
+/// FAIL: NULL (Allocation for token or string failed)
+t_token *token_create_simple_with_value(t_token_type type, const char *src, size_t len)
 {
 	t_token *token;
 
 	token = create_token(type);
 	if(!token)
 		return (NULL);
-	if(token_add_value(token, src, len, string_component_type) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
+	if(token_add_value(token, src, len, COMPONENT_NOT_COMPOSITE) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
 		return (free_token(&token), NULL);
 	return token;
 }
@@ -104,7 +112,7 @@ void	print_token(t_token *token)
 {
 	t_string_component *temp;
 
-	if(token->type == TOKEN_DOUBLE_QUOTE)
+	if(token->type == TOKEN_IDENTIFIER)
 	{
 		temp = token->value.composite_value.components_head;
 		printf("TOKEN_COMPOSITE: type_token: %d, num_of_string_components: %ld\n", token->type, token->value.composite_value.component_count);

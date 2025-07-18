@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 17:36:12 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 02:14:50 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/17 23:02:47 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,23 +39,26 @@
 //     return (0);
 // }
 
-// #include "token.h"
+#include "token.h"
 
-// int main()
-// {
+int main()
+{
     
-//     t_token *token_simple = NULL;
-// 	t_token *token_simple_without_value = NULL;
+    t_token *token_simple = NULL;
+	t_token *token_simple_without_value = NULL;
     
-// 	token_simple = token_create_simple_with_value(TOKEN_IDENTIFIER, "someident", 9, COMPONENT_NOT_COMPOSITE);
-// 	if(!token_simple)
-// 		return 1;
-// 	token_simple_without_value = create_token(TOKEN_EOF);
-// 	if(!token_simple_without_value)
-// 		return (free_token(&token_simple), 1);
-// 	print_token(token_simple);
-// 	print_token(token_simple_without_value);
-// 	free_token(&token_simple);
-// 	free_token(&token_simple_without_value);
-//     return (0);
-// }
+	token_simple = token_create_simple_with_value(TOKEN_RPAR, "someident", 9);
+	if(!token_simple)
+		return 1;
+	token_simple_without_value = create_token(TOKEN_IDENTIFIER);
+	if(!token_simple_without_value)
+		return (free_token(&token_simple), 1);
+    token_add_value(token_simple_without_value, "kokola", 4, COMPONENT_LITERAL);
+    token_add_value(token_simple_without_value, "HOME", 4, COMPONENT_ENV_VAR);
+    token_add_value(token_simple_without_value, "nana*ja", 6, COMPONENT_LITERAL_WILDCARD);
+	print_token(token_simple);
+	print_token(token_simple_without_value);
+	free_token(&token_simple);
+	free_token(&token_simple_without_value);
+    return (0);
+}

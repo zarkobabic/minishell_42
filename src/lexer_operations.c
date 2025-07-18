@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:30:59 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 02:05:13 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/18 13:49:11 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,38 +45,84 @@ void	lexer_advance(t_lexer *lexer)
 	lexer->pos += 1;
 	lexer->current_char = lexer->source[lexer->pos];
 }
+//TODO: promeni ovo posto moras da napravis token pre kad prepoznas da je identifikator a "" ce samo da dodaju komponentu
+// static bool	lexer_handle_single_quote(t_lexer *lexer, t_token *token_to_add_to)
+// {
+// 	lexer_advance(lexer);
+// 	lexer->token_start_pos = lexer->pos;
+// 	while(lexer->current_char && lexer->current_char != '\'')
+// 		lexer_advance(lexer);
+// 	if(!lexer->current_char)
+// 		return false; //TODO: Error unclosed quote
+// 	else if(lexer->current_char == '\'')
+// 		token_add_value(token_to_add_to, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_LITERAL);
+// 	return true;
+// }
 
-static t_token	*lexer_handle_single_quote(t_lexer *lexer)
-{
-	lexer_advance(lexer);
-	lexer->token_start_pos = lexer->pos;
-	while(lexer->current_char && lexer->current_char != '\'')
-		lexer_advance(lexer);
-	if(!lexer->current_char)
-		return NULL; //TODO: Error unclosed quote
-	else if(lexer->current_char == '\'')
-		return token_create_simple_with_value(TOKEN_SINGLE_QUOTE, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_NOT_COMPOSITE);
-}
+// static t_token *lexer_handle_double_quote(t_lexer *lexer)
+// {
+// 	//TODO: Napisati ovu funkciju za double quotes da isparsira sve sto treba
+// }
 
-static t_token *lexer_handle_double_quote(t_lexer *lexer)
-{
-	//TODO: Napisati ovu funkciju za double quotes da isparsira sve sto treba
-}
-
-//TODO: Check when you finish parsing have you left in some of the states for quotes or double quotes,
-// because this is error in lexing
 t_token *get_next_token(t_lexer *lexer)
 {
+	// t_token *curr_token;
+
+	// curr_token = NULL;
 	lexer_skip_whitespaces(lexer);
-	if(lexer->current_char)
+	while(lexer->current_char)
 	{
-		if(lexer->current_char == '\'')
-			return lexer_handle_single_quote(lexer);
-		else if(lexer->current_char == '\"')
-			return lexer_handle_double_quote(lexer);
+		if(lexer->current_char == '&')
+		{
+			lexer_advance(lexer);
+			if(lexer->current_char == '&')
+				return (lexer_advance(lexer), create_token(TOKEN_AND));
+			else
+				return NULL; //Error cannot be only one this & (Maybe return token type error)
+		}
+		else if(lexer->current_char ==  '|')
+		{
+			lexer_advance(lexer);
+			if(lexer->current_char == '|')
+				return (lexer_advance(lexer), create_token(TOKEN_OR));
+			else
+				return (create_token(TOKEN_PIPE));
+		}
+		else if(lexer->current_char == '(')
+			return (lexer_advance(lexer), create_token(TOKEN_LPAR));
+		else if(lexer->current_char == ')')
+			return (lexer_advance(lexer), create_token(TOKEN_RPAR));
+		else if(lexer->current_char == '<')
+		{
+			lexer_advance(lexer);
+			if(lexer->current_char == '<')
+				return (lexer_advance(lexer), create_token(TOKEN_REDIRECTION_HEREDOC));
+			else
+				return create_token(TOKEN_REDIRECT_IN);
+		}
+		else if(lexer->current_char == '>')
+		{
+			lexer_advance(lexer);
+			if(lexer->current_char == '>')
+				return (lexer_advance(lexer), create_token(TOKEN_REDIRECT_APPEND));
+			else
+				return (create_token(TOKEN_REDIRECT_OUT));
+		}
+		//else identifier, double quotes or single quotes
+		lexer_skip_whitespaces(lexer);
 	}
 	return create_token(TOKEN_EOF);
+
 }
+// if(lexer->current_char)
+// {
+// 	if(lexer->current_char == '\'')
+// 		if(lexer_handle_single_quote(lexer))
+
+// 	else if(lexer->current_char == '\"')
+// 		return lexer_handle_double_quote(lexer);
+// }
+// return create_token(TOKEN_EOF);
 
 
 
