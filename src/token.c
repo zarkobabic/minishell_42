@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:17:05 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/17 22:52:37 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/18 21:26:02 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ t_token	*create_token(t_token_type type)
 /// COMPONENT_ENV_VAR or COMPONENT_EXIT_STATUS is sent 
 /// to describe the expansion if necessary.
 /// @return FAIL: TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED if there is not enough memory
-/// TOKEN_ADD_WARNING_VALUE_SRC_DONT_EXIST if the source is NULL or len is 0.
+/// TOKEN_ADD_WARNING_VALUE_SRC_DONT_EXIST if the source is NULL or len is less than 0.
 /// SUCCESS: TOKEN_ADD_NO_PROBLEM
-t_token_add_error	token_add_value(t_token *token, const char *src, size_t len, t_component_type string_component_type)
+t_token_add_error	token_add_value(t_token *token, const char *src, long len, t_component_type string_component_type)
 {
 	char *new_value;
 
-	if(!src || len == 0)
+	if(!src || len < 0)
 		return TOKEN_ADD_WARNING_VALUE_SRC_DONT_EXIST;
 	new_value = (char *)malloc(len + 1);
 	if (!new_value)
@@ -108,14 +108,43 @@ t_token *token_create_simple_with_value(t_token_type type, const char *src, size
 	return token;
 }
 
-void	print_token(t_token *token)
+static void	token_print_type_to_string(t_token_type type, char *value)
+{
+	char *type_to_string;
+
+	if(type == TOKEN_UNDEFINED)
+		type_to_string = "TOKEN_UNDEFINED";
+	else if(type == TOKEN_AND)
+		type_to_string = "TOKEN_AND (&&)";
+	else if(type == TOKEN_OR)
+		type_to_string = "TOKEN_OR (||)";
+	else if(type == TOKEN_REDIRECT_IN)
+		type_to_string = "TOKEN_REDIRECT_IN (<)";
+	else if(type == TOKEN_REDIRECT_OUT)
+		type_to_string = "TOKEN_REDIRECT_OUT(>)";
+	else if(type == TOKEN_REDIRECTION_HEREDOC)
+		type_to_string = "TOKEN_REDIRECTION_HEREDOC(<<)";
+	else if(type == TOKEN_REDIRECT_APPEND)
+		type_to_string = "TOKEN_REDIRECT_APPEND(>>)";
+	else if(type == TOKEN_PIPE)
+		type_to_string = "TOKEN_PIPE(|)";
+	else if(type == TOKEN_LPAR)
+		type_to_string = "TOKEN_LPAR( ( )";
+	else if(type == TOKEN_RPAR)
+		type_to_string = "TOKEN_RPAR ( ) )";
+	else
+		type_to_string = "TOKEN_EOF";
+	printf("TOKEN_SIMPLE: type: %s, value: %s\n", type_to_string, value);
+}
+
+void	token_print(t_token *token)
 {
 	t_string_component *temp;
 
 	if(token->type == TOKEN_IDENTIFIER)
 	{
 		temp = token->value.composite_value.components_head;
-		printf("TOKEN_COMPOSITE: type_token: %d, num_of_string_components: %ld\n", token->type, token->value.composite_value.component_count);
+		printf("TOKEN_COMPOSITE: type: TOKEN_IDENTIFIER, num_of_string_components: %ld\n", token->value.composite_value.component_count);
 		while(temp)
 		{
 			printf("--->STRING_COMPONENT: type_string: %d, value: %s\n",temp->type, temp->value);
@@ -123,5 +152,5 @@ void	print_token(t_token *token)
 		}
 	}
 	else
-		printf("TOKEN_SIMPLE: type: %d,value: %s\n", token->type, token->value.simple_value);
+		token_print_type_to_string(token->type, token->value.simple_value);
 }

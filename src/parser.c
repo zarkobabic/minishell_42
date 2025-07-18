@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:32:25 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/17 23:59:12 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/18 14:53:55 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ void	parse_command(char *input)
 	token = get_next_token(lexer);
 	while(token->type != TOKEN_EOF)
 	{
-		print_token(token);
+		token_print(token);
 		free_token(&token);
 		token = get_next_token(lexer);
 	}
-	print_token(token);
+	token_print(token);
 	free_token(&token);
 }

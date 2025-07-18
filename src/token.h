@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 18:43:42 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/18 13:46:17 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/18 21:26:08 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,9 @@ typedef struct s_token
 // tokens
 
 t_token	*create_token(t_token_type type);
-t_token_add_error	token_add_value(t_token *token, const char *src, size_t len, t_component_type string_component_type);
+t_token_add_error	token_add_value(t_token *token, const char *src, long len, t_component_type string_component_type);
 void	free_token(t_token **token);
-void	print_token(t_token *token);
+void	token_print(t_token *token);
 t_token *token_create_simple_with_value(t_token_type type, const char *src, size_t len);
 
 // composite_tokens
