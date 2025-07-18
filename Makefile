@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LFLAGS = -L/opt/homebrew/opt/readline/lib -lhistory -lreadline 
+LFLAGS = -lcurses -lreadline 
 NAME = minishell
 LIBFT_DIR = libft/
 LIBFT = $(LIBFT_DIR)libft.a

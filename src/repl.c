@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/18 13:20:28 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/18 22:43:56 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
-// void	clear_history_now(void)
-// {
-// 	clear_history();
-// 	printf("Cleanup complete. See ya!\n");
-// }
+void	clear_history_now(void)
+{
+	clear_history();
+	printf("Cleanup complete. See ya!\n");
+}
 
 // void	process_command(char *input)
 // {
@@ -56,6 +56,6 @@ int	main(void)
 		rl_on_new_line();
 		free(input);
 	}
-	//clear_history_now();
+	clear_history_now();
 	return (0);
 }
