@@ -6,13 +6,14 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:04:16 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/17 23:06:21 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/20 01:15:58 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 
 #include <stdbool.h>
+#include <stdio.h>
 #include "token.h"
 #include "../libft/libft.h"
 

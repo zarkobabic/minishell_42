@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:17:05 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/18 21:26:02 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/20 02:17:16 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,23 @@ static void	token_print_type_to_string(t_token_type type, char *value)
 	printf("TOKEN_SIMPLE: type: %s, value: %s\n", type_to_string, value);
 }
 
+static void token_print_component_type_to_string(t_component_type type, char *value)
+{
+	char *type_to_string;
+
+	if(type == COMPONENT_LITERAL_WILDCARD)
+		type_to_string = "COMPONENT_LITERAL_WILDCARD";
+	else if(type == COMPONENT_LITERAL)
+		type_to_string = "COMPONENT_LITERAL";
+	else if(type == COMPONENT_VAR)
+		type_to_string = "COMPONENT_VAR";
+	else if(type == COMPONENT_VAR_DOUBLE_QUOTES)
+		type_to_string = "COMPONENT_VAR_DOUBLE_QUOTES";
+	else
+		type_to_string = "COMPONENT_EXIT_STATUS";
+	printf("--->STRING_COMPONENT: type_string: %s, value: %s\n", type_to_string, value);
+}
+
 void	token_print(t_token *token)
 {
 	t_string_component *temp;
@@ -147,7 +164,7 @@ void	token_print(t_token *token)
 		printf("TOKEN_COMPOSITE: type: TOKEN_IDENTIFIER, num_of_string_components: %ld\n", token->value.composite_value.component_count);
 		while(temp)
 		{
-			printf("--->STRING_COMPONENT: type_string: %d, value: %s\n",temp->type, temp->value);
+			token_print_component_type_to_string(temp->type, temp->value);
 			temp = temp->next;
 		}
 	}

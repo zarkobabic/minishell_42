@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 18:43:42 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/18 21:26:08 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/20 01:54:16 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ typedef enum e_token_type
 	TOKEN_EOF
 }	t_token_type;
 
+//TODO:Wildcard expansion only available in COMPONENT_VAR and COMPONENT_LITERAL_WILDCARD
 typedef enum e_component_type
 {
 	COMPONENT_NOT_COMPOSITE,
 	COMPONENT_LITERAL_WILDCARD,
 	COMPONENT_LITERAL,
-	COMPONENT_ENV_VAR,
+	COMPONENT_VAR,
+	COMPONENT_VAR_DOUBLE_QUOTES,
 	COMPONENT_EXIT_STATUS //$? case
 } t_component_type;
 

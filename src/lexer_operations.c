@@ -6,11 +6,19 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:30:59 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/18 20:37:48 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/20 02:10:31 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
+#define ERROR_WRONG_VARIABLE_NAMING "Syntax error: Variable in BASH cannot \
+start with something that is not letter (a-zA-Z) or underscore(_)."
+#define ERROR_UNCLOSED_SINGLE_QUOTES "Syntax error: Unclosed single quote. \
+Expected closing ' before end of input."
+#define ERROR_UNCLOSED_DOUBLE_QUOTES "Syntax error: Unclosed double quote. \
+Expected closing \" before end of input."
+#define ERROR_SINGLE_AMPERSAND "Syntax error: Operator & is not valid in the \
+BASH syntax, did you maybe mean &&?"
 
 bool	ft_isspace(char c)
 {
@@ -58,25 +66,6 @@ t_token	*lexer_advance_and_return_new_token(t_lexer *lexer, t_token_type type)
 	return create_token(type);
 }
 
-//TODO: promeni ovo posto moras da napravis token pre kad prepoznas da je identifikator a "" ce samo da dodaju komponentu
-// static bool	lexer_handle_single_quote(t_lexer *lexer, t_token *token_to_add_to)
-// {
-// 	lexer_advance(lexer);
-// 	lexer->token_start_pos = lexer->pos;
-// 	while(lexer->current_char && lexer->current_char != '\'')
-// 		lexer_advance(lexer);
-// 	if(!lexer->current_char)
-// 		return false; //TODO: Error unclosed quote
-// 	else if(lexer->current_char == '\'')
-// 		token_add_value(token_to_add_to, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_LITERAL);
-// 	return true;
-// }
-
-// static t_token *lexer_handle_double_quote(t_lexer *lexer)
-// {
-// 	//TODO: Napisati ovu funkciju za double quotes da isparsira sve sto treba
-// }
-
 static t_token *lex_ampersands_and_vertical_bars(t_lexer *lexer)
 {
 	if(lexer->current_char == '&')
@@ -85,7 +74,7 @@ static t_token *lex_ampersands_and_vertical_bars(t_lexer *lexer)
 		if(lexer->current_char == '&')
 			return (lexer_advance_and_return_new_token(lexer, TOKEN_AND));
 		else
-			return create_token(TOKEN_UNDEFINED); //cannot be only one &
+			return (perror(ERROR_SINGLE_AMPERSAND), create_token(TOKEN_UNDEFINED));
 	}
 	else if(lexer->current_char ==  '|')
 	{
@@ -133,7 +122,7 @@ bool	lex_single_quotes(t_lexer *lexer, t_token *token_to_add_to)
 	while(lexer->current_char && lexer->current_char != '\'')
 		lexer_advance(lexer);
 	if(!lexer->current_char)
-		return false; //Error unclosed quote
+		return (perror(ERROR_UNCLOSED_SINGLE_QUOTES), false);
 	else if(lexer->current_char == '\'')
 	{
 		if(token_add_value(token_to_add_to, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_LITERAL) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
@@ -144,22 +133,48 @@ bool	lex_single_quotes(t_lexer *lexer, t_token *token_to_add_to)
 	return false;
 }
 
-//TODO: dodaj expanziju variabli
+bool	lex_variable(t_lexer *lexer, t_token *token_to_add_to, t_component_type type)
+{
+	lexer_advance(lexer);
+	if(lexer->current_char == '?')
+	{
+		if(token_add_value(token_to_add_to, &lexer->source[lexer->pos], 1, COMPONENT_EXIT_STATUS) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
+			return false;
+		return (lexer_advance(lexer), true);
+	}
+	if(!(ft_isalpha(lexer->current_char) || lexer->current_char == '_'))
+		return (perror(ERROR_WRONG_VARIABLE_NAMING), false);
+	lexer->token_start_pos = lexer->pos;
+	while(ft_isalnum(lexer->current_char) || lexer->current_char == '_')
+		lexer_advance(lexer);
+	if(token_add_value(token_to_add_to, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, type) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
+		return false;
+	return true;
+}
+
 bool	lex_double_quotes(t_lexer *lexer, t_token *token_to_add_to)
 {
 	lexer_advance(lexer);
-	lexer->token_start_pos = lexer->pos;
 	while(lexer->current_char && lexer->current_char != '\"')
-		lexer_advance(lexer);
-	if(!lexer->current_char)
-		return false; //Error unclosed quote
-	else if(lexer->current_char == '\"')
 	{
-		if(token_add_value(token_to_add_to, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_LITERAL) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
-			return false;
-		lexer_advance(lexer);
-		return true;
+		if(lexer->current_char == '$')
+		{
+			if(!lex_variable(lexer, token_to_add_to, COMPONENT_VAR_DOUBLE_QUOTES))
+				return false;
+		}
+		else
+		{
+			lexer->token_start_pos = lexer->pos;
+			while(lexer->current_char && lexer->current_char != '$' && lexer->current_char != '\"')
+				lexer_advance(lexer);
+			if(token_add_value(token_to_add_to, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos, COMPONENT_LITERAL) == TOKEN_ADD_ERROR_VALUE_MALLOC_FAILED)
+				return false;
+		}
 	}
+	if(!lexer->current_char)
+		return (perror(ERROR_UNCLOSED_DOUBLE_QUOTES), false);
+	else if(lexer->current_char == '\"')
+		return (lexer_advance(lexer), true);
 	return false;
 }
 
@@ -201,12 +216,11 @@ t_token	*lex_identifier(t_lexer *lexer)
 		else if(lexer->current_char == '\"')
 			res = lex_double_quotes(lexer, token_ident);
 		else if(lexer->current_char == '$')
-			res = false;
-			// res = lex_variable(lexer, token_ident);
+			res = lex_variable(lexer, token_ident, COMPONENT_VAR);
 		else //lexiramo normalne reci, sve dok ne naidjemo na " ' $ whitespace ili kraj stringa
 			res = lex_normal_string(lexer, token_ident);
 		if(!res)
-			return NULL; //Error some allocation failed, or syntax error
+			return NULL;
 	}
 	return token_ident;
 }
