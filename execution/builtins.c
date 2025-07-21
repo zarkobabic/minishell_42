@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/07/21 06:31:29 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/07/21 09:17:14 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define PATHLENGTH 128
 #define ENV_NAME_LENGTH 32
 
-int	f_echo(const char *input, int fd, int n_flag)
+int	f_echo(char *input, int fd, int n_flag)
 {
 	// int	fd;
 	
@@ -32,7 +32,7 @@ int	f_echo(const char *input, int fd, int n_flag)
 
 	// or
 
-	ft_putstr(input, fd);
+	ft_putstr_fd(input, fd);
 	if (!n_flag)
 		write(fd, "\n", 1);
 
@@ -42,44 +42,75 @@ int	f_echo(const char *input, int fd, int n_flag)
 	return (0);
 }
 
-void	f_cd(const char *path)
+int	f_update_env(const char *name, char *value)
+{
+	extern char	**environ;
+	int			name_len;
+	int			val_len;
+	int			i;
+	char		*new_var;
+
+	name_len = ft_strlen(name);
+	val_len = ft_strlen(value);
+	new_var = (char *)malloc(name_len + 1 + val_len + 1);
+	if (!new_var)
+		return (1);
+	new_var[0] = '\0';
+	ft_strlcat(new_var, name, name_len + 1);
+	new_var[name_len] = '=';
+	ft_strlcat(new_var, value, name_len + 1 + val_len + 1);
+	i = -1;
+	while (environ[++i])
+	{
+		if (0 == ft_strncmp(environ[i], name, name_len)
+		&& environ[i][name_len] == '=')
+			return (free(environ[i]), environ[i] = new_var, 0);
+	}
+	if (!environ[i])
+		free(new_var);
+	return (1);
+}
+
+void	f_cd(char *path)
 {
 	char	custom_path[PATHLENGTH];
-	char	*user_str;
-	char	*home_str;
-	int		usr_len;
+	char	*temp_str;
+	int		user_len;
 	int		home_len;
 
-	home_str = getenv("HOME");
-	if (!path || (path[0] == '~' && path[1] == '\0'))
-	{
-		chdir(home_str);
-		// TODO: update PWD and OLDPWD env vars
-	}
-	else if (path[0] == '~' && path[1] != '\0' && path[1] != '/')
+	ft_bzero(custom_path, PATHLENGTH);
+	if (!path || (path[0] == '~' && !path[1]))
+		temp_str = getenv("HOME");
+	else if (path[0] == '~' && path[1] && path[1] != '/')
 	{
 		// change to different user's home dir
-		user_str = getenv("USER");
-		home_len = ft_strlen(home_str);
-		usr_len = ft_strlen(user_str);
-		ft_strlcat(custom_path, home_str, PATHLENGTH);
-		custom_path[home_len - usr_len] = '\0';
-		ft_strlcat(custom_path, path + 1, PATHLENGTH);
-		chdir(custom_path);
-		// TODO: update PWD and OLDPWD env vars
+		temp_str = getenv("USER");
+		user_len = ft_strlen(temp_str);
+		temp_str = getenv("HOME");
+		home_len = ft_strlen(temp_str);
+		ft_strlcat(custom_path, temp_str, PATHLENGTH);
+		custom_path[home_len - user_len] = '\0';
+ 		ft_strlcat(custom_path, path + 1, PATHLENGTH);
+		temp_str = custom_path;
 	}
-	else if (path[0] == '~' && path[1] != '\0')
+	else if (path[0] == '~' && path[1])
 	{
-		ft_strlcat(custom_path, home_str, PATHLENGTH);
+		temp_str = getenv("HOME");
+		ft_strlcat(custom_path, temp_str, PATHLENGTH);
 		ft_strlcat(custom_path, path + 1, PATHLENGTH);
-		chdir(custom_path);
-		// TODO: update PWD and OLDPWD env vars
+		temp_str = custom_path;
+	}
+	else if (path[0] == '-' && !path[1])
+	{
+		temp_str = getenv("OLDPWD");
+		printf("%s\n", temp_str);
 	}
 	else
-	{
-		chdir(path);
-		// TODO: update PWD and OLDPWD env vars
-	}
+		temp_str = path;
+	if (chdir(temp_str) == -1)
+		return (perror("minishell"), (void)temp_str);
+	f_update_env("OLDPWD", getenv("PWD"));
+	f_update_env("PWD", temp_str);
 }
 
 void	f_pwd(void)
@@ -93,11 +124,22 @@ void	f_pwd(void)
 void	f_env(void)
 {
 	char *env_path;
-	char env_args[1][ENV_NAME_LENGTH];
+	char *env_args[2];
 
-	env_path = getenv("_");
-	ft_strlcat(env_args[0], ft_strrchr(env_path, '/') + 1, ENV_NAME_LENGTH);
-	execve(env_path, env_args, NULL);
+	env_path = "/usr/bin/env";
+	env_args[0] = ft_strrchr(env_path, '/') + 1;
+	env_args[1] = NULL;
+	execve(env_path, env_args, NULL); // FIXME: env_args is of wrong argument type
+
+	// or
+	// probably preferred
+
+	extern char	**environ;
+	int			i;
+
+	i = -1;
+	while (environ[++i])
+		printf("%s\n", environ[i]);
 }
 
 void	f_exit(void)
