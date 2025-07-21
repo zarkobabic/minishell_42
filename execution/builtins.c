@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   functions.c                                        :+:      :+:    :+:   */
+/*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/07/21 04:28:09 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/07/21 06:31:29 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 
-#define PATHLENGTH 64
+#define PATHLENGTH 128
+#define ENV_NAME_LENGTH 32
 
 int	f_echo(const char *input, int fd, int n_flag)
 {
 	// int	fd;
 	
 	// FIXME: either handled here or handled already in calling mother function
+	// fd = 1;
 	// if (redirec_flag)
 	// 	fd = open(filename, O_WRONLY);
 
@@ -65,7 +67,6 @@ void	f_cd(const char *path)
 		ft_strlcat(custom_path, path + 1, PATHLENGTH);
 		chdir(custom_path);
 		// TODO: update PWD and OLDPWD env vars
-		free(user_str);
 	}
 	else if (path[0] == '~' && path[1] != '\0')
 	{
@@ -79,7 +80,6 @@ void	f_cd(const char *path)
 		chdir(path);
 		// TODO: update PWD and OLDPWD env vars
 	}
-	free(home_str);
 }
 
 void	f_pwd(void)
@@ -93,9 +93,11 @@ void	f_pwd(void)
 void	f_env(void)
 {
 	char *env_path;
+	char env_args[1][ENV_NAME_LENGTH];
 
 	env_path = getenv("_");
-	execve(env_path, "env", NULL); // FIXME: "env" probably wrong argument type
+	ft_strlcat(env_args[0], ft_strrchr(env_path, '/') + 1, ENV_NAME_LENGTH);
+	execve(env_path, env_args, NULL);
 }
 
 void	f_exit(void)
