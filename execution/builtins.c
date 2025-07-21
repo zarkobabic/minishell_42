@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/07/21 09:17:14 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/07/21 09:29:02 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void	f_cd(char *path)
 	else
 		temp_str = path;
 	if (chdir(temp_str) == -1)
-		return (perror("minishell"), (void)temp_str);
+		return (perror("minishell: cd"), (void)temp_str);
 	f_update_env("OLDPWD", getenv("PWD"));
 	f_update_env("PWD", temp_str);
 }
