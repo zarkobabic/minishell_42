@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/07/22 07:02:16 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/07/22 09:22:54 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void	f_env(void)
 	execve(env_path, env_args, NULL); // FIXME: env_args is of wrong argument type
 
 	// or
-	// probably preferred
+	// probably preferred:
 
 	extern char	**environ;
 	int			i;
@@ -146,4 +146,52 @@ void	f_exit(void)
 {
 	f_close_fds(); // TODO (maybe even more cleanup, needs to be evaluated)
 	exit (0);
+}
+
+void	f_setup_func_table(t_funcdict *func_dict)
+{ // FIXME: probably not a good approach, function signatures differ -> use hardcoded if-elseif list for function mapping/calling instead
+	func_dict[CALL_ECHO].call = "echo";
+	func_dict[CALL_ECHO].func = f_echo;
+	func_dict[CALL_CD].call = "cd";
+	func_dict[CALL_CD].func = f_cd;
+	func_dict[CALL_PWD].call = "pwd";
+	func_dict[CALL_PWD].func = f_pwd;
+	func_dict[CALL_EXPORT].call = "export";
+	func_dict[CALL_EXPORT].func = ;
+	func_dict[CALL_UNSET].call = "unset";
+	func_dict[CALL_UNSET].call = ;
+	func_dict[CALL_ENV].call = "env";
+	func_dict[CALL_ENV].func = f_env;
+	func_dict[CALL_EXIT].call = "exit";
+	func_dict[CALL_EXIT].func = f_exit;
+
+
+
+
+	
+	// func_table[CALL_ECHO] = f_echo;
+	// func_table[CALL_CD] = f_cd;
+	// func_table[CALL_PWD] = f_pwd;
+	// func_table[CALL_EXPORT] = ;
+	// func_table[CALL_UNSET] = ;
+	// func_table[CALL_ENV] = f_env;
+	// func_table[CALL_EXIT] = f_exit;
+}
+
+int	main(void)
+{
+	static t_funcdict func_dict[INPUT_COUNT] = {
+		{"echo", f_echo},
+		{"cd", f_cd},
+		{"pwd", f_pwd},
+		{"export", },
+		{"unset", },
+		{"env", f_env},
+		{"exit", f_exit}
+	};
+	void		(*func_table[INPUT_COUNT])(void);
+	t_funcdict	func_dict[INPUT_COUNT];
+
+	f_setup_func_table(func_dict);
+	return (0);
 }
