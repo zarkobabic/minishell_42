@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/07/21 09:29:02 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/07/22 07:02:16 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	f_echo(char *input, int fd, int n_flag)
 	return (0);
 }
 
-int	f_update_env(const char *name, char *value)
+int	f_setenv(const char *name, char *value)
 {
 	extern char	**environ;
 	int			name_len;
@@ -109,8 +109,8 @@ void	f_cd(char *path)
 		temp_str = path;
 	if (chdir(temp_str) == -1)
 		return (perror("minishell: cd"), (void)temp_str);
-	f_update_env("OLDPWD", getenv("PWD"));
-	f_update_env("PWD", temp_str);
+	f_setenv("OLDPWD", getenv("PWD"));
+	f_setenv("PWD", temp_str);
 }
 
 void	f_pwd(void)
