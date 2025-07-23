@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/07/22 09:22:54 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/07/23 10:57:03 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,35 @@ void	f_exit(void)
 {
 	f_close_fds(); // TODO (maybe even more cleanup, needs to be evaluated)
 	exit (0);
+}
+
+void	f_call_program(int call)
+{
+	if (call == CALL_ECHO)
+		f_echo();
+	else if (call == CALL_CD)
+		f_cd();
+	// etc
+}
+
+int	f_create_subshell(int program)
+{
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		// do stuff, e.g.:
+		f_call_program(program); // TODO
+	}
+	else if (pid > 0)
+		waitpid(pid, &status, 0);
+	else
+	{
+		// fork error
+	}
+	return (status);
 }
 
 void	f_setup_func_table(t_funcdict *func_dict)
