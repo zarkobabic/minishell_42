@@ -12,7 +12,8 @@ REMOVE = rm -rf
 DEBUG_ENABLED = -g
 
 MY_C_SOURCES =	lexer_lifecycle.c \
-				lexer_operations.c \
+				lexer_get_next_token.c \
+				lexer_utilities.c \
 				parser.c \
 				repl.c \
 				token.c \
