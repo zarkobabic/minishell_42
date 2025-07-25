@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:15:19 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/13 01:35:37 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/25 14:23:32 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 /// @param
 /// @return SUCCESS: reference to newly created lexer on heap
 /// FAIL: NULL (allocation failed)
-t_lexer	*create_lexer(void)
+t_lexer	*lexer_create(void)
 {
 	t_lexer	*new_lexer;
 
@@ -32,7 +32,7 @@ t_lexer	*create_lexer(void)
 /// if NULL the function will just return without doing anything
 /// @param source Source buffer for reading, if NULL it will set
 /// lexer character to '\0' and lexer source to NULL
-void	init_lexer(t_lexer *lexer, char *source)
+void	lexer_init(t_lexer *lexer, char *source)
 {
 	if (!lexer)
 		return ;
@@ -49,7 +49,7 @@ void	init_lexer(t_lexer *lexer, char *source)
 /// @brief Destroy the lexer (free its heap allocated space)
 /// if the reference exists
 /// @param lexer_ref Reference for lexer to destroy
-void	destroy_lexer(t_lexer **lexer_ref)
+void	lexer_destroy(t_lexer **lexer_ref)
 {
 	if (lexer_ref && (*lexer_ref))
 	{

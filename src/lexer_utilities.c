@@ -6,13 +6,13 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 13:21:50 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/25 13:22:48 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/25 14:24:15 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
-bool	ft_isspace(char c)
+bool	lexer_isspace(char c)
 {
 	return (c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r' || c == ' ');
 }

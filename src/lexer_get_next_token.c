@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:30:59 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/25 13:27:17 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/25 14:24:26 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	lexer_skip_whitespaces(t_lexer *lexer)
 {
 	if (!lexer)
 		return ;
-	while (ft_isspace(lexer->current_char))
+	while (lexer_isspace(lexer->current_char))
 		lexer_advance(lexer);
 }
 
@@ -78,7 +78,7 @@ static t_token	*lex_identifier(t_lexer *lexer)
 	if(!token_ident)
 		return NULL;
 	lexer->token_start_pos = lexer->pos;
-	while(lexer->current_char && !ft_isspace(lexer->current_char) && !lexer_is_special_symbol(lexer->current_char))
+	while(lexer->current_char && !lexer_isspace(lexer->current_char) && !lexer_is_special_symbol(lexer->current_char))
 		lexer_advance(lexer);
 	if(!token_add_value(token_ident, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos))
 		return NULL;
@@ -90,7 +90,7 @@ static t_token	*lex_identifier(t_lexer *lexer)
 /// @return SUCCESS: Next token that is lexed from the lexer input 
 /// FAIL: NULL if the allocation for some token failed, 
 /// TOKEN_UNDEFINED if the syntax is wrong
-t_token *get_next_token(t_lexer *lexer)
+t_token *lexer_get_next_token(t_lexer *lexer)
 {
 	lexer_skip_whitespaces(lexer);
 	while(lexer->current_char)

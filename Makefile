@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LFLAGS = -lcurses -lreadline 
+LFLAGS = -lreadline -lcurses
 NAME = minishell
 LIBFT_DIR = libft/
 LIBFT = $(LIBFT_DIR)libft.a
@@ -23,7 +23,7 @@ MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
 all: $(LIBFT) $(NAME)
 
 $(NAME): $(MY_OBJECTS) $(LIBFT)
-	$(CC) $(CFLAGS) $(LFLAGS) $(DEBUG_ENABLED) $^ -o $@
+	$(CC) $(CFLAGS) $(DEBUG_ENABLED) $^ $(LFLAGS) -o $@
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
