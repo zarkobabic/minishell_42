@@ -1,2 +1,1 @@
-Nothing to show
-test2
+2025-07-25|13:40|zbabic: Renamed the function parse_command in repl.main.c:55 to be process_input which calls parse_input from the parser (Git pull)

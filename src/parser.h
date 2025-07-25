@@ -6,13 +6,13 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:33:04 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/11 17:36:27 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/25 13:36:49 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 #define PARSER_H
 
-void	parse_command(char *input);
+void	parse_input(char *input);
 
 #endif

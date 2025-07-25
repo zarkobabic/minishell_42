@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:32:25 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/24 22:42:23 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/25 13:36:55 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define ERROR_LEXER_ALLOCATION_FAILED "Error: Allocation of the lexer failed"
 #define ERROR_IN_PARSING "Parser error: Lexing error stopped the execution of the parser"
 
-void	parse_command(char *input)
+void	parse_input(char *input)
 {
 	t_lexer *lexer;
 	t_token *token;

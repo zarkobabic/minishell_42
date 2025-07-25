@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/18 22:43:56 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/25 13:42:05 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ void	clear_history_now(void)
 	printf("Cleanup complete. See ya!\n");
 }
 
-// void	process_command(char *input)
-// {
-// 	parse_command(input);
-// }
+void	process_input(char *input)
+{
+	parse_input(input);
+}
 
 // Dont forget to add -lreadline flag in compilation
 // for readline functions to work
@@ -52,7 +52,7 @@ int	main(void)
 			continue ;
 		}
 		add_history(input);
-		parse_command(input);
+		process_input(input);
 		rl_on_new_line();
 		free(input);
 	}
