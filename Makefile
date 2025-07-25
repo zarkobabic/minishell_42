@@ -15,7 +15,6 @@ MY_C_SOURCES =	lexer_lifecycle.c \
 				lexer_operations.c \
 				parser.c \
 				repl.c \
-				token_composite.c \
 				token.c \
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
