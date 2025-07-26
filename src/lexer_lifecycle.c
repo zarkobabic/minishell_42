@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:15:19 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/25 14:23:32 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 01:44:18 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void	lexer_init(t_lexer *lexer, char *source)
 		lexer->current_char = source[0];
 	else
 		lexer->current_char = '\0';
+	lexer->has_peeked = false;
+	lexer->peeked_token = NULL;
 	lexer->pos = 0;
 	lexer->token_start_pos = 0;
 }
@@ -53,6 +55,8 @@ void	lexer_destroy(t_lexer **lexer_ref)
 {
 	if (lexer_ref && (*lexer_ref))
 	{
+		if((*lexer_ref)->peeked_token)
+			token_free(&((*lexer_ref)->peeked_token));
 		free(*lexer_ref);
 		*lexer_ref = NULL;
 	}

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:17:05 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/24 22:22:58 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 03:07:45 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,23 @@ bool	token_add_value(t_token *token, const char *src, long len)
 }
 
 /// @brief Frees the given token
-/// @param token
+/// @param token Token to free
 void	token_free(t_token **token)
 {
 	if (!token || !(*token))
 		return ;
 	else if((*token)->value)
 		free((*token)->value);
+	free(*token);
+	*token = NULL;
+}
+
+/// @brief Frees only the structure allocated for the token. Doesn't free the token value!
+/// @param token Token to free
+void	token_free_shallow(t_token **token)
+{
+	if (!token || !(*token))
+		return ;
 	free(*token);
 	*token = NULL;
 }

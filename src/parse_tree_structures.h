@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:58 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/25 15:35:43 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 03:50:16 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 typedef enum e_redirection_type
 {
-    TYPE_REDIRECT_IN,
+    TYPE_REDIRECT_IN = 3,
     TYPE_REDIRECT_OUT,
-    TYPE_REDIRECT_APPEND,
-    TYPE_REDIRECT_HEREDOC
+    TYPE_REDIRECT_HEREDOC,
+    TYPE_REDIRECT_APPEND
 } t_redirection_type;
 
 typedef struct s_redirection
@@ -31,7 +31,7 @@ typedef struct s_redirection
 typedef struct s_redirection_list
 {
     t_redirection *redirection;
-    t_redirection_list *redirection_list;
+    struct s_redirection_list *next;
 } t_redirection_list;
 
 //////////////////////command_element////////////////
@@ -68,6 +68,9 @@ typedef enum s_command_type
     TYPE_COMPOSITE_COMMAND
 } t_command_type;
 
+
+typedef struct s_logical_expr t_logical_expr;
+
 typedef struct s_composite_command
 {
     t_logical_expr *logical_expr;
@@ -89,22 +92,22 @@ typedef struct s_command
 typedef struct s_pipeline
 {
     t_command *command;
-    t_pipeline *pipeline;
+    struct s_pipeline *pipeline;
 } t_pipeline;
 
 //////////////////////logical_expr////////////////
 
 typedef enum e_logical_expr_type
 {
-    TYPE_OR,
-    TYPE_AND
+    TYPE_AND = 1,
+    TYPE_OR
 } t_logical_expr_type;
 
 typedef struct s_next_logical_expr
 {
     t_logical_expr_type op_type;
     t_pipeline *pipeline;
-    t_next_logical_expr *next_logical_expr;
+    struct s_next_logical_expr *next_logical_expr;
 } t_next_logical_expr;
 
 typedef struct s_logical_expr

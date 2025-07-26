@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 18:43:42 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/24 21:44:22 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 03:08:16 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,6 @@ bool	token_add_value(t_token *token, const char *src, long len);
 void	token_free(t_token **token);
 void	token_print(t_token *token);
 t_token *token_create_simple_with_value(t_token_type type, const char *src, size_t len);
+void	token_free_shallow(t_token **token);
 
 #endif
