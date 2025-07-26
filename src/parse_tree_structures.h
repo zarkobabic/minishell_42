@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:58 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 03:50:16 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 17:17:35 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ typedef struct s_command_element
 typedef struct s_simple_command
 {
     t_command_element *command_element;
-    t_command_element *simple_command;
+    struct s_simple_command *simple_command;
 } t_simple_command;
 
 //////////////////////command////////////////
@@ -95,7 +95,7 @@ typedef struct s_pipeline
     struct s_pipeline *pipeline;
 } t_pipeline;
 
-//////////////////////logical_expr////////////////
+//////////////////////next_logical_expr////////////////
 
 typedef enum e_logical_expr_type
 {
@@ -110,14 +110,15 @@ typedef struct s_next_logical_expr
     struct s_next_logical_expr *next_logical_expr;
 } t_next_logical_expr;
 
+//////////////////////logical_expr////////////////
+
 typedef struct s_logical_expr
 {
-    t_logical_expr_type op_type;
     t_pipeline *pipeline;
     t_next_logical_expr *next_logical_expr;
 } t_logical_expr;
 
-//////////////////////logical_expr////////////////
+//////////////////////command_line////////////////
 
 typedef struct s_command_line
 {

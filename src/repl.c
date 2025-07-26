@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/25 13:42:05 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 16:03:53 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@ void	clear_history_now(void)
 
 void	process_input(char *input)
 {
-	parse_input(input);
+	// parse_input(input);
+	t_command_line *tree = parse_tree(input);
+	parse_tree_print(tree);
 }
 
 // Dont forget to add -lreadline flag in compilation

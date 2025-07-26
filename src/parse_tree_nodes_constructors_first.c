@@ -6,22 +6,20 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 03:28:56 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 04:09:17 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 14:28:59 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include <stdlib.h>
 
-t_logical_expr	*create_logical_expr(t_logical_expr_type op_type,
-		t_pipeline *pipeline, t_next_logical_expr *next)
+t_logical_expr	*create_logical_expr(t_pipeline *pipeline, t_next_logical_expr *next)
 {
 	t_logical_expr	*expr;
 
 	expr = malloc(sizeof(t_logical_expr));
 	if (!expr)
 		return (NULL);
-	expr->op_type = op_type;
 	expr->pipeline = pipeline;
 	expr->next_logical_expr = next;
 	return (expr);

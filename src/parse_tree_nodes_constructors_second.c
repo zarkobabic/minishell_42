@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 03:11:38 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 04:09:30 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 17:12:23 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 t_simple_command	*create_simple_command(t_command_element *element,
-		t_command_element *next)
+		t_simple_command *next)
 {
 	t_simple_command	*cmd;
 

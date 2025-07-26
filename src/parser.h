@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:33:04 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 04:09:41 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 17:18:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,38 @@
 
 #include "parse_tree_structures.h"
 
-void	parse_input(char *input);
+// void	parse_input(char *input);
+t_command_line	*parse_tree(char *input);
 bool	is_redirection_token(t_token_type type);
 
 //Parse tree nodes constructors
 
 t_command_line *create_command_line(t_logical_expr *logical_expr);
-t_logical_expr *create_logical_expr(t_logical_expr_type op_type, t_pipeline *pipeline, t_next_logical_expr *next);
+t_logical_expr *create_logical_expr(t_pipeline *pipeline, t_next_logical_expr *next);
 t_next_logical_expr *create_next_logical_expr(t_logical_expr_type op_type, t_pipeline *pipeline, t_next_logical_expr *next);
 t_pipeline *create_pipeline(t_command *command, t_pipeline *next);
 t_command *create_simple_command_node(t_simple_command *simple_command);
 t_command *create_composite_command_node(t_logical_expr *logical_expr, t_redirection_list *redirection_list);
-t_simple_command *create_simple_command(t_command_element *element, t_command_element *next);
+t_simple_command *create_simple_command(t_command_element *element, t_simple_command *next);
 t_command_element *create_identifier_element(char *identifier);
 t_command_element *create_redirection_element(t_redirection *redirection);
 t_redirection_list *create_redirection_list(t_redirection *redirection, t_redirection_list *next);
 t_redirection *create_redirection(t_redirection_type type, char *file);
+
+//Recursive descent parsing functions
+
+t_command_line *parse_command_line(t_lexer *lexer);
+t_logical_expr *parse_logical_expr(t_lexer *lexer);
+t_next_logical_expr *parse_next_logical_expr(t_lexer *lexer);
+t_pipeline *parse_pipeline(t_lexer *lexer);
+t_command *parse_command(t_lexer *lexer);
+t_simple_command *parse_simple_command(t_lexer *lexer);
+t_command_element *parse_command_element(t_lexer *lexer);
+t_redirection_list *parse_redirection_list(t_lexer *lexer);
+t_redirection *parse_redirection(t_lexer *lexer);
+
+//Printing function just for testing
+
+void	parse_tree_print(t_command_line *command_line);
 
 #endif

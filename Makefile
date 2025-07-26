@@ -15,6 +15,10 @@ MY_C_SOURCES =	lexer_get_next_token.c \
 				lexer_lifecycle.c \
 				lexer_operations.c \
 				lexer_utilities.c \
+				parse_tree_nodes_constructors_first.c \
+				parse_tree_nodes_constructors_second.c \
+				parse_tree_nodes_constructors_third.c \
+				parse_tree_print.c \
 				parser.c \
 				repl.c \
 				token.c \
