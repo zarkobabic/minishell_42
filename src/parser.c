@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:32:25 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/29 15:44:46 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/29 17:54:24 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ t_redirection	*parse_redirection(t_lexer *lexer)
 	token = lexer_peek_next_token(lexer);
 	if (!token || token->type != TOKEN_IDENTIFIER)
 		// TODO: proveriti ovde da li se taj identifier expanduje na vise od jedne reci (ima razmak koji nije pod navodnicima,
-		// obicnim ili duplim, i ako se razlaze vratiti redirection is ambiguous),
+		// obicnim ili duplim,
+		// i ako se razlaze vratiti redirection is ambiguous),
 		// IPAK URADITI OVO TOKOM AST CREATION, NE SAD!!
 		return (perror(ERROR_EXPECTED_INDENTIFIER_IN_REDIRECTION), NULL);
 	next_token_value = token->value;
@@ -50,7 +51,7 @@ t_redirection	*parse_redirection(t_lexer *lexer)
 }
 
 // redirection_list ::= redirection redirection_list | ε
-t_redirection_list	*parse_redirection_list(t_lexer *lexer)
+t_redirection_list	*parse_redirection_list(t_lexer *lexer, bool *error_flag)
 {
 	t_token				*token;
 	t_redirection		*redirection;
@@ -62,15 +63,15 @@ t_redirection_list	*parse_redirection_list(t_lexer *lexer)
 		return (NULL); // ε (epsilon)
 	redirection = parse_redirection(lexer);
 	if (!redirection)
-		return (NULL);
-	next = parse_redirection_list(lexer);
+		return (*error_flag = true, NULL);
+	next = parse_redirection_list(lexer, error_flag);
+	if (*error_flag)
+		return (free_redirection(redirection), free_redirection_list(next),
+			NULL);
 	list = create_redirection_list(redirection, next);
 	if (!list)
-	{
-		free_redirection(redirection);
-		free_redirection_list(next);
-		return (NULL);
-	}
+		return (*error_flag = true, free_redirection(redirection),
+			free_redirection_list(next), NULL);
 	return (list);
 }
 
@@ -143,6 +144,7 @@ static t_command	*parse_composite_command(t_lexer *lexer)
 	t_logical_expr		*logical_expr;
 	t_redirection_list	*redirection_list;
 	t_command			*new_cmd_node;
+	bool				error;
 
 	lexer_consume_and_free_next_token(lexer);
 	logical_expr = parse_logical_expr(lexer);
@@ -153,10 +155,12 @@ static t_command	*parse_composite_command(t_lexer *lexer)
 		return (perror(ERROR_EXPRECTED_RIGHT_PARENTHESIS),
 			free_logical_expr(logical_expr), NULL);
 	lexer_consume_and_free_next_token(lexer);
-	// ne proveravati ovo jer ono sme da bude NULL:
-	redirection_list = parse_redirection_list(lexer);
-	new_cmd_node = create_composite_command_node(logical_expr,
-			redirection_list);
+	error = false;
+	redirection_list = parse_redirection_list(lexer, &error);
+	if (error)
+		return (free_logical_expr(logical_expr),
+			free_redirection_list(redirection_list), NULL);
+	new_cmd_node = create_composite_cmd(logical_expr, redirection_list);
 	if (!new_cmd_node)
 		return (free_logical_expr(logical_expr),
 			free_redirection_list(redirection_list), NULL);
@@ -217,7 +221,7 @@ t_pipeline	*parse_pipeline(t_lexer *lexer)
 }
 
 // next_logical_expr ::= (TOKEN_AND | TOKEN_OR) pipeline next_logical_expr | ε
-t_next_logical_expr	*parse_next_logical_expr(t_lexer *lexer)
+t_next_logical_expr	*parse_next_logical_expr(t_lexer *lexer, bool *error_flag)
 {
 	t_token				*token;
 	int					op_type;
@@ -227,16 +231,19 @@ t_next_logical_expr	*parse_next_logical_expr(t_lexer *lexer)
 
 	token = lexer_peek_next_token(lexer);
 	if (!token || (token->type != TOKEN_AND && token->type != TOKEN_OR))
-		return (NULL); // ε (epsilon)
+		return (NULL); // ε (epsilon), valid case
 	op_type = token->type;
 	lexer_consume_and_free_next_token(lexer);
 	pipeline = parse_pipeline(lexer);
 	if (!pipeline)
-		return (NULL);
-	next = parse_next_logical_expr(lexer);
-	new_expr_node = create_next_logical_expr(op_type, pipeline, next);
-	if(!new_expr_node)
+		return (*error_flag = true, NULL);
+	next = parse_next_logical_expr(lexer, error_flag);
+	if (*error_flag)
 		return (free_pipeline(pipeline), free_next_logical_expr(next), NULL);
+	new_expr_node = create_next_logical_expr(op_type, pipeline, next);
+	if (!new_expr_node)
+		return (*error_flag = true, free_pipeline(pipeline),
+			free_next_logical_expr(next), NULL);
 	return (new_expr_node);
 }
 
@@ -246,15 +253,19 @@ t_logical_expr	*parse_logical_expr(t_lexer *lexer)
 	t_pipeline			*pipeline;
 	t_next_logical_expr	*next;
 	t_logical_expr		*new_logical_expr;
+	bool				next_logical_expr_error_flag;
 
 	pipeline = parse_pipeline(lexer);
 	if (!pipeline)
 		return (NULL);
-	next = parse_next_logical_expr(lexer);
-	new_logical_expr = create_logical_expr(pipeline, next);
-	if(!new_logical_expr)
+	next_logical_expr_error_flag = false;
+	next = parse_next_logical_expr(lexer, &next_logical_expr_error_flag);
+	if (next_logical_expr_error_flag)
 		return (free_pipeline(pipeline), free_next_logical_expr(next), NULL);
-	return new_logical_expr;
+	new_logical_expr = create_logical_expr(pipeline, next);
+	if (!new_logical_expr)
+		return (free_pipeline(pipeline), free_next_logical_expr(next), NULL);
+	return (new_logical_expr);
 }
 
 // command_line ::= logical_expr TOKEN_EOF | TOKEN_EOF
@@ -277,12 +288,13 @@ t_command_line	*parse_command_line(t_lexer *lexer)
 		return (NULL);
 	token = lexer_peek_next_token(lexer);
 	if (!token || token->type != TOKEN_EOF)
-		return (perror(ERROR_INVALID_SYNTAX), free_logical_expr(logical_expr), NULL);
+		return (perror(ERROR_INVALID_SYNTAX), free_logical_expr(logical_expr),
+			NULL);
 	lexer_consume_and_free_next_token(lexer);
 	new_command_line = create_command_line(logical_expr);
-	if(!new_command_line)
+	if (!new_command_line)
 		return (free_logical_expr(logical_expr), NULL);
-	return new_command_line;
+	return (new_command_line);
 }
 
 t_command_line	*parse_tree(char *input)

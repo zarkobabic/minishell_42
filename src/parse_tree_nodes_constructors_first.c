@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 03:28:56 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 14:28:59 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/29 17:54:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ t_command	*create_simple_command_node(t_simple_command *simple_command)
 	return (cmd);
 }
 
-t_command	*create_composite_command_node(t_logical_expr *logical_expr,
+t_command	*create_composite_cmd(t_logical_expr *logical_expr,
 		t_redirection_list *redirection_list)
 {
 	t_command			*cmd;
