@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 01:55:02 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 02:47:28 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/29 13:43:44 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ t_token *lexer_peek_next_token(t_lexer *lexer)
 /// @brief Consumes and returns next token from the input
 /// @param lexer Lexer to consume token from
 /// @return FAIL: NULL if token allocation failed, SUCCESS: next token
-t_token *lexer_consume_next_token(t_lexer *lexer)
+static t_token	*lexer_consume_next_token(t_lexer *lexer)
 {
 	t_token *next_token;
 
@@ -80,5 +80,5 @@ void	lexer_consume_and_free_next_token(t_lexer *lexer)
 	t_token	*next_token;
 
 	next_token = lexer_consume_next_token(lexer);
-	token_free(&next_token);
+	token_free_shallow(&next_token);
 }

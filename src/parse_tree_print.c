@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:31:18 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 17:19:52 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/26 19:40:13 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,29 @@ void    print_padding(int padding)
     }
 }
 
-// char	*get_redirection_type_string(t_redirection_type type)
-// {
-// 	if(type == TYPE_REDIRECT_IN)
-// 		return ""
-// }
+char	*parse_tree_get_redirection_type_string(t_redirection_type type)
+{
+	if(type == TYPE_REDIRECT_IN)
+		return "TYPE_REDIRECT_IN(<)";
+	else if(type == TYPE_REDIRECT_OUT)
+		return "TYPE_REDIRECT_OUT(<)";
+	else if(type == TYPE_REDIRECT_APPEND)
+		return "TYPE_REDIRECT_APPEND(>>)";
+	else if(type == TYPE_REDIRECT_HEREDOC)
+		return "TYPE_REDIRECT_HEREDOC(<<)";
+	else 
+		return "ERROR!";
+}
+
+char	*parse_tree_get_log_expr_op_string(t_logical_expr_type type)
+{
+	if(type == TYPE_AND)
+		return "TYPE_AND(&&)";
+	else if(type == TYPE_OR)
+		return "TYPE_OR(||)";
+	else
+		return "ERROR!";
+}
 
 void    parse_tree_print_redirection(t_redirection *redirection, int padding)
 {
@@ -44,7 +62,7 @@ void    parse_tree_print_redirection(t_redirection *redirection, int padding)
         printf("REDIRECTION: NULL\n");
         return ;
     }
-    printf("REDIRECTION: type: %d, file: %s\n", redirection->type, redirection->file);
+    printf("REDIRECTION: type: %s, file: %s\n", parse_tree_get_redirection_type_string(redirection->type), redirection->file);
 }
 
 void    parse_tree_print_redirection_list(t_redirection_list *redirection_list, int padding)
@@ -136,7 +154,7 @@ void	parse_tree_print_next_logical_expr(t_next_logical_expr *next_logical_expr, 
         printf("NEXT_LOGICAL_EXPR: NULL\n");
         return ;
     }
-	printf("NEXT_LOGICAL_EXPR: op_type %d\n", next_logical_expr->op_type);
+	printf("NEXT_LOGICAL_EXPR: op_type %s\n", parse_tree_get_log_expr_op_string(next_logical_expr->op_type));
 	parse_tree_print_pipeline(next_logical_expr->pipeline, padding + NESTING_PADDING);
 	parse_tree_print_next_logical_expr(next_logical_expr->next_logical_expr, padding + NESTING_PADDING);
 }

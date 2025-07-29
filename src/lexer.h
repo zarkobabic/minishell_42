@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:04:16 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 02:47:42 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/29 13:41:12 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ t_token *lexer_get_next_token(t_lexer *lexer);
 void	lexer_advance(t_lexer *lexer);
 t_token *lexer_advance_and_return_new_token(t_lexer *lexer, t_token_type type);
 t_token *lexer_peek_next_token(t_lexer *lexer);
-t_token *lexer_consume_next_token(t_lexer *lexer);
 void	lexer_consume_and_free_next_token(t_lexer *lexer);
 
 //lexer utilities

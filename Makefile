@@ -18,6 +18,9 @@ MY_C_SOURCES =	lexer_get_next_token.c \
 				parse_tree_nodes_constructors_first.c \
 				parse_tree_nodes_constructors_second.c \
 				parse_tree_nodes_constructors_third.c \
+				parse_tree_nodes_destructors_commands.c \
+				parse_tree_nodes_destructors_operators.c \
+				parse_tree_nodes_destructors_redirections.c \
 				parse_tree_print.c \
 				parser.c \
 				repl.c \
