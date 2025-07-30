@@ -6,13 +6,17 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:30:59 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/25 14:24:26 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/30 15:07:12 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #define ERROR_SINGLE_AMPERSAND "Syntax error: Operator & is not valid in the \
 BASH syntax, did you maybe mean &&?"
+#define ERROR_UNCLOSED_SINGLE_QUOTES "Syntax error: Unclosed single quote. \
+Expected closing ' before end of input."
+#define ERROR_UNCLOSED_DOUBLE_QUOTES "Syntax error: Unclosed double quote. \
+Expected closing \" before end of input."
 
 static void	lexer_skip_whitespaces(t_lexer *lexer)
 {
@@ -64,6 +68,22 @@ static t_token *lex_redirections(t_lexer *lexer)
 	return token_create(TOKEN_UNDEFINED);
 }
 
+static bool	lex_quoted_text(t_lexer *lexer, char quote_type)
+{
+	lexer_advance(lexer);
+	while(lexer->current_char && lexer->current_char != quote_type)
+		lexer_advance(lexer);
+	if(!lexer->current_char)
+	{
+		if(quote_type == '\"')
+			perror(ERROR_UNCLOSED_DOUBLE_QUOTES);
+		else
+			perror(ERROR_UNCLOSED_SINGLE_QUOTES);
+		return false;
+	}
+	return true;
+}
+
 /// @brief Lex the identifier from the lexer input. 
 /// Identifier is the sequence of different string elements that can be either of
 /// t_component_type.
@@ -79,7 +99,19 @@ static t_token	*lex_identifier(t_lexer *lexer)
 		return NULL;
 	lexer->token_start_pos = lexer->pos;
 	while(lexer->current_char && !lexer_isspace(lexer->current_char) && !lexer_is_special_symbol(lexer->current_char))
+	{
+		if (lexer->current_char == '\"')
+		{
+			if (!lex_quoted_text(lexer, '\"'))
+				return (token_free_shallow(&token_ident), token_create(TOKEN_UNDEFINED));
+		}
+		else if (lexer->current_char == '\'')
+		{
+			if (!lex_quoted_text(lexer, '\''))
+				return (token_free_shallow(&token_ident), token_create(TOKEN_UNDEFINED));
+		}
 		lexer_advance(lexer);
+	}
 	if(!token_add_value(token_ident, &lexer->source[lexer->token_start_pos], lexer->pos - lexer->token_start_pos))
 		return NULL;
 	return token_ident;

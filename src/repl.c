@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/29 15:41:59 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/30 14:59:10 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	main(void)
 			printf("See ya!");
 			break ;
 		}
+		if(ft_strncmp(input, "plsexit", 7) == 0) //TODO: delete this, only for parsing testing purposes
+			return(free(input), 0);
 		if (ft_strlen(input) == 0)
 		{
 			free(input);

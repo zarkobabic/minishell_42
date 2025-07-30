@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:32:25 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/29 17:54:24 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/30 14:18:53 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,10 @@ t_redirection_list	*parse_redirection_list(t_lexer *lexer, bool *error_flag)
 	t_redirection_list	*list;
 
 	token = lexer_peek_next_token(lexer);
-	if (!token || !is_redirection_token(token->type))
-		return (NULL); // ε (epsilon)
+	if(!token)
+		return (*error_flag = true, NULL);
+	else if (!is_redirection_token(token->type))
+		return (NULL); // ε (epsilon), valid
 	redirection = parse_redirection(lexer);
 	if (!redirection)
 		return (*error_flag = true, NULL);
@@ -76,7 +78,7 @@ t_redirection_list	*parse_redirection_list(t_lexer *lexer, bool *error_flag)
 }
 
 // TODO: dodaj parsiranje stringa kako treba, sa sve
-// proverom za komandu ako je prvi put, expandovanje variabli etc.
+// proverom za komandu ako je prvi put, expandovanje variabli etc. - OVO TAKODJE URADITI U AST!!!
 //  command_element ::= TOKEN_IDENTIFIER | redirection
 t_command_element	*parse_command_element(t_lexer *lexer)
 {
@@ -230,7 +232,9 @@ t_next_logical_expr	*parse_next_logical_expr(t_lexer *lexer, bool *error_flag)
 	t_next_logical_expr	*new_expr_node;
 
 	token = lexer_peek_next_token(lexer);
-	if (!token || (token->type != TOKEN_AND && token->type != TOKEN_OR))
+	if(!token)
+		return (*error_flag = true, NULL);
+	else if (token->type != TOKEN_AND && token->type != TOKEN_OR)
 		return (NULL); // ε (epsilon), valid case
 	op_type = token->type;
 	lexer_consume_and_free_next_token(lexer);
