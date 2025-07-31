@@ -1,42 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_tree_nodes_constructors_second.c             :+:      :+:    :+:   */
+/*   parse_tree_nodes_constructors_redirections.        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 03:11:38 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 17:12:23 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/31 04:41:54 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include <stdlib.h>
-
-t_simple_command	*create_simple_command(t_command_element *element,
-		t_simple_command *next)
-{
-	t_simple_command	*cmd;
-
-	cmd = malloc(sizeof(t_simple_command));
-	if (!cmd)
-		return (NULL);
-	cmd->command_element = element;
-	cmd->simple_command = next;
-	return (cmd);
-}
-
-t_command_element	*create_identifier_element(char *identifier)
-{
-	t_command_element	*element;
-
-	element = malloc(sizeof(t_command_element));
-	if (!element)
-		return (NULL);
-	element->type = TYPE_TOKEN_IDENTIFIER;
-	element->command_element.string_value = identifier;
-	return (element);
-}
 
 t_command_element	*create_redirection_element(t_redirection *redirection)
 {

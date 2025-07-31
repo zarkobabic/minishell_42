@@ -6,17 +6,17 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/30 14:59:10 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/31 04:26:27 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "parser.h"
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <readline/history.h>
-#include <readline/readline.h>
 
 void	clear_history_now(void)
 {
@@ -26,8 +26,9 @@ void	clear_history_now(void)
 
 void	process_input(char *input)
 {
-	// parse_input(input);
-	t_command_line *tree = parse_tree(input);
+	t_command_line	*tree;
+
+	tree = parse_tree(input);
 	parse_tree_print(tree);
 	free_parse_tree(tree);
 }
@@ -49,8 +50,8 @@ int	main(void)
 			printf("See ya!");
 			break ;
 		}
-		if(ft_strncmp(input, "plsexit", 7) == 0) //TODO: delete this, only for parsing testing purposes
-			return(free(input), 0);
+		if (ft_strncmp(input, "plsexit", 7) == 0) // TODO: delete this, only for parsing testing purposes
+			return (free(input), clear_history_now(), 0);
 		if (ft_strlen(input) == 0)
 		{
 			free(input);

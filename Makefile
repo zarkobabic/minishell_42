@@ -15,15 +15,18 @@ MY_C_SOURCES =	lexer_get_next_token.c \
 				lexer_lifecycle.c \
 				lexer_operations.c \
 				lexer_utilities.c \
-				parse_tree_nodes_constructors_first.c \
-				parse_tree_nodes_constructors_second.c \
-				parse_tree_nodes_constructors_third.c \
+				parse_tree_nodes_constructors_commands.c \
+				parse_tree_nodes_constructors_expressions.c \
+				parse_tree_nodes_constructors_redirections.c \
 				parse_tree_nodes_destructors_commands.c \
-				parse_tree_nodes_destructors_operators.c \
+				parse_tree_nodes_destructors_expressions.c \
 				parse_tree_nodes_destructors_redirections.c \
+				parse_tree_parse_commands.c \
+				parse_tree_parse_expressions.c \
+				parse_tree_parse_redirections.c \
 				parse_tree_print.c \
-				parser.c \
 				repl.c \
+				token_print.c \
 				token.c \
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))

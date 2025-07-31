@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:15:19 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 01:44:18 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/31 03:51:39 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	lexer_destroy(t_lexer **lexer_ref)
 {
 	if (lexer_ref && (*lexer_ref))
 	{
-		if((*lexer_ref)->peeked_token)
+		if ((*lexer_ref)->peeked_token)
 			token_free(&((*lexer_ref)->peeked_token));
 		free(*lexer_ref);
 		*lexer_ref = NULL;

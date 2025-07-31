@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:14:42 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/29 15:36:36 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/31 03:51:04 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 void	free_redirection(t_redirection *redirection)
 {
 	if (!redirection)
-		return;
+		return ;
 	if (redirection->file)
 		free(redirection->file);
 	free(redirection);
@@ -25,7 +25,7 @@ void	free_redirection(t_redirection *redirection)
 void	free_redirection_list(t_redirection_list *redirection_list)
 {
 	if (!redirection_list)
-		return;
+		return ;
 	if (redirection_list->redirection)
 		free_redirection(redirection_list->redirection);
 	if (redirection_list->next)

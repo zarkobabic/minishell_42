@@ -1,24 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_tree_nodes_constructors_third.c              :+:      :+:    :+:   */
+/*   ast_tree_structures.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/26 03:36:25 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/26 04:09:11 by zbabic           ###   ########.fr       */
+/*   Created: 2025/07/30 18:58:15 by zbabic            #+#    #+#             */
+/*   Updated: 2025/07/30 19:07:14 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include <stdlib.h>
+#ifndef AST_TREE_STRUCTURES_H
+# define AST_TREE_STRUCTURES_H
 
-t_command_line *create_command_line(t_logical_expr *logical_expr)
+typedef enum e_ast_node_type
 {
-    t_command_line *cmd_line = malloc(sizeof(t_command_line));
-    if (!cmd_line)
-        return NULL;
-    
-    cmd_line->logical_expr = logical_expr;
-    return cmd_line;
-}
+	AST_CMD,
+	AST_REDIRECTION,
+	AST_LOGICAL_EXPR,
+	AST_PIPELINE,
+	AST_SUBSHELL
+}	t_ast_node_type;
+
+#endif

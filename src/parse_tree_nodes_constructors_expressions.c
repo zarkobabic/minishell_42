@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_tree_nodes_constructors_first.c              :+:      :+:    :+:   */
+/*   parse_tree_nodes_constructors_expressions.c        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 03:28:56 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/29 17:54:07 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/31 04:41:42 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include <stdlib.h>
 
-t_logical_expr	*create_logical_expr(t_pipeline *pipeline, t_next_logical_expr *next)
+t_logical_expr	*create_logical_expr(t_pipeline *pipeline,
+		t_next_logical_expr *next)
 {
 	t_logical_expr	*expr;
 
@@ -51,36 +52,13 @@ t_pipeline	*create_pipeline(t_command *command, t_pipeline *next)
 	return (pipeline);
 }
 
-t_command	*create_simple_command_node(t_simple_command *simple_command)
+t_command_line	*create_command_line(t_logical_expr *logical_expr)
 {
-	t_command	*cmd;
+	t_command_line	*cmd_line;
 
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
+	cmd_line = malloc(sizeof(t_command_line));
+	if (!cmd_line)
 		return (NULL);
-	cmd->type = TYPE_SIMPLE_COMMAND;
-	cmd->command.simple_command = simple_command;
-	return (cmd);
-}
-
-t_command	*create_composite_cmd(t_logical_expr *logical_expr,
-		t_redirection_list *redirection_list)
-{
-	t_command			*cmd;
-	t_composite_command	*composite;
-
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
-		return (NULL);
-	composite = malloc(sizeof(t_composite_command));
-	if (!composite)
-	{
-		free(cmd);
-		return (NULL);
-	}
-	composite->logical_expr = logical_expr;
-	composite->redirection_list = redirection_list;
-	cmd->type = TYPE_COMPOSITE_COMMAND;
-	cmd->command.composite_command = composite;
-	return (cmd);
+	cmd_line->logical_expr = logical_expr;
+	return (cmd_line);
 }
