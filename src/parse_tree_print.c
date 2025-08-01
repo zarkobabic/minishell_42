@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:31:18 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 03:54:16 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/01 19:31:42 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 void	parse_tree_print_logical_expr(t_logical_expr *logical_expr,
 			int padding);
 
-void	print_padding(int padding)
+static void	print_padding(int padding)
 {
 	int	counter;
 
@@ -31,7 +31,7 @@ void	print_padding(int padding)
 	}
 }
 
-char	*parse_tree_get_redirection_type_string(t_redirection_type type)
+static char	*parse_tree_get_redirection_type_string(t_redirection_type type)
 {
 	if (type == TYPE_REDIRECT_IN)
 		return ("TYPE_REDIRECT_IN(<)");
@@ -45,7 +45,7 @@ char	*parse_tree_get_redirection_type_string(t_redirection_type type)
 		return ("ERROR!");
 }
 
-char	*parse_tree_get_log_expr_op_string(t_logical_expr_type type)
+static char	*parse_tree_get_log_expr_op_string(t_logical_expr_type type)
 {
 	if (type == TYPE_AND)
 		return ("TYPE_AND(&&)");

@@ -6,12 +6,13 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 04:26:27 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/01 22:32:22 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "parser.h"
+#include "ast_tree_structures.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -27,9 +28,14 @@ void	clear_history_now(void)
 void	process_input(char *input)
 {
 	t_command_line	*tree;
+	t_ast_node		*ast_tree;
 
 	tree = parse_tree(input);
-	parse_tree_print(tree);
+	if(!tree)
+		return ;
+	// parse_tree_print(tree);
+	ast_tree = ast_create_tree(tree);
+	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
 }
 

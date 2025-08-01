@@ -11,7 +11,11 @@ INCLUDES = -I$(LIBFT_DIR) -I$(INCLUDES_FOLDER)
 REMOVE = rm -rf
 DEBUG_ENABLED = -g
 
-MY_C_SOURCES =	lexer_get_next_token.c \
+MY_C_SOURCES =	ast_tree_nodes_constructors.c \
+				ast_tree_nodes_destructors.c \
+				ast_tree_print.c \
+				ast_tree_translator.c \
+				lexer_get_next_token.c \
 				lexer_lifecycle.c \
 				lexer_operations.c \
 				lexer_utilities.c \

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 15:34:58 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/30 19:04:38 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:03:58 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ typedef struct s_pipeline
 
 typedef enum e_logical_expr_type
 {
-	TYPE_AND = 1,
+	TYPE_END,
+	TYPE_AND,
 	TYPE_OR
 }								t_logical_expr_type;
 
