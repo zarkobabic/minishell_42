@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:46:41 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/01 18:44:03 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/01 22:42:22 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	ast_free_redirection_list(t_ast_node *redirection_list_head)
 	ast_curr_redirection = redirection_list_head;
 	while (ast_curr_redirection)
 	{
-		ast_next_redirection = ast_next_redirection->next;
+		ast_next_redirection = ast_curr_redirection->next;
 		ast_free_redirection(&ast_curr_redirection);
 		ast_curr_redirection = ast_next_redirection;
 	}
@@ -54,7 +54,7 @@ void	ast_free_identifier_list(t_ast_node *identifier_list_head)
 	ast_curr_identifier = identifier_list_head;
 	while (ast_curr_identifier)
 	{
-		ast_next_identifier = ast_next_identifier->next;
+		ast_next_identifier = ast_curr_identifier->next;
 		ast_free_identifier(&ast_curr_identifier);
 		ast_curr_identifier = ast_next_identifier;
 	}
@@ -131,4 +131,11 @@ void	ast_free_all_logical_expr(t_ast_node *ast_logical_expr_head)
 		ast_free_logical_expr(&curr);
 		curr = ast_logical_expr_head;
 	}
+}
+
+void	ast_free_tree(t_ast_node *root)
+{
+	if(!root)
+		return ;
+	ast_free_all_logical_expr(root);
 }

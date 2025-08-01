@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:58:15 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/01 20:27:11 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/01 22:34:56 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void	ast_free_subshell(t_ast_node **ast_subshell);
 void	ast_free_pipeline(t_ast_node **ast_pipeline);
 void	ast_free_logical_expr(t_ast_node **ast_logical_expr);
 void	ast_free_all_logical_expr(t_ast_node *ast_logical_expr_head);
+void	ast_free_tree(t_ast_node *root);
 
 //Printing helpers - delete later
 
