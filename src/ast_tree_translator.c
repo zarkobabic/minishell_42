@@ -6,14 +6,14 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 14:34:42 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/01 21:17:59 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/03 21:07:43 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_tree_structures.h"
 #include <stdbool.h>
 
-//Forward definitions
+//Forward declarations
 void	ast_add_identifier_list_to_cmd(t_ast_node *ast_identifier_curr, t_ast_node *command);
 t_ast_node	*ast_parse_identifier_list(char *string_value);
 void	ast_add_redirection_to_cmd(t_ast_node *redirection, t_ast_node *command);
@@ -59,18 +59,14 @@ void	ast_add_identifier_list_to_cmd(t_ast_node *ast_identifier_curr, t_ast_node 
 //will become: echo mama tata and be valid to only echo should be written as
 //executable, not the whole thing.
 
-//TODO: Expand string, then split by unquoted spaces and for each part add it
-//	1. to executable if it doesnt exist already (name is first argument)
-//  2. to arguments if the executable exists
-//we have identifier list here because we will expand the string in the create_identifier function and it will parse identidfier and because it can have more than one words we need to go and make a linked list of all words to add as argument
 t_ast_node	*ast_parse_identifier_list(char *string_value)
 {
-	//Promeniti ovo da parsira string i napravi linked listu elemenata za svaku rec, samo je privremeno da bi videli da li ovo uopste radi
 	t_ast_node	*identifier_node;
+
+	identifier_process_to_char_list(string_value);
 	
 	identifier_node = ast_create_identifier(string_value);
 	return identifier_node;
-	//This function should parse the t_ast_node which will be the first word and have next to the next word etc, linked list, because one identifier can be more words
 }
 
 void	ast_add_redirection_to_cmd(t_ast_node *redirection, t_ast_node *command)
@@ -157,6 +153,7 @@ bool	ast_parse_redirection_list(t_ast_node *ast_subshell,
 	{
 		ast_parsed_redirection = ast_parse_redirection(
 			curr_redirection_list->redirection);
+		curr_redirection_list->redirection->file = NULL;
 		if (!ast_parsed_redirection)
 			return (false);
 		if (!ast_last_parsed_redirection)
