@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/04 01:17:41 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 18:18:19 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,11 @@ long	get_env_var_name_len(char *str)
 
 long	get_status_len(void)
 {
+	long status;
+
+	
 	// TODO: Find the way to return EXIT status of the last executed command
-	return (0);
+	return (1);
 }
 
 long	count_env_var(char *str, long var_name_len)
@@ -178,7 +181,7 @@ long	identifier_count_new_string_len(char *str)
 
 int	main(void)
 {
-	char *str = "a$$USER$$$";
+	char *str = "$?fghj";
 	long len;
 
 	if (!str)

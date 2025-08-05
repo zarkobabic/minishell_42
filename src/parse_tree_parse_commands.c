@@ -6,15 +6,12 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 04:02:57 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 04:12:02 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:08:40 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-// TODO: dodaj parsiranje stringa kako treba, sa sve
-// proverom za komandu ako je prvi put, expandovanje variabli etc.
-// - OVO TAKODJE URADITI U AST!!!
 //  command_element ::= TOKEN_IDENTIFIER | redirection
 t_command_element	*parse_command_element(t_lexer *lexer)
 {

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 19:29:13 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/01 20:57:31 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 18:32:55 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	ast_print_simple_command(t_ast_node *command, int padding)
 	}
 }
 
-void	ast_print_logical_expr(t_ast_node *logical_expr, int padding);
+void		ast_print_logical_expr(t_ast_node *logical_expr, int padding);
 
 void	ast_print_subshell(t_ast_node *subshell, int padding)
 {
@@ -160,7 +160,7 @@ void	ast_print_pipeline(t_ast_node *pipeline, int padding)
 
 void	ast_print_logical_expr(t_ast_node *logical_expr, int padding)
 {
-	if(!logical_expr)
+	if (!logical_expr)
 		return ;
 	print_padding(padding);
 	if (logical_expr->type != AST_LOGICAL_EXPR)
@@ -178,7 +178,7 @@ void	ast_print_logical_expr(t_ast_node *logical_expr, int padding)
 
 void	ast_tree_print(t_ast_node *root)
 {
-	if(!root)
+	if (!root)
 		printf("AST_TREE: NOTHING_TO_SHOW!\n");
 	else
 		printf("AST_TREE:\n");
@@ -191,7 +191,6 @@ void	ast_tree_print(t_ast_node *root)
 	else if (root->type == AST_PIPELINE)
 		ast_print_pipeline(root, NESTING_PADDING);
 	else if (root->type == AST_LOGICAL_EXPR)
-		// samo ova je zapravo bitna jer ce drvo uvek poceti sa ovim
 		ast_print_logical_expr(root, NESTING_PADDING);
 	else if (root->type == AST_IDENTIFIER)
 		ast_print_identifier(root, NESTING_PADDING);

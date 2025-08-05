@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:32:25 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 04:07:21 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:09:36 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,6 @@ bool	is_redirection_token(t_token_type type)
 //              | TOKEN_REDIRECT_OUT TOKEN_IDENTIFIER
 //              | TOKEN_REDIRECT_APPEND TOKEN_IDENTIFIER
 //              | TOKEN_HEREDOC TOKEN_IDENTIFIER
-// TODO: proveriti ovde da li se taj identifier 
-		// expanduje na vise od jedne reci 
-		// (ima razmak koji nije pod navodnicima,
-		// obicnim ili duplim,
-		// i ako se razlaze vratiti redirection is ambiguous),
-		// IPAK URADITI OVO TOKOM AST CREATION, NE SAD!!
 t_redirection	*parse_redirection(t_lexer *lexer)
 {
 	t_token	*token;

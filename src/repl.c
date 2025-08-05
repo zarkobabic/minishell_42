@@ -6,13 +6,13 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/01 22:35:15 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:07:55 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "parser.h"
-#include "ast_tree_structures.h"
+#include "ast_tree_translator.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -31,9 +31,8 @@ void	process_input(char *input)
 	t_ast_node		*ast_tree;
 
 	tree = parse_tree(input);
-	if(!tree)
+	if (!tree)
 		return ;
-	// parse_tree_print(tree);
 	ast_tree = ast_create_tree(tree);
 	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
@@ -41,7 +40,8 @@ void	process_input(char *input)
 }
 
 // Dont forget to add -lreadline flag in compilation
-// for readline functions to work
+// for readline functions to work,
+// TODO: delete plsexit here, only for testing purposes
 int	main(void)
 {
 	char	*input;
@@ -53,11 +53,8 @@ int	main(void)
 	{
 		input = readline(prompt);
 		if (!input)
-		{
-			printf("See ya!");
 			break ;
-		}
-		if (ft_strncmp(input, "plsexit", 7) == 0) // TODO: delete this, only for parsing testing purposes
+		if (ft_strncmp(input, "plsexit", 7) == 0)
 			return (free(input), clear_history_now(), 0);
 		if (ft_strlen(input) == 0)
 		{
