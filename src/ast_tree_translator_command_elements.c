@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 18:48:56 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 18:58:55 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:28:49 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,14 @@
 void	ast_add_identifier_list_to_cmd(t_ast_node *ast_identifier_curr,
 		t_ast_node *command)
 {
-	while (ast_identifier_curr)
+	if (ast_identifier_curr)
 	{
-		if (!command->data.command.executable)
-			command->data.command.executable = ast_identifier_curr;
+		if (!command->data.command.args)
+			command->data.command.args = ast_identifier_curr;
 		else
-		{
-			if (!command->data.command.args)
-				command->data.command.args = ast_identifier_curr;
-			else
-				command->data.command.args_tail->next = ast_identifier_curr;
-			command->data.command.args_tail = ast_identifier_curr;
-			command->data.command.arg_cnt += 1;
-		}
+			command->data.command.args_tail->next = ast_identifier_curr;
+		command->data.command.args_tail = ast_identifier_curr;
+		command->data.command.arg_cnt += 1;
 		ast_identifier_curr = ast_identifier_curr->next;
 	}
 }

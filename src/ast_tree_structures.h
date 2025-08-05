@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:58:15 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 18:42:35 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:27:30 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ typedef struct s_ast_node
 		// AST_CMD node
 		struct					s_ast_command
 		{
-			struct s_ast_node	*executable;
 			struct s_ast_node	*args;
 			struct s_ast_node	*args_tail;
 			long				arg_cnt;

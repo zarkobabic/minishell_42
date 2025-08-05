@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 19:29:13 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 18:32:55 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:31:36 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,6 @@ void	ast_print_simple_command(t_ast_node *command, int padding)
 	t_ast_node	*current_el;
 
 	printf("COMMAND: arg_cnt: %ld\n", command->data.command.arg_cnt);
-	print_padding(padding + NESTING_PADDING);
-	printf("executable:\n");
-	ast_print_identifier(command->data.command.executable, padding + 2
-		* NESTING_PADDING);
 	print_padding(padding + NESTING_PADDING);
 	printf("arguments:\n");
 	current_el = command->data.command.args;

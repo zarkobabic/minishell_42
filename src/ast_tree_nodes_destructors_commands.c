@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:46:41 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 18:39:26 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/05 19:29:18 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ void	ast_free_command(t_ast_node **ast_command)
 	if (!ast_command || !(*ast_command))
 		return ;
 	ast_free_redirection_list((*ast_command)->data.command.redirections);
-	ast_free_identifier(&((*ast_command)->data.command.executable));
 	ast_free_identifier_list((*ast_command)->data.command.args);
 	free(*ast_command);
 	*ast_command = NULL;
