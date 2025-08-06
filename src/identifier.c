@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:24:19 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/06 00:52:35 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/06 19:10:35 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	main(void)
 	long	i;
 	char	*temp;
 
-	string = "koka$USER\"life_in_germany$=Sucks$helo\"     $.    asdnfcerf'dsf$HOME'. kl";
+	string = "koka$USER\"life_in_germany$=Sucks$helo\" asdnfcerf'dsf$HOME'. kl";
 	expanded_string = identifier_expand_variables_in_string(string);
 	splitted_string = split_by_unquoted_space(expanded_string);
 	free(expanded_string);
