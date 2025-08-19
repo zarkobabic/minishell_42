@@ -2,4 +2,4 @@
 2025-07-26|18:58|zbabic: Changed the process_input function in repl.c:main:30 (Git pull)
 2025-07-29|16:48|zbabic: Added the free_parse_tree(tree) function call in repl.c:main:32 (Git pull)
 2025-07-30|15:42|zbabic: Added the temporary plsexit finish of the repl loop just for testing purposes on repl.c:main:52
-						 Added the suppression file to use with Valgrind to suppress anoying readline false negative leaks report
+						 Added the suppression file to use with Valgrind to suppress annoying readline false positive leaks report

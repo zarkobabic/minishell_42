@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 17:33:04 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 04:11:16 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/08/19 19:48:24 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@
 Expected_indentifier in redirection"
 # define ERROR_SUBSHELL_EXPECTS_COMMAND "Parsing error: Subshell call \
 must have command to execute"
-# define ERROR_EXPRECTED_RIGHT_PARENTHESIS "Parsing error: Exprected ')'"
+# define ERROR_EXPRECTED_RIGHT_PARENTHESIS "Parsing error: Expected ')'"
 # define ERROR_INVALID_SYNTAX "Parsing error: Syntax is not valid!"
 # define ERROR_TREE_PARSING_FAILED "Parsing error: Parsing of the tree failed!"
 
