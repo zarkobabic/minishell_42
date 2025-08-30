@@ -6,12 +6,23 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/08/24 23:30:17 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/08/30 18:59:05 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 #include "../src/ast_tree_structures.h"
+
+int	f_is_builtin(char *name)
+{
+	return (!ft_strcmp(name, "echo")
+		|| !ft_strcmp(name, "cd")
+		|| !ft_strcmp(name, "pwd")
+		|| !ft_strcmp(name, "export")
+		|| !ft_strcmp(name, "unset")
+		|| !ft_strcmp(name, "env")
+		|| !ft_strcmp(name, "exit"));
+}
 
 int	f_execute_cmd(t_ast_node *cmd)
 {
@@ -113,6 +124,8 @@ int	f_exec_subshell(t_ast_node *subshell)
 
 int	f_exec_cmd(t_ast_node *cmd)
 {
+	if (cmd->next != NULL)
+		return (ERROR);
 	if (cmd->type == AST_CMD)
 		return (f_exec_simple_cmd(cmd));
 	else if (cmd->type == AST_SUBSHELL)
@@ -130,7 +143,58 @@ int	f_exec_pipeline(t_ast_node *pipeline)
 		return (f_exec_cmd(pipeline->data.pipeline.cmds));
 	else
 	{
-		
+		int		i;
+		int		pipe_fds[2];
+		int		temp_in_fd;
+		pid_t	pid;
+		pid_t	*pid_list;
+		t_ast_node	*temp_cmd;
+
+		temp_cmd = pipeline->data.pipeline.cmds;
+		while (temp_cmd)
+		{
+			if (temp_cmd->next)
+			{
+				if (pipe(pipe_fds) < 0)
+					return (perror("pipe"), ERROR);
+			}
+			pid = fork();
+			if (pid == 0)
+			{
+				if (temp_in_fd != STDIN_FILENO)
+				{
+					dup2(temp_in_fd, STDIN_FILENO);
+					close (temp_in_fd);
+				}
+				if (temp_cmd->next)
+				{
+					close(pipe_fds[0]);
+					dup2(pipe_fds[1], STDOUT_FILENO);
+					close(pipe_fds[1]);
+				}
+				// f_exec_cmd(temp_cmd);
+				exit(f_exec_cmd(temp_cmd)); // FIXME: revise child exit logic
+			}
+			else if (pid > 0)
+			{
+				if (temp_in_fd != STDIN_FILENO)
+					close(temp_in_fd);
+				if (temp_cmd->next)
+				{
+					close(pipe_fds[1]);
+					temp_in_fd = pipe_fds[0];
+				}
+				temp_cmd = temp_cmd->next;
+				++i;
+			} // TODO: catch exit status of last pipeline element
+			else
+				return (perror("fork"), ERROR); // BUG: potentially leaks open fds
+		}
+		while (i-- > 0)
+			wait(NULL); // FIXME: probably waitpid to catch exit statuses, and store them in an array or so
+
+
+		return (f_pipeline_logic(/* see big code block above */));
 	}
 }
 
