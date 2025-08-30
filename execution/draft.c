@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/08/24 23:14:41 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/08/24 23:30:17 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,5 +156,6 @@ int	f_execute_ast(t_ast_node *root)
 	if (!root || root->type != AST_LOGICAL_EXPR)
 		return (ERROR);
 	exit_value = f_exec_logic_expr(root);
+	// TODO: save last exit value (maybe via f_setenv for "$?" or as a static int that is used if "$?" is called)
 	return (exit_value);
 }
