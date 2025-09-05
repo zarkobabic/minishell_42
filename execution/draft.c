@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/05 19:22:30 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/05 21:01:35 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,11 +258,11 @@ int	f_exec_pipeline(t_ast_node *pipeline)
 
 int	f_exec_logic_expr(t_ast_node *expr)
 {
-	int	exit_value;
+	static int	exit_value = 0;
 
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline);
+	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, exit_value); // TODO: pass exit_value down through all functions
 	if ((expr->data.logical_expr.type == TYPE_AND
 		&& exit_value == SUCCESS)
 		|| (expr->data.logical_expr.type == TYPE_OR
@@ -271,13 +271,10 @@ int	f_exec_logic_expr(t_ast_node *expr)
 	return (exit_value);
 }
 
-int	f_execute_ast(t_ast_node *root)
+void	f_execute_ast(t_ast_node *root)
 {
-	int	exit_value;
-
 	if (!root || root->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	exit_value = f_exec_logic_expr(root);
+	f_exec_logic_expr(root);
 	// TODO: save last exit value (maybe via f_setenv for "$?" or as a static int that is used if "$?" is called)
-	return (exit_value);
 }
