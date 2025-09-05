@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/05 20:47:05 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/05 22:37:14 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	process_input(char *input)
 	ast_tree = ast_create_tree(tree);
 	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
-	ast_free_tree(ast_tree);
 	// f_execute_ast(ast_tree);
+	ast_free_tree(ast_tree);
 }
 
 // Dont forget to add -lreadline flag in compilation
