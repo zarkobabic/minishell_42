@@ -6,22 +6,22 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/04 23:10:09 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/05 15:47:32 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 #include "../src/ast_tree_structures.h"
 
-int	f_is_builtin(char *name)
+int	f_is_builtin(char *call)
 {
-	return (!ft_strcmp(name, "echo")
-		|| !ft_strcmp(name, "cd")
-		|| !ft_strcmp(name, "pwd")
-		|| !ft_strcmp(name, "export")
-		|| !ft_strcmp(name, "unset")
-		|| !ft_strcmp(name, "env")
-		|| !ft_strcmp(name, "exit"));
+	return (!ft_strncmp(call, "echo", 9)
+		|| !ft_strncmp(call, "cd", 9)
+		|| !ft_strncmp(call, "pwd", 9)
+		|| !ft_strncmp(call, "export", 9)
+		|| !ft_strncmp(call, "unset", 9)
+		|| !ft_strncmp(call, "env", 9)
+		|| !ft_strncmp(call, "exit", 9));
 }
 
 int	f_execute_cmd(t_ast_node *cmd)
