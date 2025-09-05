@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/05 15:47:32 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/05 19:22:30 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ int	f_exec_cmd(t_ast_node *cmd)
 {
 	if (cmd->next != NULL)
 		return (ERROR);
+	// TODO: variable expansion
 	if (cmd->type == AST_CMD)
 		return (f_exec_simple_cmd(cmd));
 	else if (cmd->type == AST_SUBSHELL)

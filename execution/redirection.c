@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/05 15:30:58 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/05 19:42:27 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 			free(input);
 			break ;
 		}
+		if (expansion_flag)
+			input = identifier_expand_variables_in_string(input);
 		input_len = ft_strlen(input);
 		write(temp_file, input, input_len);
 		write(temp_file, "\n", 1);
@@ -106,6 +108,7 @@ int	f_redirect(t_ast_node *redirections)
 
 	if (!redirections)
 		return (SUCCESS);
+	// TODO: variable expansion
 	return_value = SUCCESS;
 	while (redirections)
 	{
