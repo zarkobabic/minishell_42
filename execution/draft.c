@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/05 21:01:35 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 01:28:35 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	f_exec_builtin(char **argv, long argc)
 	else if (ft_strncmp(argv[0], "cd", 9) == 0)
 		return (f_cd(argv, argc));
 	else if (ft_strncmp(argv[0], "pwd", 9) == 0)
-		return (f_pwd(argv, argc));
+		return (f_pwd());
 	else if (ft_strncmp(argv[0], "export", 9) == 0)
 		return (f_export(argv, argc));
 	else if (ft_strncmp(argv[0], "unset", 9) == 0)
@@ -67,7 +67,7 @@ int	f_exec_builtin(char **argv, long argc)
 	return (ERROR);
 }
 
-char **f_buildargv(t_ast_node *args, long argc)
+char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
 {
 	char	**argv;
 	long	i;
@@ -89,13 +89,13 @@ char **f_buildargv(t_ast_node *args, long argc)
 	return (argv);
 }
 
-int f_exec_simple_cmd(t_ast_node *simcmd)
+int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value)
 {
 	char	**argv;
 	long	argc;
 	
 	argc = simcmd->data.command.arg_cnt;
-	argv = f_buildargv(simcmd->data.command.args, argc);
+	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value);
 
 	if (!ft_strncmp(argv[0], "cd", 9) || !ft_strncmp(argv[0], "export", 9)
 		|| !ft_strncmp(argv[0], "unset", 9) || !ft_strncmp(argv[0], "exit", 9))
@@ -107,7 +107,7 @@ int f_exec_simple_cmd(t_ast_node *simcmd)
 	free(argv); // TODO: check, if viable at this point
 }
 
-int	f_exec_subshell(t_ast_node *subshell)
+int	f_exec_subshell(t_ast_node *subshell, int old_exit_value)
 {
 	pid_t	pid;
 	int		exit_value;
@@ -135,15 +135,15 @@ int	f_exec_subshell(t_ast_node *subshell)
 	return (exit_value);
 }
 
-int	f_exec_cmd(t_ast_node *cmd)
+int	f_exec_cmd(t_ast_node *cmd, int old_exit_value)
 {
 	if (cmd->next != NULL)
 		return (ERROR);
 	// TODO: variable expansion
 	if (cmd->type == AST_CMD)
-		return (f_exec_simple_cmd(cmd));
+		return (f_exec_simple_cmd(cmd, old_exit_value));
 	else if (cmd->type == AST_SUBSHELL)
-		return (f_exec_subshell(cmd));
+		return (f_exec_subshell(cmd, old_exit_value));
 	else
 		return (ERROR);
 }
@@ -165,13 +165,13 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 		free(pid_list);
 }
 
-int	f_exec_pipeline(t_ast_node *pipeline)
+int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 {
 	if (!pipeline || pipeline->type != AST_PIPELINE
 		|| pipeline->data.pipeline.cmd_cnt <= 0 || !pipeline->data.pipeline.cmds)
 		return (ERROR);
 	if (pipeline->data.pipeline.cmd_cnt == 1)
-		return (f_exec_cmd(pipeline->data.pipeline.cmds));
+		return (f_exec_cmd(pipeline->data.pipeline.cmds, old_exit_value));
 	else
 	{
 		int		i;
@@ -187,7 +187,6 @@ int	f_exec_pipeline(t_ast_node *pipeline)
 			return (perror("malloc"), ERROR);
 		temp_cmd = pipeline->data.pipeline.cmds;
 		temp_fd_in = STDIN_FILENO;
-		exit_value = SUCCESS;
 		i = 0;
 		while (temp_cmd)
 		{
@@ -219,7 +218,7 @@ int	f_exec_pipeline(t_ast_node *pipeline)
 				// 	exit_value = f_redirect(temp_cmd->data.subshell.redirections);
 				// if (exit_value != SUCCESS)
 				// 	exit(exit_value);
-				exit(f_exec_cmd(temp_cmd));
+				exit(f_exec_cmd(temp_cmd, old_exit_value));
 			}
 			else if (pid_list[i] > 0)
 			{
