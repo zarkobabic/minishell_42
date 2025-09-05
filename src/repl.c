@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 19:07:55 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/05 20:47:05 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,20 @@ void	process_input(char *input)
 	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
 	ast_free_tree(ast_tree);
+	// f_execute_ast(ast_tree);
 }
 
 // Dont forget to add -lreadline flag in compilation
 // for readline functions to work,
 // TODO: delete plsexit here, only for testing purposes
-int	main(void)
+int	main(char **argv, int argc)
 {
 	char	*input;
 	char	*prompt;
 
+	if (argc != 1)
+		return (printf("ERROR: invalid arguments\n"), 1);
+	(void)argv;
 	prompt = "minishell> ";
 	printf("Welcome to minishell!\n");
 	while (1)
