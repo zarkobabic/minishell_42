@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/05 19:42:27 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/05 20:30:55 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,11 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 {
 	char	*input;
 	int		temp_file;
+	bool	expansion_flag;
 	size_t	target_len;
 	size_t	input_len;
 
+	expansion_flag = !is_containing_quotes(redirection->data.redirection.target);
 	temp_file = open("/tmp/ez_guys_minishell_tempheredocfile.txt",
 		O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (temp_file < 0)
@@ -87,12 +89,12 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 	}
 	close(temp_file);
 	temp_file = open("/tmp/ez_guys_minishell_tempheredocfile.txt", O_RDONLY);
+	unlink("/tmp/ez_guys_minishell_tempheredocfile.txt");
 	if (temp_file < 0)
 		return (perror("heredoc temp file reading"), ERROR);
 	else if (dup2(temp_file, STDIN_FILENO) == -1)
 		return (perror("dup2"), ERROR);
 	close(temp_file);
-	unlink("/tmp/ez_guys_minishell_tempheredocfile.txt");
 	return(SUCCESS);
 	// TODO:
 	/** signal handling for heredocs
