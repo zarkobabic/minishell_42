@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 20:30:07 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 20:53:25 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "exe_builtins.c"
 #include "exe_redirection.c"
+#include "exe_path_resolution.c"
 int	f_exec_logic_expr(t_ast_node *expr);
 
 
@@ -61,22 +62,41 @@ bool	f_is_builtin(char *call)
 	// }
 // }
 
+int	f_exec_file(long argc, char **argv)
+{
+	extern char	**environ;
+	char		*executable_path;
+	int			exit_value;
+
+	if (!argc || !argv[0])
+		return (FAIL);
+	executable_path = resolve_executable_path(argv[0]);
+	if (!executable_path)
+		return (perror("path resolution"), FAIL);
+	if (execve(executable_path, argv, environ) == ERROR)
+		return (perror("execve"), free(executable_path), FAIL);
+																// TODO: needs a lot more work
+
+	// free(executable_path);
+	// return (exit_value);
+}
+
 int	f_exec_builtin(long argc, char **argv)
 {
 	if (ft_strncmp(argv[0], "echo", 5) == 0)
-		return (f_echo(argv, argc));
+		return (f_echo(argc, argv));
 	else if (ft_strncmp(argv[0], "cd", 3) == 0)
-		return (f_cd(argv, argc));
+		return (f_cd(argc, argv));
 	else if (ft_strncmp(argv[0], "pwd", 4) == 0)
 		return (f_pwd());
 	// else if (ft_strncmp(argv[0], "export", 7) == 0)
-	// 	return (f_export(argv, argc));
+	// 	return (f_export(argc, argv));
 	// else if (ft_strncmp(argv[0], "unset", 6) == 0)
-	// 	return (f_unset(argv, argc));
+	// 	return (f_unset(argc, argv));
 	else if (ft_strncmp(argv[0], "env", 4) == 0)
-		return (f_env(argv, argc));
+		return (f_env(argc, argv));
 	else if (ft_strncmp(argv[0], "exit", 5) == 0)
-		return (f_exit(argv, argc));
+		return (f_exit(argc, argv));
 	else
 		return (perror("builtin mapping"), ERROR);
 }
@@ -133,7 +153,6 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value); // TODO: var expansion
 	if (!argv)
 		return (perror("arg list"), ERROR);
-	// Case 1: normal (not in pipeline child) parent-builtin executes in current shell
 	if (!in_pipeline && argv[0] && f_is_builtin_parent(argv[0]))
 	{
 		orig_in = dup(STDIN_FILENO);
@@ -149,8 +168,7 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 		}
 		exit_value = f_redirect(simcmd->data.command.redirections);
 		if (exit_value == SUCCESS)
-			exit_value = f_exec_builtin(argv, argc); // execute without fork
-		// restore FDs regardless
+			exit_value = f_exec_builtin(argc, argv);
 		if (dup2(orig_in, STDIN_FILENO) == -1)
 			perror("dup2 restore in");
 		if (dup2(orig_out, STDOUT_FILENO) == -1)
@@ -167,9 +185,9 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 			if (exit_value != SUCCESS)
 				exit(exit_value);
 			if (argv[0] && f_is_builtin_child(argv[0]))
-				exit_value = f_exec_builtin(argv, argc);
-			// else if (argv[0])
-			// 	exit_value = f_exec_file(argv, argc);
+				exit_value = f_exec_builtin(argc, argv);
+			else if (argv[0])
+				exit_value = f_exec_file(argc, argv);
 			else
 				exit_value = FAIL;
 			exit(exit_value);
@@ -193,11 +211,11 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 		if (exit_value != SUCCESS)
 			return (exit_value);
 		if (argv[0] && f_is_builtin(argv[0]))
-			exit_value = f_exec_builtin(argv, argc);
-		// else if (argv[0])
-		// 	exit_value = f_exec_file(argv, argc);
+			exit_value = f_exec_builtin(argc, argv);
+		else if (argv[0])
+			exit_value = f_exec_file(argc, argv);
 		else
-			exit_value = FAIL; // empty command: no-op
+			exit_value = FAIL;
 	}
 	free(argv); // TODO: check, if viable at this point
 	return (exit_value);

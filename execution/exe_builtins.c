@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 20:30:07 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 20:54:10 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define PATHLENGTH 256
 #define ENV_NAME_LENGTH 64
 
-// bool	f_found_nflag(char **argv, int argc)
+// bool	f_found_nflag(long argc, char **argv)
 // {
 // 	int	i;
 
@@ -42,7 +42,7 @@ int	f_echo(long argc, char **argv)
 	long		i;
 	
 	n_flag = !(bool)ft_strncmp(argv[1], "-n", 3);
-	// n_flag = f_found_nflag(argv, argc);
+	// n_flag = f_found_nflag(argc, argv);
 	i = 1 + n_flag;
 	while (i < argc)
 	{
