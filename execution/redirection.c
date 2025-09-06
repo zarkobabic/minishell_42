@@ -6,13 +6,15 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 16:11:26 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 19:29:53 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 #include "../src/ast_tree_structures.h"
 #include <readline/readline.h>
+
+#define HEREDOC_FILE_NAME "/tmp/.deEZ_guys_minishell_tempheredocfile.txt"
 
 int	f_check_ambiguity(char *target)
 {
@@ -112,8 +114,7 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 	size_t	input_len;
 
 	expansion_flag = !is_containing_quotes(redirection->data.redirection.target);
-	temp_file = open("/tmp/ez_guys_minishell_tempheredocfile.txt",
-		O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	temp_file = open(HEREDOC_FILE_NAME, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (temp_file < 0)
 		return (perror("heredoc temp file creation"), FAIL);
 	redirection->data.redirection.target = remove_quotes(redirection->data.redirection.target);
@@ -135,10 +136,10 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 		free(input);
 	}
 	close(temp_file);
-	temp_file = open("/tmp/ez_guys_minishell_tempheredocfile.txt", O_RDONLY);
-	unlink("/tmp/ez_guys_minishell_tempheredocfile.txt");
+	temp_file = open(HEREDOC_FILE_NAME, O_RDONLY);
+	unlink(HEREDOC_FILE_NAME);
 	if (temp_file < 0)
-		return (perror("heredoc temp file reading"), ERROR);
+		return (perror("reading heredoc temp file"), ERROR);
 	else if (dup2(temp_file, STDIN_FILENO) == -1)
 		return (perror("dup2"), ERROR);
 	close(temp_file);
