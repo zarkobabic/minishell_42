@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/06 00:50:15 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/05 21:03:40 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,10 +254,25 @@ char	*identifier_expand_environment_variables(char *str, long new_size)
 	return (new_string);
 }
 
+bool	is_containing_quotes(char *str)
+{
+	long	cnt;
+
+	cnt = 0;
+	while(str[cnt])
+	{
+		if(str[cnt] == '\"' || str[cnt] == "\'")
+			return true;
+		++cnt;
+	}
+	return false;
+}
+
 /// @brief Returns NULL if the allocation failed
 /// @param str
 /// @return
-char	*identifier_expand_variables_in_string(char *str)
+char	*identifier_expand_variables_in_string(char *str) //TODO: the exit status will be sent here as an argument
+//, so we need to read it from here and replace it from here
 {
 	long	new_size;
 	char	*new_str;
@@ -268,6 +283,8 @@ char	*identifier_expand_variables_in_string(char *str)
 	if (new_size < 0)
 		return (NULL);
 	new_str = identifier_expand_environment_variables(str, new_size);
+	if(str)
+		free(str);
 	if (!new_str)
 		return (NULL);
 	return (new_str);
