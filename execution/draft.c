@@ -6,23 +6,28 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 01:28:35 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 16:37:51 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
 #include "../src/ast_tree_structures.h"
 
-int	f_is_builtin(char *call)
+int	f_is_builtin_parent(char *call)
 {
-	return (!ft_strncmp(call, "echo", 9)
-		|| !ft_strncmp(call, "cd", 9)
-		|| !ft_strncmp(call, "pwd", 9)
+	return (!ft_strncmp(call, "cd", 9)
 		|| !ft_strncmp(call, "export", 9)
 		|| !ft_strncmp(call, "unset", 9)
-		|| !ft_strncmp(call, "env", 9)
 		|| !ft_strncmp(call, "exit", 9));
 }
+
+int	f_is_builtin_child(char *call)
+{
+	return (!ft_strncmp(call, "echo", 9)
+		|| !ft_strncmp(call, "pwd", 9)
+		|| !ft_strncmp(call, "env", 9));
+}
+
 
 int	f_execute_cmd(t_ast_node *cmd)
 {
@@ -93,18 +98,43 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value)
 {
 	char	**argv;
 	long	argc;
+	pid_t	pid;
+	int		exit_value;
+	int		status;
 	
 	argc = simcmd->data.command.arg_cnt;
-	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value);
+	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value); // TODO: var expansion
 
-	if (!ft_strncmp(argv[0], "cd", 9) || !ft_strncmp(argv[0], "export", 9)
-		|| !ft_strncmp(argv[0], "unset", 9) || !ft_strncmp(argv[0], "exit", 9))
+	if (f_is_builtin_parent(argv[0]))
 		f_exec_builtin(argv, argc); // execute without fork
 	else
 	{
-		// TODO: fork and execute
+		pid = fork();
+		if (pid == 0)
+		{
+			exit_value = f_redirect(simcmd->data.command.redirections);
+			if (exit_value != SUCCESS)
+				exit(exit_value);
+			if (f_is_builtin_child(argv[0]))
+				exit_value = f_exec_builtin(argv, argc);
+			else
+				exit_value = f_exec_file(argv, argc);
+			exit(exit_value);
+		}
+		else if (pid > 0)
+		{
+		// TODO: outsource following logic to separate function due to repetitional appearance
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			exit_value = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			exit_value = 128 + WTERMSIG(status);
+		}
+		else
+			return (perror("fork"), ERROR);
 	}
 	free(argv); // TODO: check, if viable at this point
+	return (exit_value);
 }
 
 int	f_exec_subshell(t_ast_node *subshell, int old_exit_value)
