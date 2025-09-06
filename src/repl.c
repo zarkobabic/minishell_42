@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/05 22:37:14 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 19:32:15 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	main(char **argv, int argc)
 	printf("Welcome to minishell!\n");
 	while (1)
 	{
+		// f_set_signals_interactive_mode();
 		input = readline(prompt);
 		if (!input)
 			break ;
@@ -65,6 +66,7 @@ int	main(char **argv, int argc)
 			free(input);
 			continue ;
 		}
+		// f_set_signals_execution_mode();
 		add_history(input);
 		process_input(input);
 		rl_on_new_line();
