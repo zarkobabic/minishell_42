@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 01:58:27 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 02:46:38 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,43 @@
 #include "../src/ast_tree_structures.h"
 #include <readline/readline.h>
 
+bool	f_check_ambiguity(char *target)
+{
+	char	**target_list;
+	int		i;
+
+	i = -1;
+	while (target[++i])
+	{
+		if (target[i] == ' ')
+			return (true);
+	}
+	target_list = get_all_matched_names(target);
+	if (target_list[0] && target_list[1])
+		return (true);
+	i = 0;
+	while (target_list[i])
+		free(target_list[i++]);
+	free(target_list);
+	return (false);
+}
+
+int	f_expand_vars(char **target)
+{
+	*target = identifier_expand_variables_in_string(*target);
+	if (f_check_ambiguity(*target))
+		return (printf("minishell: %s: ambiguous redirection\n"), FAIL);
+	*target = remove_quotes(*target);
+	return (SUCCESS);
+}
+
 static int	f_redirect_in(t_ast_node *redirection)
 {
 	int	file;
 
 	file = -1;
+	if (f_expand_vars(redirection->data.redirection.target) != SUCCESS)
+		return (FAIL);
 	file = open(redirection->data.redirection.target, O_RDONLY);
 	if (file < 0)
 		return (perror(redirection->data.redirection.target), FAIL);
@@ -33,6 +65,8 @@ static int	f_redirect_out(t_ast_node *redirection)
 	int	file;
 
 	file = -1;
+	if (f_expand_vars(redirection->data.redirection.target) != SUCCESS)
+		return (FAIL);
 	file = open(redirection->data.redirection.target,
 		O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (file < 0)
@@ -48,6 +82,8 @@ static int	f_redirect_append(t_ast_node *redirection)
 	int	file;
 
 	file = -1;
+	if (f_expand_vars(redirection->data.redirection.target) != SUCCESS)
+		return (FAIL);
 	file = open(redirection->data.redirection.target,
 		O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (file < 0)
