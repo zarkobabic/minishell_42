@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   exe_signals.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 19:25:09 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 20:23:46 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "exe_execution.h"
 #include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -36,7 +36,7 @@ static void	f_signal_reset_prompt(int signal)
 	(void)signal;
 	write(STDOUT_FILENO, "^C\n", 3);
 	rl_on_new_line();
-	rl_replace_line("", FALSE);
+	// rl_replace_line("", FALSE);
 	rl_redisplay();
 }
 

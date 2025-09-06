@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection.c                                      :+:      :+:    :+:   */
+/*   exe_redirection.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 19:29:53 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 20:13:24 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "exe_execution.h"
 #include "../src/ast_tree_structures.h"
 #include <readline/readline.h>
 
@@ -46,7 +46,7 @@ int	f_expand_vars(char **target)
 	*target = identifier_expand_variables_in_string(*target);
 	ambiguity = f_check_ambiguity(*target);
 	if (ambiguity == 1)
-		return (printf("minishell: %s: ambiguous redirection\n"), FAIL);
+		return (printf("minishell: %s: ambiguous redirection\n", *target), FAIL);
 	else if (ambiguity == -1)
 		return (perror("redirection var expansion"), ERROR);
 	*target = remove_quotes(*target);
@@ -59,7 +59,7 @@ static int	f_redirect_in(t_ast_node *redirection)
 	int	var_expansion;
 
 	file = -1;
-	var_expansion = f_expand_vars(redirection->data.redirection.target);
+	var_expansion = f_expand_vars(&redirection->data.redirection.target);
 	if (var_expansion != SUCCESS)
 		return (var_expansion);
 	file = open(redirection->data.redirection.target, O_RDONLY);
@@ -76,7 +76,7 @@ static int	f_redirect_out(t_ast_node *redirection)
 	int	file;
 
 	file = -1;
-	if (f_expand_vars(redirection->data.redirection.target) != SUCCESS)
+	if (f_expand_vars(&redirection->data.redirection.target) != SUCCESS)
 		return (FAIL);
 	file = open(redirection->data.redirection.target,
 		O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -93,7 +93,7 @@ static int	f_redirect_append(t_ast_node *redirection)
 	int	file;
 
 	file = -1;
-	if (f_expand_vars(redirection->data.redirection.target) != SUCCESS)
+	if (f_expand_vars(&redirection->data.redirection.target) != SUCCESS)
 		return (FAIL);
 	file = open(redirection->data.redirection.target,
 		O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -111,7 +111,6 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 	int		temp_file;
 	bool	expansion_flag;
 	size_t	target_len;
-	size_t	input_len;
 
 	expansion_flag = !is_containing_quotes(redirection->data.redirection.target);
 	temp_file = open(HEREDOC_FILE_NAME, O_WRONLY | O_CREAT | O_TRUNC, 0600);

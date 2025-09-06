@@ -1,17 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draft.c                                            :+:      :+:    :+:   */
+/*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 17:53:03 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 20:30:07 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "exe_execution.h"
 #include "../src/ast_tree_structures.h"
+
+#include "exe_builtins.c"
+#include "exe_redirection.c"
+int	f_exec_logic_expr(t_ast_node *expr);
+
 
 bool	f_is_builtin_parent(char *call)
 {
@@ -34,8 +39,8 @@ bool	f_is_builtin(char *call)
 		|| f_is_builtin_child(call));
 }
 
-int	f_execute_cmd(t_ast_node *cmd)
-{
+// int	f_execute_cmd(t_ast_node *cmd)
+// {
 	// pid_t	pid;
 
 	// // filter for builtins
@@ -54,9 +59,9 @@ int	f_execute_cmd(t_ast_node *cmd)
 	// {
 	// 	if (cmd->type == AST_CMD)
 	// }
-}
+// }
 
-int	f_exec_builtin(char **argv, long argc)
+int	f_exec_builtin(long argc, char **argv)
 {
 	if (ft_strncmp(argv[0], "echo", 5) == 0)
 		return (f_echo(argv, argc));
@@ -64,10 +69,10 @@ int	f_exec_builtin(char **argv, long argc)
 		return (f_cd(argv, argc));
 	else if (ft_strncmp(argv[0], "pwd", 4) == 0)
 		return (f_pwd());
-	else if (ft_strncmp(argv[0], "export", 7) == 0)
-		return (f_export(argv, argc));
-	else if (ft_strncmp(argv[0], "unset", 6) == 0)
-		return (f_unset(argv, argc));
+	// else if (ft_strncmp(argv[0], "export", 7) == 0)
+	// 	return (f_export(argv, argc));
+	// else if (ft_strncmp(argv[0], "unset", 6) == 0)
+	// 	return (f_unset(argv, argc));
 	else if (ft_strncmp(argv[0], "env", 4) == 0)
 		return (f_env(argv, argc));
 	else if (ft_strncmp(argv[0], "exit", 5) == 0)
@@ -86,6 +91,8 @@ int	f_wait_for_child(pid_t pid)
 		exit_value = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 		exit_value = 128 + WTERMSIG(status);
+	else
+		exit_value = ERROR;
 	return (exit_value);
 }
 
@@ -94,6 +101,7 @@ char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: ch
 	char	**argv;
 	long	i;
 
+	(void)old_exit_value;
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
 	argv = (char **)malloc((argc + 1) * sizeof(char *)); // include NULL slot
@@ -160,8 +168,8 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 				exit(exit_value);
 			if (argv[0] && f_is_builtin_child(argv[0]))
 				exit_value = f_exec_builtin(argv, argc);
-			else if (argv[0])
-				exit_value = f_exec_file(argv, argc);
+			// else if (argv[0])
+			// 	exit_value = f_exec_file(argv, argc);
 			else
 				exit_value = FAIL;
 			exit(exit_value);
@@ -186,8 +194,8 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 			return (exit_value);
 		if (argv[0] && f_is_builtin(argv[0]))
 			exit_value = f_exec_builtin(argv, argc);
-		else if (argv[0])
-			exit_value = f_exec_file(argv, argc);
+		// else if (argv[0])
+		// 	exit_value = f_exec_file(argv, argc);
 		else
 			exit_value = FAIL; // empty command: no-op
 	}
@@ -200,6 +208,7 @@ int	f_exec_subshell(t_ast_node *subshell, int old_exit_value, int in_pipeline)
 	pid_t	pid;
 	int		exit_value;
 
+	(void)old_exit_value;
 	if (in_pipeline)
 	{
 		exit_value = f_redirect(subshell->data.subshell.redirections);

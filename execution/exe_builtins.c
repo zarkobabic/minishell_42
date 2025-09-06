@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.c                                         :+:      :+:    :+:   */
+/*   exe_builtins.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 19:42:39 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 20:30:07 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "exe_execution.h"
 
 #define PATHLENGTH 256
 #define ENV_NAME_LENGTH 64
@@ -29,7 +29,7 @@
 // 	return (false);
 // }
 
-int	f_echo(char **argv, long argc)
+int	f_echo(long argc, char **argv)
 {
 	// int	fd;
 	
@@ -92,7 +92,7 @@ int	f_setenv(const char *name, char *value)
 	return (1);
 }
 
-void	f_cd(char **argv, long argc)
+int	f_cd(long argc, char **argv)
 {
 	char	custom_path[PATHLENGTH];
 	char	*temp_str;
@@ -131,9 +131,10 @@ void	f_cd(char **argv, long argc)
 	else
 		temp_str = argv[1];
 	if (chdir(temp_str) == -1)
-		return (perror("minishell: cd"), (void)temp_str);
+		return (perror("minishell: cd"), FAIL);
 	f_setenv("OLDPWD", getenv("PWD"));
 	f_setenv("PWD", temp_str);
+	return (SUCCESS);
 }
 
 int	f_pwd(void)
@@ -147,15 +148,15 @@ int	f_pwd(void)
 	return (SUCCESS);
 }
 
-void	f_env(char **argv, long argc)
+int	f_env(long argc, char **argv)
 {
-	char *env_path;
-	char *env_args[2];
+	// char *env_path;
+	// char *env_args[2];
 
-	env_path = "/usr/bin/env";
-	env_args[0] = ft_strrchr(env_path, '/') + 1;
-	env_args[1] = NULL;
-	execve(env_path, env_args, NULL); // FIXME: env_args is of wrong argument type
+	// env_path = "/usr/bin/env";
+	// env_args[0] = ft_strrchr(env_path, '/') + 1;
+	// env_args[1] = NULL;
+	// execve(env_path, env_args, NULL); // FIXME: env_args is of wrong argument type
 
 	// or
 	// probably preferred:
@@ -163,11 +164,13 @@ void	f_env(char **argv, long argc)
 	extern char	**environ;
 	int			i;
 
+	(void)argv;
 	if (argc > 1)
 		return (printf("minishell: env: too many arguments for this minishell implementation\n"), FAIL);
 	i = -1;
 	while (environ[++i])
 		printf("%s\n", environ[i]);
+	return (SUCCESS);
 }
 
 bool	f_isnumeric(char *str)
@@ -184,7 +187,7 @@ bool	f_isnumeric(char *str)
 	return (true);
 }
 
-int	f_exit(char **argv, long argc/* , t_ast_node *ast_root */)
+int	f_exit(long argc, char **argv/* , t_ast_node *ast_root */)
 {
 	if (argc > 2)
 		return (printf("minishell: exit: too many arguments\n"), FAIL);
