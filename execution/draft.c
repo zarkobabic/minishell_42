@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 16:37:51 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 16:59:20 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: ch
 
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
-	argv = (char **)malloc(argc * sizeof(char *)); // TODO: shallow free that thing!
+	argv = (char **)malloc(argc * sizeof(char *) + 1); // TODO: shallow free that thing!
 	if (!argv)
 		return (NULL);
 	i = 0;
@@ -89,6 +89,7 @@ char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: ch
 		args = args->next;
 		++i;
 	}
+	argv[i] = NULL;
 	if (args || i != argc)
 		return (free(argv), NULL);
 	return (argv);
@@ -101,12 +102,34 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value)
 	pid_t	pid;
 	int		exit_value;
 	int		status;
+	int		orig_in;
+	int		orig_out;
 	
 	argc = simcmd->data.command.arg_cnt;
 	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value); // TODO: var expansion
-
+	if (!argv)
+		return (perror("arg list"), ERROR);
 	if (f_is_builtin_parent(argv[0]))
-		f_exec_builtin(argv, argc); // execute without fork
+	{
+		orig_in = dup(STDIN_FILENO);
+		orig_out = dup(STDOUT_FILENO);
+		exit_value = f_redirect(simcmd->data.command.redirections);
+		if (exit_value != SUCCESS)
+		{
+			// TODO: outsource following logic to separate function
+			dup2(orig_in, STDIN_FILENO);
+			dup2(orig_out, STDOUT_FILENO);
+			close(orig_in);
+			close(orig_out);
+			exit(exit_value);
+		}
+		exit_value = f_exec_builtin(argv, argc); // execute without fork
+		dup2(orig_in, STDIN_FILENO);
+		dup2(orig_out, STDOUT_FILENO);
+		close(orig_in);
+		close(orig_out);
+		exit(exit_value);
+	}
 	else
 	{
 		pid = fork();
