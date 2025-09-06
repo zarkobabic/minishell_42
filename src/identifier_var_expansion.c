@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_var_expansion.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/05 21:03:40 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/06 02:07:39 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,7 +268,7 @@ bool	is_containing_quotes(char *str)
 	return false;
 }
 
-/// @brief Returns NULL if the allocation failed
+/// @brief Returns NULL if the allocation failed; frees input string and returns modified string
 /// @param str
 /// @return
 char	*identifier_expand_variables_in_string(char *str) //TODO: the exit status will be sent here as an argument
