@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 02:46:38 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 16:11:26 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../src/ast_tree_structures.h"
 #include <readline/readline.h>
 
-bool	f_check_ambiguity(char *target)
+int	f_check_ambiguity(char *target)
 {
 	char	**target_list;
 	int		i;
@@ -26,6 +26,8 @@ bool	f_check_ambiguity(char *target)
 			return (true);
 	}
 	target_list = get_all_matched_names(target);
+	if (!target_list)
+		return (ERROR);
 	if (target_list[0] && target_list[1])
 		return (true);
 	i = 0;
@@ -37,9 +39,14 @@ bool	f_check_ambiguity(char *target)
 
 int	f_expand_vars(char **target)
 {
+	int	ambiguity;
+
 	*target = identifier_expand_variables_in_string(*target);
-	if (f_check_ambiguity(*target))
+	ambiguity = f_check_ambiguity(*target);
+	if (ambiguity == 1)
 		return (printf("minishell: %s: ambiguous redirection\n"), FAIL);
+	else if (ambiguity == -1)
+		return (perror("redirection var expansion"), ERROR);
 	*target = remove_quotes(*target);
 	return (SUCCESS);
 }
@@ -47,10 +54,12 @@ int	f_expand_vars(char **target)
 static int	f_redirect_in(t_ast_node *redirection)
 {
 	int	file;
+	int	var_expansion;
 
 	file = -1;
-	if (f_expand_vars(redirection->data.redirection.target) != SUCCESS)
-		return (FAIL);
+	var_expansion = f_expand_vars(redirection->data.redirection.target);
+	if (var_expansion != SUCCESS)
+		return (var_expansion);
 	file = open(redirection->data.redirection.target, O_RDONLY);
 	if (file < 0)
 		return (perror(redirection->data.redirection.target), FAIL);

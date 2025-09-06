@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 01:39:33 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 16:15:10 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 // 	return (false);
 // }
 
-int	f_echo(char **argv, int argc)
+int	f_echo(char **argv, long argc)
 {
 	// int	fd;
 	
@@ -39,7 +39,7 @@ int	f_echo(char **argv, int argc)
 	// 	fd = open(filename, O_WRONLY);
 
 	bool	n_flag;
-	int		i;
+	long		i;
 	
 	n_flag = !(bool)ft_strncmp(argv[1], "-n", 3);
 	// n_flag = f_found_nflag(argv, argc);
@@ -92,7 +92,7 @@ int	f_setenv(const char *name, char *value)
 	return (1);
 }
 
-void	f_cd(char **argv, int argc)
+void	f_cd(char **argv, long argc)
 {
 	char	custom_path[PATHLENGTH];
 	char	*temp_str;
@@ -147,7 +147,7 @@ int	f_pwd(void)
 	return (SUCCESS);
 }
 
-void	f_env(char **argv, int argc)
+void	f_env(char **argv, long argc)
 {
 	char *env_path;
 	char *env_args[2];
@@ -184,7 +184,7 @@ bool	f_isnumeric(char *str)
 	return (true);
 }
 
-int	f_exit(char **argv, int argc/* , t_ast_node *ast_root */)
+int	f_exit(char **argv, long argc/* , t_ast_node *ast_root */)
 {
 	if (argc > 2)
 		return (printf("minishell: exit: too many arguments\n"), FAIL);
