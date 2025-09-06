@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 00:39:51 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/06 01:51:25 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/06 02:30:56 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-char	*handle_absolute_relative_path(char *command)
+char	*handle_absolute_relative_path(const char *command)
 {
 	long	command_len;
 	char	*full_path;
@@ -33,7 +33,7 @@ char	*handle_absolute_relative_path(char *command)
 }
 
 char	*check_is_executable_dir_cmd_path(char *curr_dir_path, long dir_str_len,
-		char *command)
+		const char *command)
 {
 	char	*full_path;
 	long	need_slash;
@@ -49,38 +49,39 @@ char	*check_is_executable_dir_cmd_path(char *curr_dir_path, long dir_str_len,
 	ft_memcpy(full_path, curr_dir_path, dir_str_len);
 	if (need_slash)
 		full_path[dir_str_len] = '/';
-	ft_memcpy(full_path + dir_str_len + need_slash, curr_dir_path, command);
-	full_path[dir_str_len + need_slash + command_len + 1] = '\0';
+	ft_memcpy(full_path + dir_str_len + need_slash, command, command_len);
+	full_path[dir_str_len + need_slash + command_len] = '\0';
 	if (access(full_path, X_OK) == 0)
 		return (full_path);
 	free(full_path);
 	return (NULL);
 }
 
-char	*handle_executable_from_path_env(char *command, char *path_cpy)
+char	*handle_executable_from_path_env(const char *command, char *path_cpy)
 {
-	char	*curr_pos;
+	char	*curr_dir_path;
 	char	*next_colon_pos;
-	long	directory_str_len;
+	long	dir_str_len;
 	char	*cmd_full_path;
 
-	while (curr_pos && *curr_pos)
+	curr_dir_path = path_cpy;
+	while (curr_dir_path && *curr_dir_path)
 	{
-		next_colon_pos = ft_strchr(curr_pos, ':');
+		next_colon_pos = ft_strchr(curr_dir_path, ':');
 		if (next_colon_pos)
 			*next_colon_pos = '\0';
-		directory_str_len = strlen(curr_pos);
-		if (directory_str_len > 0)
+		dir_str_len = ft_strlen(curr_dir_path);
+		if (dir_str_len > 0)
 		{
-			cmd_full_path = check_is_executable_dir_cmd_path(curr_pos,
-					directory_str_len, command);
+			cmd_full_path = check_is_executable_dir_cmd_path(curr_dir_path,
+					dir_str_len, command);
 			if (cmd_full_path)
 				return (free(path_cpy), cmd_full_path);
 		}
 		if (next_colon_pos)
-			curr_pos = next_colon_pos + 1;
+			curr_dir_path = next_colon_pos + 1;
 		else
-			curr_pos = NULL;
+			curr_dir_path = NULL;
 	}
 	return (free(path_cpy), NULL);
 }
