@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/06 19:32:15 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 19:59:39 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	process_input(char *input)
 // Dont forget to add -lreadline flag in compilation
 // for readline functions to work,
 // TODO: delete plsexit here, only for testing purposes
-int	main(char **argv, int argc)
+int	main(int argc, char **argv)
 {
 	char	*input;
 	char	*prompt;

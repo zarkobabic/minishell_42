@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/06 19:10:18 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/06 20:12:53 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,6 @@ char	*remove_quotes(char *str);
 
 bool	wildcard_check_if_matches(char *input, char *pattern);
 char	**get_all_matched_names(char *pattern);
+bool	is_containing_quotes(char *str);
 
 #endif
