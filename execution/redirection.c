@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/05 20:30:55 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/06 01:58:27 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,21 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 		O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (temp_file < 0)
 		return (perror("heredoc temp file creation"), FAIL);
-	target_len = 1 + ft_strlen(redirection->data.redirection.target);
+	redirection->data.redirection.target = remove_quotes(redirection->data.redirection.target);
+	target_len = ft_strlen(redirection->data.redirection.target);
 	while (1)
 	{
 		input = readline("> ");
-		if (!input || ft_strncmp(input, redirection->data.redirection.target, target_len) == 0)
+		if (!input || ft_strncmp(input, redirection->data.redirection.target, target_len + 1) == 0)
 		{
 			free(input);
 			break ;
 		}
 		if (expansion_flag)
 			input = identifier_expand_variables_in_string(input);
-		input_len = ft_strlen(input);
-		write(temp_file, input, input_len);
+		// input_len = ft_strlen(input);
+		// write(temp_file, input, input_len);
+		ft_putstr_fd_fail_safe(input, temp_file);
 		write(temp_file, "\n", 1);
 		free(input);
 	}
