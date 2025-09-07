@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/06 19:59:39 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 19:47:10 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "parser.h"
 #include "ast_tree_translator.h"
+#include "exe_execution.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -36,7 +37,7 @@ void	process_input(char *input)
 	ast_tree = ast_create_tree(tree);
 	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
-	// f_execute_ast(ast_tree);
+	f_execute_ast(ast_tree);
 	ast_free_tree(ast_tree);
 }
 
@@ -66,8 +67,8 @@ int	main(int argc, char **argv)
 			free(input);
 			continue ;
 		}
-		// f_set_signals_execution_mode();
 		add_history(input);
+		// f_set_signals_execution_mode();
 		process_input(input);
 		rl_on_new_line();
 		free(input);

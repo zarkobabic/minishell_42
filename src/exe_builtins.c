@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/07 18:14:02 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 22:21:32 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	f_setenv(const char *name, char *value)
 	{
 		if (0 == ft_strncmp(environ[i], name, name_len)
 		&& environ[i][name_len] == '=')
-			return (free(environ[i]), environ[i] = new_var, 0);
+			return (/* free(environ[i]),  */environ[i] = new_var, 0);
 	}
 	if (!environ[i])
 		free(new_var);
@@ -98,10 +98,12 @@ int	f_cd(long argc, char **argv)
 	char	*temp_str;
 	int		user_len;
 	int		home_len;
+	bool	alloc_flag;
 
 	if (argc > 2)
 		return (printf("minishell: cd: too many arguments\n"), FAIL);
 	ft_bzero(custom_path, PATHLENGTH);
+	alloc_flag = false;
 	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
 		temp_str = getenv("HOME");
 	else if (argv[1][0] == '~' && argv[1][1] != '\0' && argv[1][1] != '/')
@@ -113,7 +115,7 @@ int	f_cd(long argc, char **argv)
 		home_len = ft_strlen(temp_str);
 		ft_strlcat(custom_path, temp_str, PATHLENGTH);
 		custom_path[home_len - user_len] = '\0';
- 		ft_strlcat(custom_path, &(argv[1][1]), PATHLENGTH);
+		ft_strlcat(custom_path, &(argv[1][1]), PATHLENGTH);
 		temp_str = custom_path;
 	}
 	else if (argv[1][0] == '~' && argv[1][1])
@@ -125,7 +127,8 @@ int	f_cd(long argc, char **argv)
 	}
 	else if (argv[1][0] == '-' && !argv[1][1])
 	{
-		temp_str = getenv("OLDPWD");
+		temp_str = ft_strdup(getenv("OLDPWD"));
+		alloc_flag = true;
 		printf("%s\n", temp_str);
 	}
 	else
@@ -134,9 +137,12 @@ int	f_cd(long argc, char **argv)
 		return (perror("minishell: cd"), FAIL);
 	f_setenv("OLDPWD", getenv("PWD"));
 	f_setenv("PWD", temp_str);
+	if (alloc_flag)
+		free(temp_str);
 	return (SUCCESS);
 }
 
+//FINE
 int	f_pwd(void)
 {
 	char	*working_dir;
@@ -148,19 +154,9 @@ int	f_pwd(void)
 	return (SUCCESS);
 }
 
+//FINE
 int	f_env(long argc, char **argv)
 {
-	// char *env_path;
-	// char *env_args[2];
-
-	// env_path = "/usr/bin/env";
-	// env_args[0] = ft_strrchr(env_path, '/') + 1;
-	// env_args[1] = NULL;
-	// execve(env_path, env_args, NULL); // FIXME: env_args is of wrong argument type
-
-	// or
-	// probably preferred:
-
 	extern char	**environ;
 	int			i;
 
@@ -201,80 +197,3 @@ int	f_exit(long argc, char **argv/* , t_ast_node *ast_root */)
 		exit (SUCCESS);
 	return (SUCCESS);
 }
-
-// void	f_call_program(int call)
-// {
-// 	if (call == CALL_ECHO)
-// 		f_echo();
-// 	else if (call == CALL_CD)
-// 		f_cd();
-// 	// etc
-// }
-
-// int	f_create_subshell(int program)
-// {
-// 	pid_t	pid;
-// 	int		status;
-
-// 	pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		// do stuff, e.g.:
-// 		f_call_program(program); // TODO
-// 	}
-// 	else if (pid > 0)
-// 		waitpid(pid, &status, 0);
-// 	else
-// 	{
-// 		// fork error
-// 	}
-// 	return (status);
-// }
-
-// void	f_setup_func_table(t_funcdict *func_dict)
-// { // FIXME: probably not a good approach, function signatures differ -> use hardcoded if-elseif list for function mapping/calling instead
-// 	func_dict[CALL_ECHO].call = "echo";
-// 	func_dict[CALL_ECHO].func = f_echo;
-// 	func_dict[CALL_CD].call = "cd";
-// 	func_dict[CALL_CD].func = f_cd;
-// 	func_dict[CALL_PWD].call = "pwd";
-// 	func_dict[CALL_PWD].func = f_pwd;
-// 	func_dict[CALL_EXPORT].call = "export";
-// 	func_dict[CALL_EXPORT].func = ;
-// 	func_dict[CALL_UNSET].call = "unset";
-// 	func_dict[CALL_UNSET].call = ;
-// 	func_dict[CALL_ENV].call = "env";
-// 	func_dict[CALL_ENV].func = f_env;
-// 	func_dict[CALL_EXIT].call = "exit";
-// 	func_dict[CALL_EXIT].func = f_exit;
-
-
-
-
-	
-// 	// func_table[CALL_ECHO] = f_echo;
-// 	// func_table[CALL_CD] = f_cd;
-// 	// func_table[CALL_PWD] = f_pwd;
-// 	// func_table[CALL_EXPORT] = ;
-// 	// func_table[CALL_UNSET] = ;
-// 	// func_table[CALL_ENV] = f_env;
-// 	// func_table[CALL_EXIT] = f_exit;
-// }
-
-// int	main(void)
-// {
-// 	static t_funcdict func_dict[INPUT_COUNT] = {
-// 		{"echo", f_echo},
-// 		{"cd", f_cd},
-// 		{"pwd", f_pwd},
-// 		{"export", },
-// 		{"unset", },
-// 		{"env", f_env},
-// 		{"exit", f_exit}
-// 	};
-// 	void		(*func_table[INPUT_COUNT])(void);
-// 	t_funcdict	func_dict[INPUT_COUNT];
-
-// 	f_setup_func_table(func_dict);
-// 	return (0);
-// }

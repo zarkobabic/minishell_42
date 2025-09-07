@@ -3,21 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/07 19:11:09 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 20:56:45 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
-#include "../src/ast_tree_structures.h"
+#include <sys/wait.h>
 
-#include "exe_builtins.c"
-#include "exe_redirection.c"
-#include "exe_path_resolution.c"
-int	f_exec_logic_expr(t_ast_node *expr);
-
+int	f_exec_logic_expr(t_ast_node *expr, t_ast_node *root);
 
 bool	f_is_builtin_parent(char *call)
 {
@@ -40,47 +36,6 @@ bool	f_is_builtin(char *call)
 		|| f_is_builtin_child(call));
 }
 
-// int	f_execute_cmd(t_ast_node *cmd)
-// {
-	// pid_t	pid;
-
-	// // filter for builtins
-	// if (cmd->type == AST_IDENTIFIER
-	// 	&& (cmd->data.identifier.string_value == "echo"
-	// 	|| cmd->data.identifier.string_value == "cd"
-	// 	|| cmd->data.identifier.string_value == "pwd"
-	// 	|| cmd->data.identifier.string_value == "export"
-	// 	|| cmd->data.identifier.string_value == "unset"
-	// 	|| cmd->data.identifier.string_value == "env"
-	// 	|| cmd->data.identifier.string_value == "exit"))
-	// 	f_execute_builtin(cmd);
-	// else
-	// pid = fork();
-	// if (pid == 0)
-	// {
-	// 	if (cmd->type == AST_CMD)
-	// }
-// }
-
-int	f_exec_file(long argc, char **argv)
-{
-	extern char	**environ;
-	char		*executable_path;
-	int			exit_value;
-
-	if (!argc || !argv[0])
-		return (FAIL);
-	executable_path = resolve_executable_path(argv[0]);
-	if (!executable_path)
-		return (perror("path resolution"), FAIL);
-	if (execve(executable_path, argv, environ) == ERROR)
-		return (perror("execve"), free(executable_path), FAIL);
-																// TODO: needs a lot more work
-
-	// free(executable_path);
-	// return (exit_value);
-}
-
 int	f_exec_builtin(long argc, char **argv)
 {
 	if (ft_strncmp(argv[0], "echo", 5) == 0)
@@ -99,6 +54,13 @@ int	f_exec_builtin(long argc, char **argv)
 		return (f_exit(argc, argv));
 	else
 		return (perror("builtin mapping"), ERROR);
+}
+
+void	f_cleanup_child(t_ast_node *root, char **argv)
+{
+	ast_free_tree(root);
+	if (argv)
+		free(argv);
 }
 
 int	f_wait_for_child(pid_t pid)
@@ -141,7 +103,7 @@ char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: ch
 	return (argv);
 }
 
-int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
+int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, int in_pipeline)
 {
 	char	**argv;
 	long	argc;
@@ -169,7 +131,8 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 			free(argv);
 			return (perror("dup"), ERROR);
 		}
-		exit_value = f_redirect(simcmd->data.command.redirections);
+		// exit_value = f_redirect(simcmd->data.command.redirections);
+		exit_value = SUCCESS;
 		if (exit_value == SUCCESS)
 			exit_value = f_exec_builtin(argc, argv);
 		if (dup2(orig_fds[IN], STDIN_FILENO) == -1)
@@ -184,89 +147,46 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 		pid = fork();
 		if (pid == 0)
 		{
-			exit_value = f_redirect(simcmd->data.command.redirections);
+			// exit_value = f_redirect(simcmd->data.command.redirections);
+			exit_value = SUCCESS;
 			if (exit_value != SUCCESS)
 				exit(exit_value);
 			if (f_is_builtin_child(argv[0]))
 				exit_value = f_exec_builtin(argc, argv);
-			else
-				exit_value = f_exec_file(argc, argv);
+			// else
+			// 	exit_value = f_exec_file(argc, argv);
+			f_cleanup_child(root, argv);
 			exit(exit_value);
 		}
 		else if (pid > 0)
-		{
-			// TODO: outsource following logic to separate function due to repetitional appearance
-			// waitpid(pid, &status, 0);
-			// if (WIFEXITED(status))
-			// 	exit_value = WEXITSTATUS(status);
-			// else if (WIFSIGNALED(status))
-			// 	exit_value = 128 + WTERMSIG(status);
 			exit_value = f_wait_for_child(pid);
-		}
 		else
 			return (perror("fork"), ERROR);
 	}
 	else
 	{
-		exit_value = f_redirect(simcmd->data.command.redirections);
+		// exit_value = f_redirect(simcmd->data.command.redirections);
+		exit_value = SUCCESS;
 		if (exit_value != SUCCESS)
 			return (exit_value);
 		if (f_is_builtin(argv[0]))
 			exit_value = f_exec_builtin(argc, argv);
-		else
-			exit_value = f_exec_file(argc, argv);
+		// else
+		// 	exit_value = f_exec_file(argc, argv);
+		f_cleanup_child(root, NULL);
 	}
 	free(argv); // TODO: deep free everything, not just shallow
 	return (exit_value);
 }
 
-int	f_exec_subshell(t_ast_node *subshell, int old_exit_value, int in_pipeline)
-{
-	pid_t	pid;
-	int		exit_value;
-
-	(void)old_exit_value;
-	if (in_pipeline)
-	{
-		exit_value = f_redirect(subshell->data.subshell.redirections);
-		if (exit_value != SUCCESS)
-			return(exit_value);
-		exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr);
-	}
-	else
-	{
-		pid = fork();
-		if (pid == 0)
-		{
-			exit_value = f_redirect(subshell->data.subshell.redirections);
-			if (exit_value != SUCCESS)
-				exit (exit_value);
-			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr);
-			exit(exit_value);
-		}
-		else if (pid > 0)
-		{
-			// waitpid(pid, &status, 0);
-			// if (WIFEXITED(status))
-			// 	exit_value = WEXITSTATUS(status);
-			// else if (WIFSIGNALED(status))
-			// 	exit_value = 128 + WTERMSIG(status);
-			exit_value = f_wait_for_child(pid);
-		}
-		else
-			return (perror("fork"), ERROR);
-	}
-	return (exit_value);
-}
-
-int	f_exec_cmd(t_ast_node *cmd, int old_exit_value, int in_pipeline)
+int	f_exec_cmd(t_ast_node *cmd, t_ast_node *root, int old_exit_value, int in_pipeline)
 {
 	if (!cmd || cmd->next != NULL)
 		return (ERROR);
 	if (cmd->type == AST_CMD)
-		return (f_exec_simple_cmd(cmd, old_exit_value, in_pipeline));
-	else if (cmd->type == AST_SUBSHELL)
-		return (f_exec_subshell(cmd, old_exit_value, in_pipeline));
+		return (f_exec_simple_cmd(cmd, root, old_exit_value, in_pipeline));
+	// else if (cmd->type == AST_SUBSHELL)
+	// 	return (f_exec_subshell(cmd, old_exit_value, in_pipeline));
 	else
 		return (ERROR);
 }
@@ -288,13 +208,13 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 		free(pid_list);
 }
 
-int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
+int	f_exec_pipeline(t_ast_node *pipeline, t_ast_node *root, int old_exit_value)
 {
 	if (!pipeline || pipeline->type != AST_PIPELINE
 		|| pipeline->data.pipeline.cmd_cnt <= 0 || !pipeline->data.pipeline.cmds)
 		return (ERROR);
 	if (pipeline->data.pipeline.cmd_cnt == 1)
-		return (f_exec_cmd(pipeline->data.pipeline.cmds, old_exit_value, FALSE));
+		return (f_exec_cmd(pipeline->data.pipeline.cmds, root, old_exit_value, FALSE));
 	else
 	{
 		int		i;
@@ -350,13 +270,7 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 					}
 					close(pipe_fds[OUT]);
 				}
-				// if (temp_cmd->type == AST_CMD)
-				// 	exit_value = f_redirect(temp_cmd->data.command.redirections);
-				// else if (temp_cmd == AST_SUBSHELL)
-				// 	exit_value = f_redirect(temp_cmd->data.subshell.redirections);
-				// if (exit_value != SUCCESS)
-				// 	exit(exit_value);
-				exit(f_exec_cmd(temp_cmd, old_exit_value, TRUE));
+				exit(f_exec_cmd(temp_cmd, root, old_exit_value, TRUE));
 			}
 			else if (pid_list[i] > 0)
 			{
@@ -381,11 +295,6 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 				return (perror("fork"), ERROR);
 			}
 		}
-		// waitpid(pid_list[--i], &status, 0);
-		// if (WIFEXITED(status))
-		// 	exit_value = WEXITSTATUS(status);
-		// else if (WIFSIGNALED(status))
-		// 	exit_value = 128 + WTERMSIG(status);
 		exit_value = f_wait_for_child(pid_list[--i]);
 		while (--i >= 0)
 			waitpid(pid_list[i], NULL, 0);
@@ -394,18 +303,18 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 	}
 }
 
-int	f_exec_logic_expr(t_ast_node *expr)
+int	f_exec_logic_expr(t_ast_node *expr, t_ast_node *root)
 {
 	static int	exit_value = 0;
 
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, exit_value); // TODO: pass exit_value down through all functions
+	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, root, exit_value); // TODO: pass exit_value down through all functions
 	if ((expr->data.logical_expr.type == TYPE_AND
 		&& exit_value == SUCCESS)
 		|| (expr->data.logical_expr.type == TYPE_OR
 		&& exit_value != SUCCESS))
-		exit_value = f_exec_logic_expr(expr->next);
+		exit_value = f_exec_logic_expr(expr->next, root);
 	return (exit_value);
 }
 
@@ -413,6 +322,5 @@ int	f_execute_ast(t_ast_node *root)
 {
 	if (!root || root->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	return (f_exec_logic_expr(root));
-	// TODO: save last exit value (maybe via f_setenv for "$?" or as a static int that is used if "$?" is called)
+	return (f_exec_logic_expr(root, root)); // TODO: save last exit value (maybe via f_setenv for "$?" or as a static int that is used if "$?" is called)
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_execution.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/07 18:46:07 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 20:57:51 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,13 @@
 
 # include "../libft/libft.h"
 # include "../src/identifier.h"
+# include "ast_tree_translator.h"
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
 # include <fcntl.h>
 # include <stdbool.h>
+# include "ast_tree_structures.h"
 
 # define FALSE 0
 # define TRUE 1
@@ -33,23 +35,14 @@ enum	e_exit_value
 	FAIL
 };
 
-// typedef struct s_functiondict
-// {
-// 	char	*call;
-// 	void	(*func)(void);
-// }	t_funcdict;
+//builtin
+int	f_pwd(void);
+int	f_env(long argc, char **argv);
+int	f_echo(long argc, char **argv);
+int	f_cd(long argc, char **argv);
+int	f_exit(long argc, char **argv);
 
-// enum e_callfunction
-// {
-// 	INPUT_INVALID = -1,
-// 	CALL_ECHO,
-// 	CALL_CD,
-// 	CALL_PWD,
-// 	CALL_EXPORT,
-// 	CALL_UNSET,
-// 	CALL_ENV,
-// 	CALL_EXIT,
-// 	INPUT_COUNT
-// };
+//exe_draft
+int	f_execute_ast(t_ast_node *root);
 
 #endif
