@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 20:54:10 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 18:14:02 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,7 @@ int	f_exit(long argc, char **argv/* , t_ast_node *ast_root */)
 	if (argc == 2 && !f_isnumeric(argv[1]))
 		return (printf("minishell: exit: numeric argument required\n"), FAIL);
 	// f_close_fds(); // TODO (more cleanup, needs to be evaluated)
+	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (argc == 2)
 		exit(ft_atoi(argv[1]));
 	else

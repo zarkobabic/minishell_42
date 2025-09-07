@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 20:53:25 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 19:11:09 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,8 @@ int	f_wait_for_child(pid_t pid)
 	int	status;
 	int	exit_value;
 	
-	waitpid(pid, &status, 0);
+	if (waitpid(pid, &status, 0) < 0)
+		return (ERROR);
 	if (WIFEXITED(status))
 		exit_value = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -146,35 +147,37 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 	long	argc;
 	pid_t	pid;
 	int		exit_value;
-	int		orig_in;
-	int		orig_out;
+	int		orig_fds[2];
 	
+	if (simcmd->data.command.arg_cnt <= 0 || !simcmd->data.command.args)
+		return (SUCCESS);
+	// TODO: variable expansion
 	argc = simcmd->data.command.arg_cnt;
 	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value); // TODO: var expansion
 	if (!argv)
 		return (perror("arg list"), ERROR);
-	if (!in_pipeline && argv[0] && f_is_builtin_parent(argv[0]))
+	if (!in_pipeline && f_is_builtin_parent(argv[0]))
 	{
-		orig_in = dup(STDIN_FILENO);
-		orig_out = dup(STDOUT_FILENO);
-		if (orig_in == -1 || orig_out == -1)
+		orig_fds[IN] = dup(STDIN_FILENO);
+		orig_fds[OUT] = dup(STDOUT_FILENO);
+		if (orig_fds[IN] == -1 || orig_fds[OUT] == -1)
 		{
-			if (orig_in != -1)
-				close(orig_in);
-			if (orig_out != -1)
-				close(orig_out);
+			if (orig_fds[IN] != -1)
+				close(orig_fds[IN]);
+			if (orig_fds[OUT] != -1)
+				close(orig_fds[OUT]);
 			free(argv);
 			return (perror("dup"), ERROR);
 		}
 		exit_value = f_redirect(simcmd->data.command.redirections);
 		if (exit_value == SUCCESS)
 			exit_value = f_exec_builtin(argc, argv);
-		if (dup2(orig_in, STDIN_FILENO) == -1)
+		if (dup2(orig_fds[IN], STDIN_FILENO) == -1)
 			perror("dup2 restore in");
-		if (dup2(orig_out, STDOUT_FILENO) == -1)
+		if (dup2(orig_fds[OUT], STDOUT_FILENO) == -1)
 			perror("dup2 restore out");
-		close(orig_in);
-		close(orig_out);
+		close(orig_fds[IN]);
+		close(orig_fds[OUT]);
 	}
 	else if (!in_pipeline)
 	{
@@ -184,12 +187,10 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 			exit_value = f_redirect(simcmd->data.command.redirections);
 			if (exit_value != SUCCESS)
 				exit(exit_value);
-			if (argv[0] && f_is_builtin_child(argv[0]))
+			if (f_is_builtin_child(argv[0]))
 				exit_value = f_exec_builtin(argc, argv);
-			else if (argv[0])
-				exit_value = f_exec_file(argc, argv);
 			else
-				exit_value = FAIL;
+				exit_value = f_exec_file(argc, argv);
 			exit(exit_value);
 		}
 		else if (pid > 0)
@@ -210,14 +211,12 @@ int f_exec_simple_cmd(t_ast_node *simcmd, int old_exit_value, int in_pipeline)
 		exit_value = f_redirect(simcmd->data.command.redirections);
 		if (exit_value != SUCCESS)
 			return (exit_value);
-		if (argv[0] && f_is_builtin(argv[0]))
+		if (f_is_builtin(argv[0]))
 			exit_value = f_exec_builtin(argc, argv);
-		else if (argv[0])
-			exit_value = f_exec_file(argc, argv);
 		else
-			exit_value = FAIL;
+			exit_value = f_exec_file(argc, argv);
 	}
-	free(argv); // TODO: check, if viable at this point
+	free(argv); // TODO: deep free everything, not just shallow
 	return (exit_value);
 }
 
@@ -262,9 +261,8 @@ int	f_exec_subshell(t_ast_node *subshell, int old_exit_value, int in_pipeline)
 
 int	f_exec_cmd(t_ast_node *cmd, int old_exit_value, int in_pipeline)
 {
-	if (cmd->next != NULL)
+	if (!cmd || cmd->next != NULL)
 		return (ERROR);
-	// TODO: variable expansion
 	if (cmd->type == AST_CMD)
 		return (f_exec_simple_cmd(cmd, old_exit_value, in_pipeline));
 	else if (cmd->type == AST_SUBSHELL)
@@ -300,7 +298,6 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 	else
 	{
 		int		i;
-		// int		status;
 		int		exit_value;
 		int		pipe_fds[2];
 		int		temp_fd_in;
@@ -328,14 +325,30 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 			{
 				if (temp_fd_in != STDIN_FILENO)
 				{
-					dup2(temp_fd_in, STDIN_FILENO);
+					if (dup2(temp_fd_in, STDIN_FILENO) < 0)
+					{
+						perror("dup2");
+						if (temp_cmd->next)
+						{
+							close(pipe_fds[IN]);
+							close(pipe_fds[OUT]);
+						}
+						close(temp_fd_in);
+						exit(FAIL);
+					}
 					close (temp_fd_in);
 				}
 				if (temp_cmd->next)
 				{
-					close(pipe_fds[0]);
-					dup2(pipe_fds[1], STDOUT_FILENO);
-					close(pipe_fds[1]);
+					close(pipe_fds[IN]);
+					if (dup2(pipe_fds[OUT], STDOUT_FILENO) < 0)
+					{
+						perror("dup2");
+						close(pipe_fds[IN]);
+						close(pipe_fds[OUT]);
+						exit(FAIL);
+					}
+					close(pipe_fds[OUT]);
 				}
 				// if (temp_cmd->type == AST_CMD)
 				// 	exit_value = f_redirect(temp_cmd->data.command.redirections);
@@ -351,8 +364,8 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 					close(temp_fd_in);
 				if (temp_cmd->next)
 				{
-					close(pipe_fds[1]);
-					temp_fd_in = pipe_fds[0];
+					close(pipe_fds[OUT]);
+					temp_fd_in = pipe_fds[IN];
 				}
 				temp_cmd = temp_cmd->next;
 				++i;
@@ -361,8 +374,8 @@ int	f_exec_pipeline(t_ast_node *pipeline, int old_exit_value)
 			{
 				if (temp_cmd->next)
 				{
-					close(pipe_fds[0]);
-					close(pipe_fds[1]);
+					close(pipe_fds[IN]);
+					close(pipe_fds[OUT]);
 				}
 				f_cleanup_pipeline(pid_list, i, temp_fd_in);
 				return (perror("fork"), ERROR);
@@ -391,7 +404,7 @@ int	f_exec_logic_expr(t_ast_node *expr)
 	if ((expr->data.logical_expr.type == TYPE_AND
 		&& exit_value == SUCCESS)
 		|| (expr->data.logical_expr.type == TYPE_OR
-		&& exit_value == FAIL))
+		&& exit_value != SUCCESS))
 		exit_value = f_exec_logic_expr(expr->next);
 	return (exit_value);
 }

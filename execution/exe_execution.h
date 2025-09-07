@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 20:10:00 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 18:46:07 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 
 # define FALSE 0
 # define TRUE 1
+# define IN 0
+# define OUT 1
 
 enum	e_exit_value
 {

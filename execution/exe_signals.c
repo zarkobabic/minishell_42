@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/06 20:23:46 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/07 19:14:48 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+// #include <readline/>
 
 static void	f_signal_newline(int signal)
 {
