@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/07 22:21:32 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 01:03:51 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,12 @@
 
 int	f_echo(long argc, char **argv)
 {
-	// int	fd;
-	
-	// FIXME: either handled here or handled already in calling mother function
-	// fd = 1;
-	// if (redirec_flag)
-	// 	fd = open(filename, O_WRONLY);
-
 	bool	n_flag;
 	long		i;
 	
+	if(argc <= 1)
+		return (SUCCESS);
 	n_flag = !(bool)ft_strncmp(argv[1], "-n", 3);
-	// n_flag = f_found_nflag(argc, argv);
 	i = 1 + n_flag;
 	while (i < argc)
 	{

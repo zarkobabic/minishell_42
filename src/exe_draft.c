@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/07 20:56:45 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 01:30:30 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: ch
 	(void)old_exit_value;
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
-	argv = (char **)malloc((argc + 1) * sizeof(char *)); // include NULL slot
+	argv = (char **)malloc((argc + 1) * sizeof(char *));
 	if (!argv)
 		return (NULL);
 	i = 0;
@@ -150,7 +150,10 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 			// exit_value = f_redirect(simcmd->data.command.redirections);
 			exit_value = SUCCESS;
 			if (exit_value != SUCCESS)
+			{
+				f_cleanup_child(root, argv);
 				exit(exit_value);
+			}
 			if (f_is_builtin_child(argv[0]))
 				exit_value = f_exec_builtin(argc, argv);
 			// else
@@ -161,19 +164,24 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 		else if (pid > 0)
 			exit_value = f_wait_for_child(pid);
 		else
+		{
+			free(argv);
 			return (perror("fork"), ERROR);
+		}
 	}
 	else
 	{
 		// exit_value = f_redirect(simcmd->data.command.redirections);
 		exit_value = SUCCESS;
 		if (exit_value != SUCCESS)
+		{
+			free(argv); //proveri
 			return (exit_value);
+		}
 		if (f_is_builtin(argv[0]))
 			exit_value = f_exec_builtin(argc, argv);
 		// else
 		// 	exit_value = f_exec_file(argc, argv);
-		f_cleanup_child(root, NULL);
 	}
 	free(argv); // TODO: deep free everything, not just shallow
 	return (exit_value);
@@ -254,23 +262,29 @@ int	f_exec_pipeline(t_ast_node *pipeline, t_ast_node *root, int old_exit_value)
 							close(pipe_fds[OUT]);
 						}
 						close(temp_fd_in);
+						f_cleanup_child(root, NULL);
+						free(pid_list);
 						exit(FAIL);
 					}
 					close (temp_fd_in);
 				}
 				if (temp_cmd->next)
 				{
-					close(pipe_fds[IN]);
+					close(pipe_fds[IN]); //While refactoring keep the order of this close and if
 					if (dup2(pipe_fds[OUT], STDOUT_FILENO) < 0)
 					{
 						perror("dup2");
-						close(pipe_fds[IN]);
 						close(pipe_fds[OUT]);
+						f_cleanup_child(root, NULL);
+						free(pid_list);
 						exit(FAIL);
 					}
 					close(pipe_fds[OUT]);
 				}
-				exit(f_exec_cmd(temp_cmd, root, old_exit_value, TRUE));
+				exit_value = f_exec_cmd(temp_cmd, root, old_exit_value, TRUE);
+				f_cleanup_child(root, NULL);
+				free(pid_list);
+				exit(exit_value);
 			}
 			else if (pid_list[i] > 0)
 			{
