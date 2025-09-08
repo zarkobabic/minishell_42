@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 19:04:21 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 19:46:14 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static int	f_exec_builtin_parent(t_cmd_ctx *ctx)
 	{
 		free(ctx->argv);
 		ast_free_tree(ctx->env->ast_root);
-		exit(exit_value);
+		mini_exit(exit_value, ctx->env);
 	}
 	return (exit_value);
 }
@@ -73,12 +73,13 @@ static int	f_handle_child_process(t_cmd_ctx *ctx)
 	if (exit_value != SUCCESS)
 	{
 		f_cleanup_child(ctx->env->ast_root, ctx->argv);
-		exit(exit_value);
+		mini_exit(exit_value, ctx->env);
 	}
 	if (f_is_builtin_child(ctx->argv[0]))
 		exit_value = f_exec_builtin(ctx);
 	f_cleanup_child(ctx->env->ast_root, ctx->argv);
-	exit(exit_value);
+	mini_exit(exit_value, ctx->env);
+	return (FAIL);
 }
 
 // Execute external command

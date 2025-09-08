@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:25:30 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 17:58:45 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 19:45:42 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	f_execute_child_process(t_ast_node *temp_cmd, t_environ *env,
 	exit_value = f_exec_cmd(temp_cmd, env, TRUE);
 	f_cleanup_child(env->ast_root, NULL);
 	free(ctx->pid_list);
-	exit(exit_value);
+	mini_exit(exit_value, env);
 }
 
 // Handle parent process after fork
@@ -86,7 +86,7 @@ static int	f_handle_child_process(t_ast_node *temp_cmd, t_environ *env,
 	{
 		f_cleanup_child(env->ast_root, NULL);
 		free(ctx->pid_list);
-		exit(FAIL);
+		mini_exit(FAIL, env);
 	}
 	f_execute_child_process(temp_cmd, env, ctx);
 	return (SUCCESS);

@@ -6,34 +6,30 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 19:04:44 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 20:16:30 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
 #include <sys/wait.h>
 
-int	f_exec_logic_expr(t_ast_node *expr, t_environ *env);
+int		f_exec_logic_expr(t_ast_node *expr, t_environ *env);
 
 bool	f_is_builtin_parent(char *call)
 {
-	return (!ft_strncmp(call, "cd", 3)
-		|| !ft_strncmp(call, "export", 7)
-		|| !ft_strncmp(call, "unset", 6)
-		|| !ft_strncmp(call, "exit", 5));
+	return (!ft_strncmp(call, "cd", 3) || !ft_strncmp(call, "export", 7)
+		|| !ft_strncmp(call, "unset", 6) || !ft_strncmp(call, "exit", 5));
 }
 
 bool	f_is_builtin_child(char *call)
 {
-	return (!ft_strncmp(call, "echo", 5)
-		|| !ft_strncmp(call, "pwd", 4)
+	return (!ft_strncmp(call, "echo", 5) || !ft_strncmp(call, "pwd", 4)
 		|| !ft_strncmp(call, "env", 4));
 }
 
 bool	f_is_builtin(char *call)
 {
-	return (f_is_builtin_parent(call)
-		|| f_is_builtin_child(call));
+	return (f_is_builtin_parent(call) || f_is_builtin_child(call));
 }
 
 int	f_exec_builtin(t_cmd_ctx *ctx)
@@ -41,15 +37,15 @@ int	f_exec_builtin(t_cmd_ctx *ctx)
 	if (ft_strncmp(ctx->argv[0], "echo", 5) == 0)
 		return (f_echo(ctx->argc, ctx->argv));
 	else if (ft_strncmp(ctx->argv[0], "cd", 3) == 0)
-		return (f_cd(ctx->argc, ctx->argv));
+		return (f_cd(&ctx->env->minienviron, ctx->argc, ctx->argv));
 	else if (ft_strncmp(ctx->argv[0], "pwd", 4) == 0)
 		return (f_pwd());
-	// else if (ft_strncmp(argv[0], "export", 7) == 0)
-	// 	return (f_export(argc, argv));
-	// else if (ft_strncmp(argv[0], "unset", 6) == 0)
-	// 	return (f_unset(argc, argv));
+	else if (ft_strncmp(ctx->argv[0], "export", 7) == 0)
+		return (f_export(&ctx->env->minienviron, ctx->argc, ctx->argv));
+	else if (ft_strncmp(ctx->argv[0], "unset", 6) == 0)
+		return (f_unset(&ctx->env->minienviron, ctx->argc, ctx->argv));
 	else if (ft_strncmp(ctx->argv[0], "env", 4) == 0)
-		return (f_env(ctx->argc, ctx->argv));
+		return (f_env(ctx->env->minienviron, ctx->argc, false));
 	else if (ft_strncmp(ctx->argv[0], "exit", 5) == 0)
 		return (f_exit(ctx->argc, ctx->argv, &ctx->error));
 	else
@@ -67,7 +63,7 @@ int	f_wait_for_child(pid_t pid)
 {
 	int	status;
 	int	exit_value;
-	
+
 	if (waitpid(pid, &status, 0) < 0)
 		return (ERROR);
 	if (WIFEXITED(status))
@@ -79,10 +75,11 @@ int	f_wait_for_child(pid_t pid)
 	return (exit_value);
 }
 
-char **f_buildargv(t_ast_node *args, long *argc, t_environ *env) // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
+// FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
+char	**f_buildargv(t_ast_node *args, long *argc, t_environ *env)
 {
-	char	**argv;
-	long	i;
+	char **argv;
+	long i;
 
 	(void)env; //ADD VARIABLE EXPANSION THIS IS FOR $?
 	if (!args || args->type != AST_IDENTIFIER)
@@ -134,17 +131,17 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 
 int	f_exec_logic_expr(t_ast_node *expr, t_environ *env)
 {
-	static int	exit_value = 0;
+	static int	exit_value;
 
+	exit_value = 0;
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
 	env->old_exit_value = exit_value;
-	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env); // TODO: pass exit_value down through all functions
+	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env);
+	// TODO: pass exit_value down through all functions
 	env->old_exit_value = exit_value;
-	if ((expr->data.logical_expr.type == TYPE_AND
-		&& exit_value == SUCCESS)
-		|| (expr->data.logical_expr.type == TYPE_OR
-		&& exit_value != SUCCESS))
+	if ((expr->data.logical_expr.type == TYPE_AND && exit_value == SUCCESS)
+		|| (expr->data.logical_expr.type == TYPE_OR && exit_value != SUCCESS))
 		exit_value = f_exec_logic_expr(expr->next, env);
 	return (exit_value);
 }

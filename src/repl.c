@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 17:37:26 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 20:00:16 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void	clear_history_now(void)
-{
-	clear_history();
-	printf("Cleanup complete. See ya!\n");
-}
-
 void	process_input(char *input, t_environ *env)
 {
 	t_command_line	*tree;
@@ -35,12 +29,18 @@ void	process_input(char *input, t_environ *env)
 	if (!tree)
 		return ;
 	ast_tree = ast_create_tree(tree);
-	env->minienviron = NULL; //TODO populate minienviron
 	env->ast_root = ast_tree;
 	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
 	f_execute_ast(env);
 	ast_free_tree(ast_tree);
+}
+
+void	mini_exit(int exit_status, t_environ *env)
+{
+	f_destroy_environ(&env->minienviron, ENV_DELETE_ALL);
+	clear_history();
+	exit(exit_status);
 }
 
 // Dont forget to add -lreadline flag in compilation
@@ -56,15 +56,19 @@ int	main(int argc, char **argv)
 		return (printf("ERROR: invalid arguments\n"), 1);
 	(void)argv;
 	prompt = "minishell> ";
+	if(f_build_environ(&env.minienviron) != SUCCESS)
+		exit(FAIL);
 	printf("Welcome to minishell!\n");
 	while (1)
 	{
 		// f_set_signals_interactive_mode();
 		input = readline(prompt);
 		if (!input)
+		{
+			if(isatty(STDIN_FILENO))
+				printf("exit\n");
 			break ;
-		if (ft_strncmp(input, "plsexit", 7) == 0)
-			return (free(input), clear_history_now(), 0);
+		}
 		if (ft_strlen(input) == 0)
 		{
 			free(input);
@@ -75,7 +79,7 @@ int	main(int argc, char **argv)
 		process_input(input, &env);
 		rl_on_new_line();
 		free(input);
-	}
-	clear_history_now();
+	}	
+	mini_exit(0, &env);
 	return (0);
 }

@@ -40,6 +40,9 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				exe_draft.c \
 				exe_pipeline.c \
 				exe_simple_command.c \
+				exe_environment_access.c \
+				exe_environment_manipulation.c \
+				exe_builtins_cd.c \
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
 

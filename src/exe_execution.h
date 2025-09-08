@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 18:58:22 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 19:45:23 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "../src/identifier.h"
 # include "ast_tree_structures.h"
 # include "ast_tree_translator.h"
+# include "exe_environment.h"
 # include <fcntl.h>
 # include <stdbool.h>
 # include <stdio.h>
@@ -27,13 +28,6 @@
 # define TRUE 1
 # define IN 0
 # define OUT 1
-
-typedef struct s_environment_to_keep_track_of
-{
-	char		**minienviron;
-	t_ast_node	*ast_root;
-	int			old_exit_value;
-}				t_environ;
 
 enum			e_exit_value
 {
@@ -52,13 +46,21 @@ typedef struct s_cmd_ctx
 	int			orig_fds[2];
 }	t_cmd_ctx;
 
+
+void	mini_exit(int exit_status, t_environ *env);
+
 //builtin
-int				f_pwd(void);
-int				f_env(long argc, char **argv);
-int				f_echo(long argc, char **argv);
-int				f_cd(long argc, char **argv);
-int				f_exit(long argc, char **argv, bool *error);
+int	f_cd(char ***environ, long argc, char **argv);
+int	f_echo(long argc, char **argv);
+int	f_env(char **environ, long argc, bool export_call);
+int	f_exit(long argc, char **argv, bool *error);
+int	f_export(char ***environ, long argc, char **argv);
+int	f_pwd(void);
+int	f_unset(char ***environ, long argc, char **argv);
+
+//send this to pipeline
 int				f_exec_pipeline(t_ast_node *pipeline, t_environ *env);
+
 //exe_draft
 int				f_execute_ast(t_environ *env);
 int				f_exec_logic_expr(t_ast_node *expr, t_environ *env);
