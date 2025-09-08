@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/07 19:47:10 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 17:37:26 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	clear_history_now(void)
 	printf("Cleanup complete. See ya!\n");
 }
 
-void	process_input(char *input)
+void	process_input(char *input, t_environ *env)
 {
 	t_command_line	*tree;
 	t_ast_node		*ast_tree;
@@ -35,9 +35,11 @@ void	process_input(char *input)
 	if (!tree)
 		return ;
 	ast_tree = ast_create_tree(tree);
+	env->minienviron = NULL; //TODO populate minienviron
+	env->ast_root = ast_tree;
 	ast_tree_print(ast_tree);
 	free_parse_tree(tree);
-	f_execute_ast(ast_tree);
+	f_execute_ast(env);
 	ast_free_tree(ast_tree);
 }
 
@@ -48,6 +50,7 @@ int	main(int argc, char **argv)
 {
 	char	*input;
 	char	*prompt;
+	t_environ env;
 
 	if (argc != 1)
 		return (printf("ERROR: invalid arguments\n"), 1);
@@ -69,7 +72,7 @@ int	main(int argc, char **argv)
 		}
 		add_history(input);
 		// f_set_signals_execution_mode();
-		process_input(input);
+		process_input(input, &env);
 		rl_on_new_line();
 		free(input);
 	}

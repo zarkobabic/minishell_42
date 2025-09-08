@@ -6,14 +6,14 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 02:16:34 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 17:50:13 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
 #include <sys/wait.h>
 
-int	f_exec_logic_expr(t_ast_node *expr, t_ast_node *root);
+int	f_exec_logic_expr(t_ast_node *expr, t_environ *env);
 
 bool	f_is_builtin_parent(char *call)
 {
@@ -79,12 +79,12 @@ int	f_wait_for_child(pid_t pid)
 	return (exit_value);
 }
 
-char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
+char **f_buildargv(t_ast_node *args, long argc, t_environ *env) // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
 {
 	char	**argv;
 	long	i;
 
-	(void)old_exit_value;
+	(void)env; //ADD VARIABLE EXPANSION THIS IS FOR $?
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
 	argv = (char **)malloc((argc + 1) * sizeof(char *));
@@ -103,7 +103,7 @@ char **f_buildargv(t_ast_node *args, long argc, int old_exit_value) // FIXME: ch
 	return (argv);
 }
 
-int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, int in_pipeline)
+int f_exec_simple_cmd(t_ast_node *simcmd, t_environ *env, int in_pipeline)
 {
 	char	**argv;
 	long	argc;
@@ -115,7 +115,7 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 		return (SUCCESS);
 	// TODO: variable expansion
 	argc = simcmd->data.command.arg_cnt;
-	argv = f_buildargv(simcmd->data.command.args, argc, old_exit_value); // TODO: var expansion
+	argv = f_buildargv(simcmd->data.command.args, argc, env); // TODO: var expansion
 	if (!argv)
 		return (perror("arg list"), ERROR);
 	if (!in_pipeline && f_is_builtin_parent(argv[0]))
@@ -144,7 +144,7 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 		if(ft_strncmp(argv[0], "exit", 5) == 0)
 		{
 			free(argv);
-			ast_free_tree(root);
+			ast_free_tree(env->ast_root);
 			exit(exit_value);
 		}
 	}
@@ -157,14 +157,14 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 			exit_value = SUCCESS;
 			if (exit_value != SUCCESS)
 			{
-				f_cleanup_child(root, argv);
+				f_cleanup_child(env->ast_root, argv);
 				exit(exit_value);
 			}
 			if (f_is_builtin_child(argv[0]))
 				exit_value = f_exec_builtin(argc, argv);
 			// else
 			// 	exit_value = f_exec_file(argc, argv);
-			f_cleanup_child(root, argv);
+			f_cleanup_child(env->ast_root, argv);
 			exit(exit_value);
 		}
 		else if (pid > 0)
@@ -193,12 +193,12 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 	return (exit_value);
 }
 
-int	f_exec_cmd(t_ast_node *cmd, t_ast_node *root, int old_exit_value, int in_pipeline)
+int	f_exec_cmd(t_ast_node *cmd, t_environ *env, int in_pipeline)
 {
 	if (!cmd || cmd->next != NULL)
 		return (ERROR);
 	if (cmd->type == AST_CMD)
-		return (f_exec_simple_cmd(cmd, root, old_exit_value, in_pipeline));
+		return (f_exec_simple_cmd(cmd, env, in_pipeline));
 	// else if (cmd->type == AST_SUBSHELL)
 	// 	return (f_exec_subshell(cmd, old_exit_value, in_pipeline));
 	else
@@ -222,125 +222,127 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 		free(pid_list);
 }
 
-int	f_exec_pipeline(t_ast_node *pipeline, t_ast_node *root, int old_exit_value)
-{
-	if (!pipeline || pipeline->type != AST_PIPELINE
-		|| pipeline->data.pipeline.cmd_cnt <= 0 || !pipeline->data.pipeline.cmds)
-		return (ERROR);
-	if (pipeline->data.pipeline.cmd_cnt == 1)
-		return (f_exec_cmd(pipeline->data.pipeline.cmds, root, old_exit_value, FALSE));
-	else
-	{
-		int		i;
-		int		exit_value;
-		int		pipe_fds[2];
-		int		temp_fd_in;
-		pid_t	*pid_list;
-		t_ast_node	*temp_cmd;
+// int	f_exec_pipeline(t_ast_node *pipeline, t_ast_node *root, int old_exit_value)
+// {
+// 	if (!pipeline || pipeline->type != AST_PIPELINE
+// 		|| pipeline->data.pipeline.cmd_cnt <= 0 || !pipeline->data.pipeline.cmds)
+// 		return (ERROR);
+// 	if (pipeline->data.pipeline.cmd_cnt == 1)
+// 		return (f_exec_cmd(pipeline->data.pipeline.cmds, root, old_exit_value, FALSE));
+// 	else
+// 	{
+// 		int		i;
+// 		int		exit_value;
+// 		int		pipe_fds[2];
+// 		int		temp_fd_in;
+// 		pid_t	*pid_list;
+// 		t_ast_node	*temp_cmd;
 
-		pid_list = (pid_t *)malloc(pipeline->data.pipeline.cmd_cnt * sizeof(pid_t));
-		if (!pid_list)
-			return (perror("malloc"), ERROR);
-		temp_cmd = pipeline->data.pipeline.cmds;
-		temp_fd_in = STDIN_FILENO;
-		i = 0;
-		while (temp_cmd)
-		{
-			if (temp_cmd->next)
-			{
-				if (pipe(pipe_fds) < 0)
-				{
-					f_cleanup_pipeline(pid_list, i, temp_fd_in);
-					return (perror("pipe"), ERROR);
-				}
-			}
-			pid_list[i] = fork();
-			if (pid_list[i] == 0)
-			{
-				if (temp_fd_in != STDIN_FILENO)
-				{
-					if (dup2(temp_fd_in, STDIN_FILENO) < 0)
-					{
-						perror("dup2");
-						if (temp_cmd->next)
-						{
-							close(pipe_fds[IN]);
-							close(pipe_fds[OUT]);
-						}
-						close(temp_fd_in);
-						f_cleanup_child(root, NULL);
-						free(pid_list);
-						exit(FAIL);
-					}
-					close (temp_fd_in);
-				}
-				if (temp_cmd->next)
-				{
-					close(pipe_fds[IN]); //While refactoring keep the order of this close and if
-					if (dup2(pipe_fds[OUT], STDOUT_FILENO) < 0)
-					{
-						perror("dup2");
-						close(pipe_fds[OUT]);
-						f_cleanup_child(root, NULL);
-						free(pid_list);
-						exit(FAIL);
-					}
-					close(pipe_fds[OUT]);
-				}
-				exit_value = f_exec_cmd(temp_cmd, root, old_exit_value, TRUE);
-				f_cleanup_child(root, NULL);
-				free(pid_list);
-				exit(exit_value);
-			}
-			else if (pid_list[i] > 0)
-			{
-				if (temp_fd_in != STDIN_FILENO)
-					close(temp_fd_in);
-				if (temp_cmd->next)
-				{
-					close(pipe_fds[OUT]);
-					temp_fd_in = pipe_fds[IN];
-				}
-				temp_cmd = temp_cmd->next;
-				++i;
-			}
-			else
-			{
-				if (temp_cmd->next)
-				{
-					close(pipe_fds[IN]);
-					close(pipe_fds[OUT]);
-				}
-				f_cleanup_pipeline(pid_list, i, temp_fd_in);
-				return (perror("fork"), ERROR);
-			}
-		}
-		exit_value = f_wait_for_child(pid_list[--i]);
-		while (--i >= 0)
-			waitpid(pid_list[i], NULL, 0);
-		free(pid_list);
-		return (exit_value);
-	}
-}
+// 		pid_list = (pid_t *)malloc(pipeline->data.pipeline.cmd_cnt * sizeof(pid_t));
+// 		if (!pid_list)
+// 			return (perror("malloc"), ERROR);
+// 		temp_cmd = pipeline->data.pipeline.cmds;
+// 		temp_fd_in = STDIN_FILENO;
+// 		i = 0;
+// 		while (temp_cmd)
+// 		{
+// 			if (temp_cmd->next)
+// 			{
+// 				if (pipe(pipe_fds) < 0)
+// 				{
+// 					f_cleanup_pipeline(pid_list, i, temp_fd_in);
+// 					return (perror("pipe"), ERROR);
+// 				}
+// 			}
+// 			pid_list[i] = fork();
+// 			if (pid_list[i] == 0)
+// 			{
+// 				if (temp_fd_in != STDIN_FILENO)
+// 				{
+// 					if (dup2(temp_fd_in, STDIN_FILENO) < 0)
+// 					{
+// 						perror("dup2");
+// 						if (temp_cmd->next)
+// 						{
+// 							close(pipe_fds[IN]);
+// 							close(pipe_fds[OUT]);
+// 						}
+// 						close(temp_fd_in);
+// 						f_cleanup_child(root, NULL);
+// 						free(pid_list);
+// 						exit(FAIL);
+// 					}
+// 					close (temp_fd_in);
+// 				}
+// 				if (temp_cmd->next)
+// 				{
+// 					close(pipe_fds[IN]); //While refactoring keep the order of this close and if
+// 					if (dup2(pipe_fds[OUT], STDOUT_FILENO) < 0)
+// 					{
+// 						perror("dup2");
+// 						close(pipe_fds[OUT]);
+// 						f_cleanup_child(root, NULL);
+// 						free(pid_list);
+// 						exit(FAIL);
+// 					}
+// 					close(pipe_fds[OUT]);
+// 				}
+// 				exit_value = f_exec_cmd(temp_cmd, root, old_exit_value, TRUE);
+// 				f_cleanup_child(root, NULL);
+// 				free(pid_list);
+// 				exit(exit_value);
+// 			}
+// 			else if (pid_list[i] > 0)
+// 			{
+// 				if (temp_fd_in != STDIN_FILENO)
+// 					close(temp_fd_in);
+// 				if (temp_cmd->next)
+// 				{
+// 					close(pipe_fds[OUT]);
+// 					temp_fd_in = pipe_fds[IN];
+// 				}
+// 				temp_cmd = temp_cmd->next;
+// 				++i;
+// 			}
+// 			else
+// 			{
+// 				if (temp_cmd->next)
+// 				{
+// 					close(pipe_fds[IN]);
+// 					close(pipe_fds[OUT]);
+// 				}
+// 				f_cleanup_pipeline(pid_list, i, temp_fd_in);
+// 				return (perror("fork"), ERROR);
+// 			}
+// 		}
+// 		exit_value = f_wait_for_child(pid_list[--i]);
+// 		while (--i >= 0)
+// 			waitpid(pid_list[i], NULL, 0);
+// 		free(pid_list);
+// 		return (exit_value);
+// 	}
+// }
 
-int	f_exec_logic_expr(t_ast_node *expr, t_ast_node *root)
+int	f_exec_logic_expr(t_ast_node *expr, t_environ *env)
 {
 	static int	exit_value = 0;
 
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, root, exit_value); // TODO: pass exit_value down through all functions
+	env->old_exit_value = exit_value;
+	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env); // TODO: pass exit_value down through all functions
+	env->old_exit_value = exit_value;
 	if ((expr->data.logical_expr.type == TYPE_AND
 		&& exit_value == SUCCESS)
 		|| (expr->data.logical_expr.type == TYPE_OR
 		&& exit_value != SUCCESS))
-		exit_value = f_exec_logic_expr(expr->next, root);
+		exit_value = f_exec_logic_expr(expr->next, env);
 	return (exit_value);
 }
 
-int	f_execute_ast(t_ast_node *root)
+int	f_execute_ast(t_environ *env)
 {
-	if (!root || root->type != AST_LOGICAL_EXPR)
+	if (!env->ast_root || env->ast_root->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	return (f_exec_logic_expr(root, root)); // TODO: save last exit value (maybe via f_setenv for "$?" or as a static int that is used if "$?" is called)
+	return (f_exec_logic_expr(env->ast_root, env));
 }
