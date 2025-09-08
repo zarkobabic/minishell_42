@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_execution.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 23:23:08 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/08 23:38:24 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_cmd_ctx
 {
 	char		**argv;
 	long		argc;
+	t_ast_node	*redirections;
 	bool		error;
 	t_environ	*env;
 	int			in_pipeline;

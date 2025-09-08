@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_simple_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 23:29:49 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/09 01:24:05 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static int	f_exec_builtin_parent(t_cmd_ctx *ctx)
 	if (f_setup_builtin_parent_fds(ctx) == ERROR)
 		return (ERROR);
 	exit_value = SUCCESS;
+	// exit_value = f_redirect(ctx->redirections);
 	if (exit_value == SUCCESS)
 		exit_value = f_exec_builtin(ctx);
 	if (dup2(ctx->orig_fds[IN], STDIN_FILENO) == -1)
@@ -70,13 +71,13 @@ static int	f_handle_child_process(t_cmd_ctx *ctx)
 	int	exit_value;
 
 	exit_value = SUCCESS;
-	if (exit_value != SUCCESS)
+	// exit_value = f_redirect(ctx->redirections);
+	if (exit_value == SUCCESS)
 	{
-		f_cleanup_child(ctx->env->ast_root, ctx->argv);
-		mini_exit(exit_value, ctx->env);
+		if (f_is_builtin_child(ctx->argv[0]))
+			exit_value = f_exec_builtin(ctx);
+		//Add other executables here after
 	}
-	if (f_is_builtin_child(ctx->argv[0]))
-		exit_value = f_exec_builtin(ctx);
 	f_cleanup_child(ctx->env->ast_root, ctx->argv);
 	mini_exit(exit_value, ctx->env);
 	return (FAIL);
@@ -107,11 +108,9 @@ static int	f_exec_in_pipeline(t_cmd_ctx *ctx)
 	int	exit_value;
 
 	exit_value = SUCCESS;
+	// exit_value = f_redirect(ctx->redirections);
 	if (exit_value != SUCCESS)
-	{
-		free(ctx->argv);
 		return (exit_value);
-	}
 	if (f_is_builtin(ctx->argv[0]))
 		exit_value = f_exec_builtin(ctx);
 	return (exit_value);
@@ -127,6 +126,7 @@ int	f_exec_simple_cmd(t_ast_node *simcmd, t_environ *env, int in_pipeline)
 		return (SUCCESS);
 	ctx.env = env;
 	ctx.error = false;
+	ctx.redirections = simcmd->data.command.redirections;
 	ctx.in_pipeline = in_pipeline;
 	if (f_prepare_argv(simcmd, &ctx) == ERROR)
 		return (ERROR);
