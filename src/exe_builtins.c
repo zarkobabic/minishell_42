@@ -6,16 +6,14 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 20:44:42 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 20:58:35 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_environment.h"
 #include "exe_execution.h"
 #define PATHLENGTH 256
-// #define ENV_NAME_LENGTH 64
 
-//FINE
 int	f_echo(long argc, char **argv)
 {
 	bool	n_flag;
@@ -43,49 +41,6 @@ int	f_echo(long argc, char **argv)
 	}
 	return (SUCCESS);
 }
-
-// int	f_cd(char ***environ, long argc, char **argv)
-// {
-// 	char	custom_path[PATHLENGTH];
-// 	char	*temp_str;
-// 	int		user_len;
-// 	int		home_len;
-
-// 	if (argc > 2)
-// 		return (printf("minishell: cd: too many arguments\n"), FAIL);
-// 	ft_bzero(custom_path, PATHLENGTH);
-// 	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
-// 	{
-// 		temp_str = f_getenv(*environ, "HOME");
-// 		if(!temp_str)
-// 			return SUCCESS;
-// 	}
-// 	else if (argv[1][0] == '~' && argv[1][1])
-// 	{
-// 		temp_str = f_getenv(*environ, "HOME");
-// 		if(!temp_str)
-// 			return SUCCESS;
-// 		ft_strlcat(custom_path, temp_str, PATHLENGTH);
-// 		ft_strlcat(custom_path, &(argv[1][1]), PATHLENGTH);
-// 		temp_str = custom_path;
-// 	}
-// 	else if (argv[1][0] == '-' && !argv[1][1])
-// 	{
-// 		temp_str = f_getenv(*environ, "OLDPWD");
-// 		if(!temp_str)
-// 			return SUCCESS;
-// 		printf("%s\n", temp_str);
-// 	}
-// 	else
-// 		temp_str = argv[1];
-// 	if (chdir(temp_str) == -1)
-// 		return (perror("minishell: cd"), FAIL);
-// 	f_setenv(environ, "OLDPWD", f_getenv(*environ, "PWD"), true);
-// 	temp_str = getcwd(NULL, 0);
-// 	f_setenv(environ, "PWD", temp_str, true);
-// 	free(temp_str);
-// 	return (SUCCESS);
-// }
 
 int	f_pwd(void)
 {
