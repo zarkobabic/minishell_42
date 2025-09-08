@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 01:03:51 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 02:30:53 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,7 @@
 #define PATHLENGTH 256
 #define ENV_NAME_LENGTH 64
 
-// bool	f_found_nflag(long argc, char **argv)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < 0)
-// 	{
-// 		if (!ft_strncmp(argv[i], "-n", 3))
-// 			return (true);
-// 		++i;
-// 	}
-// 	return (false);
-// }
-
+//FINE
 int	f_echo(long argc, char **argv)
 {
 	bool	n_flag;
@@ -177,17 +164,16 @@ bool	f_isnumeric(char *str)
 	return (true);
 }
 
-int	f_exit(long argc, char **argv/* , t_ast_node *ast_root */)
+//FINE
+int	f_exit(long argc, char **argv)
 {
 	if (argc > 2)
 		return (printf("minishell: exit: too many arguments\n"), FAIL);
 	if (argc == 2 && !f_isnumeric(argv[1]))
 		return (printf("minishell: exit: numeric argument required\n"), FAIL);
-	// f_close_fds(); // TODO (more cleanup, needs to be evaluated)
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (argc == 2)
-		exit(ft_atoi(argv[1]));
+		return (ft_atoi(argv[1]));
 	else
-		exit (SUCCESS);
-	return (SUCCESS);
+		return (SUCCESS);
 }

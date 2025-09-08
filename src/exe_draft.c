@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 01:30:30 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 02:16:34 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,12 @@ int f_exec_simple_cmd(t_ast_node *simcmd, t_ast_node *root, int old_exit_value, 
 			perror("dup2 restore out");
 		close(orig_fds[IN]);
 		close(orig_fds[OUT]);
+		if(ft_strncmp(argv[0], "exit", 5) == 0)
+		{
+			free(argv);
+			ast_free_tree(root);
+			exit(exit_value);
+		}
 	}
 	else if (!in_pipeline)
 	{
