@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:25:30 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 19:45:42 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 22:14:48 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	f_execute_child_process(t_ast_node *temp_cmd, t_environ *env,
 {
 	int	exit_value;
 
-	exit_value = f_exec_cmd(temp_cmd, env, TRUE);
+	exit_value = f_exec_cmd(temp_cmd, env, ctx, TRUE);
 	f_cleanup_child(env->ast_root, NULL);
 	free(ctx->pid_list);
 	mini_exit(exit_value, env);
@@ -157,7 +157,7 @@ int	f_exec_pipeline(t_ast_node *pipeline, t_environ *env)
 		|| !pipeline->data.pipeline.cmds)
 		return (ERROR);
 	if (pipeline->data.pipeline.cmd_cnt == 1)
-		return (f_exec_cmd(pipeline->data.pipeline.cmds, env, FALSE));
+		return (f_exec_cmd(pipeline->data.pipeline.cmds, env, NULL, FALSE));
 	ctx.pid_list = (pid_t *)malloc(pipeline->data.pipeline.cmd_cnt
 			* sizeof(pid_t));
 	if (!ctx.pid_list)

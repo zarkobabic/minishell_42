@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 19:45:23 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 22:33:45 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include "ast_tree_structures.h"
 # include "ast_tree_translator.h"
 # include "exe_environment.h"
+# include "exe_pipeline.h"
 # include <fcntl.h>
 # include <stdbool.h>
 # include <stdio.h>
@@ -46,6 +47,13 @@ typedef struct s_cmd_ctx
 	int			orig_fds[2];
 }	t_cmd_ctx;
 
+typedef struct s_pipeline_ctx
+{
+	pid_t	*pid_list;
+	int		pipe_fds[2];
+	int		current_index;
+	int		temp_fd_in;
+}			t_pipeline_ctx;
 
 void	mini_exit(int exit_status, t_environ *env);
 
@@ -66,7 +74,7 @@ int				f_execute_ast(t_environ *env);
 int				f_exec_logic_expr(t_ast_node *expr, t_environ *env);
 void			f_cleanup_pipeline(pid_t *pid_list, int created_processes,
 					int temp_fd);
-int				f_exec_cmd(t_ast_node *cmd, t_environ *env, int in_pipeline);
+int				f_exec_cmd(t_ast_node *cmd, t_environ *env, t_pipeline_ctx *pipe_ctx, bool in_pipeline);
 int				f_exec_simple_cmd(t_ast_node *simcmd, t_environ *env,
 					int in_pipeline);
 char			**f_buildargv(t_ast_node *args, long *argc, t_environ *env);
@@ -76,6 +84,5 @@ int				f_exec_builtin(t_cmd_ctx *ctx);
 bool			f_is_builtin(char *call);
 bool			f_is_builtin_child(char *call);
 bool			f_is_builtin_parent(char *call);
-
 
 #endif

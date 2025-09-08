@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 20:00:16 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 21:27:31 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,10 @@ int	main(int argc, char **argv)
 	printf("Welcome to minishell!\n");
 	while (1)
 	{
-		// f_set_signals_interactive_mode();
+		// if (isatty(STDIN_FILENO))
+		// 	f_set_signals_interactive_mode();
+		// else
+		// 	f_set_signals_execution_mode();
 		input = readline(prompt);
 		if (!input)
 		{
@@ -74,11 +77,11 @@ int	main(int argc, char **argv)
 			free(input);
 			continue ;
 		}
-		add_history(input);
 		// f_set_signals_execution_mode();
+		add_history(input);
 		process_input(input, &env);
-		rl_on_new_line();
 		free(input);
+		rl_on_new_line();
 	}	
 	mini_exit(0, &env);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 20:16:30 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 22:58:01 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,14 +100,74 @@ char	**f_buildargv(t_ast_node *args, long *argc, t_environ *env)
 	return (argv);
 }
 
-int	f_exec_cmd(t_ast_node *cmd, t_environ *env, int in_pipeline)
+int	f_exec_subshell(t_ast_node *subshell, t_environ *env, t_pipeline_ctx *pipe_ctx)
+{
+	pid_t	pid;
+	// int		redir_success;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		// redir_success = f_redirect(subshell->data.subshell.redirections);
+		// if (redir_success != SUCCESS)
+		// 	mini_exit(redir_success);
+		if(pipe_ctx && pipe_ctx->pid_list)
+		{
+			free(pipe_ctx->pid_list);
+			pipe_ctx->pid_list = NULL;
+		}
+		env->old_exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr, env);
+		ast_free_tree(env->ast_root);
+		mini_exit(env->old_exit_value, env);
+	}
+	else if (pid > 0)
+		env->old_exit_value = f_wait_for_child(pid);
+	else
+		return (perror("fork"), ast_free_tree(env->ast_root), ERROR);
+	return (env->old_exit_value);
+}
+
+
+// int	f_exec_subshell(t_ast_node *subshell, int old_exit_value, int in_pipeline)
+// {
+// 	pid_t	pid;
+// 	int		exit_value;
+
+// 	(void)old_exit_value;
+// 	if (in_pipeline)
+// 	{
+// 		exit_value = f_redirect(subshell->data.subshell.redirections);
+// 		if (exit_value != SUCCESS)
+// 			return(exit_value);
+// 		exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr);
+// 	}
+// 	else
+// 	{
+// 		pid = fork();
+// 		if (pid == 0)
+// 		{
+// 			exit_value = f_redirect(subshell->data.subshell.redirections);
+// 			if (exit_value != SUCCESS)
+// 				exit (exit_value);
+// 			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr);
+// 			exit(exit_value);
+// 		}
+// 		else if (pid > 0)
+// 			exit_value = f_wait_for_child(pid);
+// 		else
+// 			return (perror("fork"), ERROR);
+// 	}
+// 	return (exit_value);
+// }
+
+int	f_exec_cmd(t_ast_node *cmd, t_environ *env, t_pipeline_ctx *pipe_ctx, bool in_pipeline)
 {
 	if (!cmd || cmd->next != NULL)
 		return (ERROR);
 	if (cmd->type == AST_CMD)
 		return (f_exec_simple_cmd(cmd, env, in_pipeline));
-	// else if (cmd->type == AST_SUBSHELL)
-	// 	return (f_exec_subshell(cmd, old_exit_value, in_pipeline));
+	else if (cmd->type == AST_SUBSHELL)
+		return (f_exec_subshell(cmd, env, pipe_ctx));
 	else
 		return (ERROR);
 }
@@ -138,7 +198,6 @@ int	f_exec_logic_expr(t_ast_node *expr, t_environ *env)
 		return (ERROR);
 	env->old_exit_value = exit_value;
 	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env);
-	// TODO: pass exit_value down through all functions
 	env->old_exit_value = exit_value;
 	if ((expr->data.logical_expr.type == TYPE_AND && exit_value == SUCCESS)
 		|| (expr->data.logical_expr.type == TYPE_OR && exit_value != SUCCESS))
