@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 02:30:53 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 18:57:29 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,12 +165,12 @@ bool	f_isnumeric(char *str)
 }
 
 //FINE
-int	f_exit(long argc, char **argv)
+int	f_exit(long argc, char **argv, bool *error)
 {
 	if (argc > 2)
-		return (printf("minishell: exit: too many arguments\n"), FAIL);
+		return (*error = true, printf("minishell: exit: too many arguments\n"), FAIL);
 	if (argc == 2 && !f_isnumeric(argv[1]))
-		return (printf("minishell: exit: numeric argument required\n"), FAIL);
+		return (*error = true, printf("minishell: exit: numeric argument required\n"), FAIL);
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (argc == 2)
 		return (ft_atoi(argv[1]));
