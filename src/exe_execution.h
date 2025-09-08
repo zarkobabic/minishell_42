@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_execution.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 22:33:45 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/08 23:23:08 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int				f_execute_ast(t_environ *env);
 int				f_exec_logic_expr(t_ast_node *expr, t_environ *env);
 void			f_cleanup_pipeline(pid_t *pid_list, int created_processes,
 					int temp_fd);
-int				f_exec_cmd(t_ast_node *cmd, t_environ *env, t_pipeline_ctx *pipe_ctx, bool in_pipeline);
+int				f_exec_cmd(t_ast_node *cmd, t_environ *env, bool in_pipeline);
 int				f_exec_simple_cmd(t_ast_node *simcmd, t_environ *env,
 					int in_pipeline);
 char			**f_buildargv(t_ast_node *args, long *argc, t_environ *env);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_simple_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 19:04:18 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 19:46:14 by zbabic           ###   ########.fr       */
+/*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
+/*   Updated: 2025/09/08 23:29:49 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

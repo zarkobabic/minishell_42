@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins_cd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/08 20:40:38 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/08 20:44:27 by zbabic           ###   ########.fr       */
+/*   Created: 2025/09/08 20:40:38 by eberkau           #+#    #+#             */
+/*   Updated: 2025/09/08 23:30:20 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
