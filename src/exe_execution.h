@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_execution.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 23:38:24 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/09 03:59:51 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # define TRUE 1
 # define IN 0
 # define OUT 1
+
+// int	g_received_signal;
 
 enum			e_exit_value
 {
@@ -85,5 +87,10 @@ int				f_exec_builtin(t_cmd_ctx *ctx);
 bool			f_is_builtin(char *call);
 bool			f_is_builtin_child(char *call);
 bool			f_is_builtin_parent(char *call);
+
+//signals
+void	f_set_signals_execution_mode(void);
+void	f_set_signals_interactive_mode(void);
+
 
 #endif

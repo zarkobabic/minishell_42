@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/09 01:24:26 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/09 01:33:45 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ char	**f_buildargv(t_ast_node *args, long *argc, t_environ *env)
 	char **argv;
 	long i;
 
-	(void)env; //ADD VARIABLE EXPANSION THIS IS FOR $?
+	(void)env; // TODO: ADD VARIABLE EXPANSION THIS IS FOR $?
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
 	argv = (char **)malloc((*argc + 1) * sizeof(char *));
@@ -109,7 +109,7 @@ int	f_exec_subshell(t_ast_node *subshell, t_environ *env)
 	if (pid == 0)
 	{
 		exit_value = SUCCESS;
-		//exit_value = f_redirect(subshell->data.subshell.redirections);
+		// exit_value = f_redirect(subshell->data.subshell.redirections);
 		if (exit_value == SUCCESS)
 			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr, env);
 		ast_free_tree(env->ast_root);

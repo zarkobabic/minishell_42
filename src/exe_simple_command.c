@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_simple_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/09 01:24:05 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/09 01:33:14 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ static int	f_handle_child_process(t_cmd_ctx *ctx)
 	{
 		if (f_is_builtin_child(ctx->argv[0]))
 			exit_value = f_exec_builtin(ctx);
-		//Add other executables here after
+		// else
+		// 	TODO: Add other executables here after
 	}
 	f_cleanup_child(ctx->env->ast_root, ctx->argv);
 	mini_exit(exit_value, ctx->env);
