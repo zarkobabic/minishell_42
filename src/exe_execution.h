@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_execution.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 19:59:41 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 22:49:09 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,13 @@ enum			e_exit_value
 	ERROR = -1,
 	SUCCESS,
 	FAIL
+};
+
+enum	e_sigmode
+{
+	NONINTERACTIVE = 0,
+	INTERACTIVE,
+	SILENT
 };
 
 typedef struct s_cmd_ctx
@@ -89,11 +96,12 @@ int		f_exec_builtin(t_cmd_ctx *ctx);
 bool	f_is_builtin(char *call);
 bool	f_is_builtin_child(char *call);
 bool	f_is_builtin_parent(char *call);
+
 //exe_simple_cmd
 void	free_argv(char ***argv);
+
 //signals
-void	f_set_signals_execution_mode(t_env *env);
-void	f_set_signals_interactive_mode(t_env *env);
+void	f_set_signals(int mode, t_env *env);
 
 
 #endif

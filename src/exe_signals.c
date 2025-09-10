@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:33:15 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 22:48:35 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,6 @@
 
 #define MSG_SIGQUIT "Quit: 3\n"
 #define MSG_SIGINT "^C\n"
-
-enum	e_sigmode
-{
-	NONINTERACTIVE = 0,
-	INTERACTIVE,
-	SILENT
-};
 
 static void	f_signal_noninteractive_sigquit(int signo)
 {
