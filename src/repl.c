@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 03:56:14 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 22:42:34 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// int	g_received_signal = 0;
 
 void	process_input(char *input, t_env *env)
 {
@@ -52,6 +50,7 @@ int	main(int argc, char **argv)
 {
 	char	*input;
 	char	*prompt;
+	int		is_terminal;
 	t_env	env;
 
 	if (argc != 1)
@@ -61,17 +60,18 @@ int	main(int argc, char **argv)
 	if(f_build_environ(&env.minienviron) != SUCCESS)
 		exit(FAIL);
 	rl_catch_signals = 0;
-	f_set_signals_execution_mode(&env);
+	is_terminal = isatty(STDIN_FILENO);
+	f_set_signals(NONINTERACTIVE, &env);
 	printf("Welcome to minishell!\n");
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			f_set_signals_interactive_mode(&env);			
+		if (is_terminal)
+			f_set_signals(INTERACTIVE, &env);			
 		input = readline(prompt);
 		if (!input)
 		{
-			if(isatty(STDIN_FILENO))
-				write(STDOUT_FILENO, "exit\n", 5);
+			if(is_terminal)
+				write(STDERR_FILENO, "exit\n", 5);
 			break ;
 		}
 		if (ft_strlen(input) == 0)
@@ -80,11 +80,14 @@ int	main(int argc, char **argv)
 			continue ;
 		}
 		add_history(input);
-		f_set_signals_execution_mode(&env);
+		if (ft_strnstr(input, "/minishell", 11))
+			f_set_signals(SILENT, &env);
+		else
+			f_set_signals(NONINTERACTIVE, &env);
 		process_input(input, &env);
 		free(input);
 		rl_on_new_line();
-	}	
+	}
 	mini_exit(0, &env);
 	return (0);
 }

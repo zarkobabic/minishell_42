@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 03:43:07 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 22:33:15 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,15 @@
 #define MSG_SIGQUIT "Quit: 3\n"
 #define MSG_SIGINT "^C\n"
 
+enum	e_sigmode
+{
+	NONINTERACTIVE = 0,
+	INTERACTIVE,
+	SILENT
+};
+
 static void	f_signal_noninteractive_sigquit(int signo)
 {
-	// g_received_signal = signo;
 	(void)signo;
 	// if (isatty(STDOUT_FILENO)) // FIXME: check condition
 		write(STDERR_FILENO, MSG_SIGQUIT, sizeof(MSG_SIGQUIT));
@@ -32,7 +38,6 @@ static void	f_signal_noninteractive_sigquit(int signo)
 // FIXME: test, if behavior differs in interactive vs noninteractive; if not, remove this function
 static void	f_signal_noninteractive_sigint(int signo)
 {
-	// g_received_signal = signo;
 	(void)signo;
 	// if (isatty(STDOUT_FILENO)) // FIXME: check condition
 		write(STDERR_FILENO, "\n", 1);
@@ -41,23 +46,8 @@ static void	f_signal_noninteractive_sigint(int signo)
 	// rl_redisplay();
 }
 
-void	f_set_signals_execution_mode(t_env *env)
-{
-	struct sigaction	act_conf_sigint;
-	struct sigaction	act_conf_sigquit;
-
-	ft_bzero(&act_conf_sigint, sizeof(act_conf_sigint));
-	ft_bzero(&act_conf_sigquit, sizeof(act_conf_sigquit));
-	act_conf_sigint.sa_handler = f_signal_noninteractive_sigint;
-	act_conf_sigquit.sa_handler = f_signal_noninteractive_sigquit;
-	if (sigaction(SIGINT, &act_conf_sigint, NULL) == -1
-		|| sigaction(SIGQUIT, &act_conf_sigquit, NULL) == -1)
-		mini_exit(ERROR, env);
-}
-
 static void	f_signal_reset_prompt(int signo)
 {
-	// g_received_signal = signo;
 	(void)signo;
 	if (isatty(STDIN_FILENO))
 		write(STDERR_FILENO, MSG_SIGINT, sizeof(MSG_SIGINT));
@@ -66,15 +56,25 @@ static void	f_signal_reset_prompt(int signo)
 	rl_redisplay();
 }
 
-void	f_set_signals_interactive_mode(t_env *env)
+void	f_set_signals(int mode, t_env *env)
 {
 	struct sigaction	act_conf_sigint;
 	struct sigaction	act_conf_sigquit;
 
 	ft_bzero(&act_conf_sigint, sizeof(act_conf_sigint));
 	ft_bzero(&act_conf_sigquit, sizeof(act_conf_sigquit));
-	act_conf_sigint.sa_handler = f_signal_reset_prompt;
-	act_conf_sigquit.sa_handler = SIG_IGN;
+	if (mode == NONINTERACTIVE)
+	{
+		act_conf_sigint.sa_handler = f_signal_noninteractive_sigint;
+		act_conf_sigquit.sa_handler = f_signal_noninteractive_sigquit;
+	}
+	else if (mode >= INTERACTIVE)
+	{
+		act_conf_sigint.sa_handler = f_signal_reset_prompt;
+		act_conf_sigquit.sa_handler = SIG_IGN;
+	}
+	if (mode == SILENT)
+		act_conf_sigint.sa_handler = SIG_IGN;
 	if (sigaction(SIGINT, &act_conf_sigint, NULL) == -1
 		|| sigaction(SIGQUIT, &act_conf_sigquit, NULL) == -1)
 		mini_exit(ERROR, env);
