@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 16:40:40 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/06 19:07:30 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 23:03:14 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,18 +179,3 @@ char	**get_all_matched_names(char *pattern)
 	closedir(dir);
 	return (result);
 }
-
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char	**matched;
-// 	long	i;
-
-// 	i = 0;
-// 	matched = get_all_matched_names("*qu*");
-// 	bash_sort(matched);
-// 	while (matched[i])
-// 		printf("%s ", matched[i++]);
-// 	string_array_free_all(matched);
-// }

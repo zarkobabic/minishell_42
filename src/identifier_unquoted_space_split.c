@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 23:18:51 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/06 00:51:54 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 22:26:54 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,28 +171,3 @@ char	**split_by_unquoted_space(const char *str)
 	}
 	return (result);
 }
-
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char	**result;
-// 	long	i;
-// 	char	*test = "hello.   $mama asd $$$ 'world test'
-// \"another quote\" asdsad &&&& sadfas ^^ asdf $$.    ";
-
-// 	result = split_by_unquoted_space(test);
-// 	if (!result)
-// 	{
-// 		printf("Error: split_by_unquoted_space returned NULL\n");
-// 		return (1);
-// 	}
-// 	i = 0;
-// 	while (result[i])
-// 	{
-// 		printf("Word %ld: |%s|\n", i, result[i]);
-// 		i++;
-// 	}
-// 	free_split(result);
-// 	return (0);
-// }

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:09:06 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 22:53:56 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,30 +88,34 @@ char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
 	char	**result_array;
 
 	arg_list_initialize(&arg_list);
-	while(args) //expansion for each t_ast_node args in args linked list
+	while(args)
 	{
 		expanded_string = identifier_expand_variables_in_string(args->data.identifier.string_value, env);
 		if(!expanded_string)
 			return NULL;
 		splitted_string = split_by_unquoted_space(expanded_string);
 		free(expanded_string);
+		if(!splitted_string)
+			return NULL;
 		i = 0;
 		while (splitted_string[i])
 		{
 			j = 0;
-			temp_matched = get_all_matched_names(splitted_string[i]); //TODO: check if it fails
-			//TODO: add cleanup if temp_matched fails
+			temp_matched = get_all_matched_names(splitted_string[i]);
+			if(!temp_matched)
+				return (free_split(splitted_string), NULL);
 			while(temp_matched[j])
 			{
-				temp = remove_quotes(temp_matched[j]); //TODO: check if it fails
+				temp = remove_quotes(temp_matched[j]);
+				if(!temp)
+					return (free_split(temp_matched), free_split(splitted_string), NULL);
 				arg_list_append(&arg_list, temp);
 				++j;
 			}
-			free(temp_matched);
-			free(splitted_string[i]);
+			free_split(temp_matched);
 			++i;
 		}
-		free(splitted_string);
+		free_split(splitted_string);
 		args = args->next;
 	}
 	result_array = arg_list_to_array_shallow(&arg_list);
@@ -120,31 +124,15 @@ char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
 	return result_array;
 }
 
-// TODO: ADD VARIABLE EXPANSION THIS IS FOR $?
-// FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
 char	**f_buildargv(t_ast_node *args, long *argc, t_env *env, bool *empty_string)
 {
 	char **argv;
-	// long i;
 
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
-	
 	argv = identifier_process_arguments(args, argc, env);
 	if(*argc == 0)
 		*empty_string = true;
-	// if (!argv)
-	// 	return (NULL);
-	// i = 0;
-	// while (args && i < *argc)
-	// {
-	// 	argv[i] = args->data.identifier.string_value;
-	// 	args = args->next;
-	// 	++i;
-	// }
-	// argv[i] = NULL;
-	// if (args || i != *argc)
-	// 	return (free(argv), NULL);
 	return (argv);
 }
 

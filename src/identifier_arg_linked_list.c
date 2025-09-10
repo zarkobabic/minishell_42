@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 15:14:33 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 18:15:29 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 22:25:56 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool	arg_list_append(t_arg_list *list, char *string_value)
 		return (false);
 	new_node = arg_node_create(string_value);
 	if (!new_node)
-		return (free(string_value), false); //proveri da li treba free na kraju
+		return (free(string_value), false);
 	if (!list->head)
 		list->head = new_node;
 	else
@@ -83,26 +83,25 @@ void	arg_list_free_shallow(t_arg_list *list)
 	list->tail = NULL;
 }
 
-char **arg_list_to_array_shallow(t_arg_list *list)
+char	**arg_list_to_array_shallow(t_arg_list *list)
 {
-	char **array;
-	t_arg_node *current;
-	long i;
+	char		**array;
+	t_arg_node	*current;
+	long		i;
 
-    if (!list || !list->head || list->size <= 0)
-        return NULL;
-    
-    array = malloc(sizeof(char *) * (list->size + 1));
+	if (!list || !list->head || list->size <= 0)
+		return (NULL);
+	array = malloc(sizeof(char *) * (list->size + 1));
 	if (!array)
-        return NULL;
+		return (NULL);
 	current = list->head;
-    i = 0;
-    while (current && i < list->size)
-    {
-        array[i] = current->string_value;
-        current = current->next;
-        i++;
-    }
-    array[list->size] = NULL;
-    return array;
+	i = 0;
+	while (current && i < list->size)
+	{
+		array[i] = current->string_value;
+		current = current->next;
+		i++;
+	}
+	array[list->size] = NULL;
+	return (array);
 }
