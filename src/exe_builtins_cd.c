@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 20:40:38 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 23:30:20 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 02:07:48 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,14 @@ static char	*f_handle_oldpwd(char ***environ)
 
 static int	f_change_directory_and_update_env(char ***environ, char *path)
 {
-	char	*current_pwd;
+	char	*old_pwd;
 	char	*new_pwd;
 
 	if (chdir(path) == -1)
 		return (perror("minishell: cd"), FAIL);
-	current_pwd = f_getenv(*environ, "PWD");
-	f_setenv(environ, "OLDPWD", current_pwd, true);
+	old_pwd = f_getenv(*environ, "PWD");
+	if (old_pwd)
+		f_setenv(environ, "OLDPWD", old_pwd, true);
 	new_pwd = getcwd(NULL, 0);
 	f_setenv(environ, "PWD", new_pwd, true);
 	free(new_pwd);

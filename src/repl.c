@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/09 03:59:48 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 03:56:14 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 // int	g_received_signal = 0;
 
-void	process_input(char *input, t_environ *env)
+void	process_input(char *input, t_env *env)
 {
 	t_command_line	*tree;
 	t_ast_node		*ast_tree;
@@ -38,7 +38,7 @@ void	process_input(char *input, t_environ *env)
 	ast_free_tree(ast_tree);
 }
 
-void	mini_exit(int exit_status, t_environ *env)
+void	mini_exit(int exit_status, t_env *env)
 {
 	f_destroy_environ(&env->minienviron, ENV_DELETE_ALL);
 	clear_history();
@@ -52,7 +52,7 @@ int	main(int argc, char **argv)
 {
 	char	*input;
 	char	*prompt;
-	t_environ env;
+	t_env	env;
 
 	if (argc != 1)
 		return (printf("ERROR: invalid arguments\n"), 1);
@@ -61,13 +61,12 @@ int	main(int argc, char **argv)
 	if(f_build_environ(&env.minienviron) != SUCCESS)
 		exit(FAIL);
 	rl_catch_signals = 0;
+	f_set_signals_execution_mode(&env);
 	printf("Welcome to minishell!\n");
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			f_set_signals_interactive_mode();
-		else
-			f_set_signals_execution_mode();
+			f_set_signals_interactive_mode(&env);			
 		input = readline(prompt);
 		if (!input)
 		{
@@ -81,7 +80,7 @@ int	main(int argc, char **argv)
 			continue ;
 		}
 		add_history(input);
-		f_set_signals_execution_mode();
+		f_set_signals_execution_mode(&env);
 		process_input(input, &env);
 		free(input);
 		rl_on_new_line();

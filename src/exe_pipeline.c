@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:25:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 23:29:45 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 02:20:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int	f_setup_child_pipes(t_pipeline_ctx *ctx, t_ast_node *temp_cmd)
 }
 
 // Execute child process
-static void	f_execute_child_process(t_ast_node *temp_cmd, t_environ *env)
+static void	f_execute_child_process(t_ast_node *temp_cmd, t_env *env)
 {
 	int	exit_value;
 
@@ -77,7 +77,7 @@ static int	f_handle_fork_error(t_ast_node *temp_cmd, t_pipeline_ctx *ctx)
 }
 
 // Handle child process
-static int	f_handle_child_process(t_ast_node *temp_cmd, t_environ *env,
+static int	f_handle_child_process(t_ast_node *temp_cmd, t_env *env,
 		t_pipeline_ctx *ctx)
 {
 	if (f_setup_child_pipes(ctx, temp_cmd) == ERROR)
@@ -90,7 +90,7 @@ static int	f_handle_child_process(t_ast_node *temp_cmd, t_environ *env,
 }
 
 // Process single command
-static int	f_process_single_cmd(t_ast_node *temp_cmd, t_environ *env,
+static int	f_process_single_cmd(t_ast_node *temp_cmd, t_env *env,
 		t_pipeline_ctx *ctx)
 {
 	if (temp_cmd->next)
@@ -116,7 +116,7 @@ static int	f_process_single_cmd(t_ast_node *temp_cmd, t_environ *env,
 }
 
 // Create all pipeline processes
-static int	f_create_pipeline_processes(t_ast_node *pipeline, t_environ *env,
+static int	f_create_pipeline_processes(t_ast_node *pipeline, t_env *env,
 		t_pipeline_ctx *ctx)
 {
 	t_ast_node	*temp_cmd;
@@ -144,7 +144,7 @@ static int	f_wait_for_pipeline(pid_t *pid_list, int cmd_count)
 	return (exit_value);
 }
 
-int	f_exec_pipeline(t_ast_node *pipeline, t_environ *env)
+int	f_exec_pipeline(t_ast_node *pipeline, t_env *env)
 {
 	t_pipeline_ctx	ctx;
 	int				exit_value;

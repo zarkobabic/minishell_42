@@ -6,14 +6,14 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/09 01:33:45 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 02:20:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
 #include <sys/wait.h>
 
-int		f_exec_logic_expr(t_ast_node *expr, t_environ *env);
+int		f_exec_logic_expr(t_ast_node *expr, t_env *env);
 
 bool	f_is_builtin_parent(char *call)
 {
@@ -76,7 +76,7 @@ int	f_wait_for_child(pid_t pid)
 }
 
 // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
-char	**f_buildargv(t_ast_node *args, long *argc, t_environ *env)
+char	**f_buildargv(t_ast_node *args, long *argc, t_env *env)
 {
 	char **argv;
 	long i;
@@ -100,7 +100,7 @@ char	**f_buildargv(t_ast_node *args, long *argc, t_environ *env)
 	return (argv);
 }
 
-int	f_exec_subshell(t_ast_node *subshell, t_environ *env)
+int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 {
 	pid_t	pid;
 	int		exit_value;
@@ -122,7 +122,7 @@ int	f_exec_subshell(t_ast_node *subshell, t_environ *env)
 	return (exit_value);
 }
 
-int	f_exec_cmd(t_ast_node *cmd, t_environ *env, bool in_pipeline)
+int	f_exec_cmd(t_ast_node *cmd, t_env *env, bool in_pipeline)
 {
 	if (!cmd || cmd->next != NULL)
 		return (ERROR);
@@ -151,7 +151,7 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 		free(pid_list);
 }
 
-int	f_exec_logic_expr(t_ast_node *expr, t_environ *env)
+int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 {
 	static int	exit_value;
 
@@ -167,7 +167,7 @@ int	f_exec_logic_expr(t_ast_node *expr, t_environ *env)
 	return (exit_value);
 }
 
-int	f_execute_ast(t_environ *env)
+int	f_execute_ast(t_env *env)
 {
 	if (!env->ast_root || env->ast_root->type != AST_LOGICAL_EXPR)
 		return (ERROR);

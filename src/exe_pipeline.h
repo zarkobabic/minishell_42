@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_pipeline.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:16:17 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 22:33:56 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 02:20:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,6 @@
 # include <unistd.h>
 # include "exe_execution.h"
 
-int			f_exec_pipeline(t_ast_node *pipeline, t_environ *env);
+int			f_exec_pipeline(t_ast_node *pipeline, t_env *env);
 
 #endif

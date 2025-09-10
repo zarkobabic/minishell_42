@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_environment.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:21:41 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 20:17:44 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 02:20:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct s_environment_to_keep_track_of
 	char		**minienviron;
 	t_ast_node	*ast_root;
 	int			old_exit_value;
-}				t_environ;
+}				t_env;
 
 // environment table management
 
