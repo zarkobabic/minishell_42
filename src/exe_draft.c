@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:53:56 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 01:16:51 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 
 int	f_exec_cmd(t_ast_node *cmd, t_env *env, bool in_pipeline)
 {
-	if (!cmd || cmd->next != NULL)
+	if (!cmd)
 		return (ERROR);
 	if (cmd->type == AST_CMD)
 		return (f_exec_simple_cmd(cmd, env, in_pipeline));
