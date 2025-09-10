@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 02:20:31 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 19:14:48 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ void	f_cleanup_child(t_ast_node *root, char **argv)
 {
 	ast_free_tree(root);
 	if (argv)
-		free(argv);
+		free_argv(&argv);
+		//free(argv);
 }
 
 int	f_wait_for_child(pid_t pid)
@@ -75,28 +76,79 @@ int	f_wait_for_child(pid_t pid)
 	return (exit_value);
 }
 
+char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
+{
+	char	*expanded_string;
+	t_arg_list	arg_list;
+	char	**splitted_string;
+	long	i;
+	long	j;
+	char	**temp_matched;
+	char	*temp;
+	char	**result_array;
+
+	arg_list_initialize(&arg_list);
+	while(args) //expansion for each t_ast_node args in args linked list
+	{
+		expanded_string = identifier_expand_variables_in_string(args->data.identifier.string_value, env);
+		//if(!empty_arg && expanded_string == NULL) error
+		// if(empty_str)
+		// {
+		// 	free(expanded_string);
+		// 	args = args->next;
+		// 	continue;
+		// }
+		//dodaj guard ako je expanded string == NULL
+		splitted_string = split_by_unquoted_space(expanded_string);
+		free(expanded_string);
+		i = 0;
+		while (splitted_string[i])
+		{
+			j = 0;
+			temp_matched = get_all_matched_names(splitted_string[i]); //TODO: check if it fails
+			//TODO: add cleanup if temp_matched fails
+			while(temp_matched[j])
+			{
+				temp = remove_quotes(temp_matched[j]); //TODO: check if it fails
+				arg_list_append(&arg_list, temp);
+				++j;
+			}
+			free(temp_matched);
+			free(splitted_string[i]);
+			++i;
+		}
+		free(splitted_string);
+		args = args->next;
+	}
+	result_array = arg_list_to_array_shallow(&arg_list);
+	*argc = arg_list.size;
+	arg_list_free_shallow(&arg_list);
+	return result_array;
+}
+
+// TODO: ADD VARIABLE EXPANSION THIS IS FOR $?
 // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
 char	**f_buildargv(t_ast_node *args, long *argc, t_env *env)
 {
 	char **argv;
-	long i;
+	// long i;
 
-	(void)env; // TODO: ADD VARIABLE EXPANSION THIS IS FOR $?
 	if (!args || args->type != AST_IDENTIFIER)
 		return (NULL);
-	argv = (char **)malloc((*argc + 1) * sizeof(char *));
-	if (!argv)
-		return (NULL);
-	i = 0;
-	while (args && i < *argc)
-	{
-		argv[i] = args->data.identifier.string_value;
-		args = args->next;
-		++i;
-	}
-	argv[i] = NULL;
-	if (args || i != *argc)
-		return (free(argv), NULL);
+	
+	argv = identifier_process_arguments(args, argc, env);
+	// if (!argv)
+	// 	return (NULL);
+	// i = 0;
+	// while (args && i < *argc)
+	// {
+	// 	argv[i] = args->data.identifier.string_value;
+	// 	args = args->next;
+	// 	++i;
+	// }
+	// argv[i] = NULL;
+	// if (args || i != *argc)
+	// 	return (free(argv), NULL);
 	return (argv);
 }
 

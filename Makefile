@@ -45,6 +45,13 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				exe_builtins_cd.c \
 				exe_signals.c \
 				exe_path_resolution.c \
+				identifier_arg_linked_list.c \
+				identifier_quote_remove.c \
+				identifier_unquoted_space_split.c \
+				identifier_var_expansion.c \
+				identifier_wildcard_curr_dir.c \
+				identifier_wildcard.c \
+
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
 

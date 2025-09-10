@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   exe_simple_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 03:54:58 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/10 19:17:58 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
+
+void	free_argv(char ***argv)
+{
+	long	i;
+
+	i = 0;
+	if(!argv || !(*argv))
+		return ;
+	while((*argv)[i])
+	{
+		free((*argv)[i]);
+		++i;
+	}
+	free(*argv);
+	*argv = NULL;
+}
 
 int	f_exec_external(t_cmd_ctx *ctx)
 {
@@ -37,7 +53,7 @@ static int	f_prepare_argv(t_ast_node *simcmd, t_cmd_ctx *ctx)
 	ctx->argc = simcmd->data.command.arg_cnt;
 	ctx->argv = f_buildargv(simcmd->data.command.args, &ctx->argc, ctx->env);
 	if (!ctx->argv)
-		return (perror("arg list"), ERROR);
+		return (perror("argument building failed"), ERROR);
 	return (SUCCESS);
 }
 
@@ -52,7 +68,7 @@ static int	f_setup_builtin_parent_fds(t_cmd_ctx *ctx)
 			close(ctx->orig_fds[IN]);
 		if (ctx->orig_fds[OUT] != -1)
 			close(ctx->orig_fds[OUT]);
-		free(ctx->argv);
+		free_argv(&ctx->argv);
 		return (perror("dup"), ERROR);
 	}
 	return (SUCCESS);
@@ -77,7 +93,7 @@ static int	f_exec_builtin_parent(t_cmd_ctx *ctx)
 	close(ctx->orig_fds[OUT]);
 	if (ft_strncmp(ctx->argv[0], "exit", 5) == 0 && ctx->error == false)
 	{
-		free(ctx->argv);
+		free_argv(&ctx->argv);
 		ast_free_tree(ctx->env->ast_root);
 		mini_exit(exit_value, ctx->env);
 	}
@@ -116,7 +132,7 @@ static int	f_fork_cmd(t_cmd_ctx *ctx)
 		exit_value = f_wait_for_child(pid);
 	else
 	{
-		free(ctx->argv);
+		free_argv(&ctx->argv);
 		return (perror("fork"), ERROR);
 	}
 	return (exit_value);
@@ -152,12 +168,14 @@ int	f_exec_simple_cmd(t_ast_node *simcmd, t_env *env, int in_pipeline)
 	ctx.in_pipeline = in_pipeline;
 	if (f_prepare_argv(simcmd, &ctx) == ERROR)
 		return (ERROR);
+	// if(!ctx.argv) //empty string
+	// 	return (0);
 	if (!in_pipeline && f_is_builtin_parent(ctx.argv[0]))
 		exit_value = f_exec_builtin_parent(&ctx);
 	else if (!in_pipeline)
 		exit_value = f_fork_cmd(&ctx);
 	else
 		exit_value = f_exec_in_pipeline(&ctx);
-	free(ctx.argv);
+	free_argv(&ctx.argv);
 	return (exit_value);
 }
