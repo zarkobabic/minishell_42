@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 19:14:48 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 20:00:29 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
 
 // TODO: ADD VARIABLE EXPANSION THIS IS FOR $?
 // FIXME: check when old_exit_value needs to be expanded and is maybe not needed anymore
-char	**f_buildargv(t_ast_node *args, long *argc, t_env *env)
+char	**f_buildargv(t_ast_node *args, long *argc, t_env *env, bool *empty_string)
 {
 	char **argv;
 	// long i;
@@ -137,6 +137,8 @@ char	**f_buildargv(t_ast_node *args, long *argc, t_env *env)
 		return (NULL);
 	
 	argv = identifier_process_arguments(args, argc, env);
+	if(*argc == 0)
+		*empty_string = true;
 	// if (!argv)
 	// 	return (NULL);
 	// i = 0;

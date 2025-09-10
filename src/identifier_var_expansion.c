@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 19:14:29 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 19:51:13 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,21 +282,3 @@ char	*identifier_expand_variables_in_string(char *str, t_env *env)
 		return (NULL);
 	return (new_str);
 }
-
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char	*str;
-// 	char	*new_str;
-
-// 	str = "$?fghj$USER$AKSDFKAKF'$HOME'sdf$halo-asd$";
-// 	// str = "mama$USER koko";
-// 	if (!str)
-// 		new_str = "blabla"; // invalid case, argument cannot be null,
-// 					// it is at least empty string
-// 	else
-// 		new_str = identifier_expand_variables_in_string(str);
-// 	printf("%s", new_str);
-// 	return (0);
-// }

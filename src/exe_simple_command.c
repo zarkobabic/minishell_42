@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 19:17:58 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 20:00:04 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,12 @@ int	f_exec_external(t_cmd_ctx *ctx)
 // Prepare argv for command execution
 static int	f_prepare_argv(t_ast_node *simcmd, t_cmd_ctx *ctx)
 {
+	bool	empty_string;
+
+	empty_string = false;
 	ctx->argc = simcmd->data.command.arg_cnt;
-	ctx->argv = f_buildargv(simcmd->data.command.args, &ctx->argc, ctx->env);
-	if (!ctx->argv)
+	ctx->argv = f_buildargv(simcmd->data.command.args, &ctx->argc, ctx->env, &empty_string);
+	if (!ctx->argv && !empty_string)
 		return (perror("argument building failed"), ERROR);
 	return (SUCCESS);
 }
@@ -168,8 +171,8 @@ int	f_exec_simple_cmd(t_ast_node *simcmd, t_env *env, int in_pipeline)
 	ctx.in_pipeline = in_pipeline;
 	if (f_prepare_argv(simcmd, &ctx) == ERROR)
 		return (ERROR);
-	// if(!ctx.argv) //empty string
-	// 	return (0);
+	if(!ctx.argv) //empty string
+		return (0);
 	if (!in_pipeline && f_is_builtin_parent(ctx.argv[0]))
 		exit_value = f_exec_builtin_parent(&ctx);
 	else if (!in_pipeline)

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 19:16:38 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 19:59:41 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes,
 int		f_exec_cmd(t_ast_node *cmd, t_env *env, bool in_pipeline);
 int		f_exec_simple_cmd(t_ast_node *simcmd, t_env *env,
 			int in_pipeline);
-char	**f_buildargv(t_ast_node *args, long *argc, t_env *env);
+char	**f_buildargv(t_ast_node *args, long *argc, t_env *env, bool *empty_string);
 int		f_wait_for_child(pid_t pid);
 void	f_cleanup_child(t_ast_node *root, char **argv);
 int		f_exec_builtin(t_cmd_ctx *ctx);
