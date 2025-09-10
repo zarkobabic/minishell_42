@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:17:38 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 00:13:57 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_environment.h"
 #include "exe_execution.h"
 #define PATHLENGTH 256
+#define ENV_ARGC_ERRMSG "minishell: env: too many arguments for this \
+	minishell implementation\n"
 
 int	f_echo(long argc, char **argv)
 {
@@ -20,7 +22,11 @@ int	f_echo(long argc, char **argv)
 	long	i;
 
 	if (argc <= 1)
+	{
+		if (-1 == write(STDOUT_FILENO, "\n", 1))
+			return (perror("write"), FAIL);
 		return (SUCCESS);
+	}
 	n_flag = !(bool)ft_strncmp(argv[1], "-n", 3);
 	i = 1 + n_flag;
 	while (i < argc)
@@ -49,7 +55,8 @@ int	f_pwd(void)
 	working_dir = getcwd(NULL, 0);
 	if (!working_dir)
 		return (perror("getcwd"), FAIL);
-	printf("%s\n", working_dir);
+	ft_putendl_fd(working_dir, STDOUT_FILENO);
+	// printf("%s\n", working_dir);
 	free(working_dir);
 	return (SUCCESS);
 }
@@ -59,8 +66,7 @@ int	f_env(char **environ, long argc, bool export_call)
 	int	i;
 
 	if (argc > 1)
-		return (printf("minishell: env: too many arguments for this "
-				"minishell implementation\n"), FAIL);
+		return (printf(ENV_ARGC_ERRMSG), FAIL);
 	i = -1;
 	while (environ[++i])
 	{

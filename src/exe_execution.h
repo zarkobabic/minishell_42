@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:49:09 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 00:00:28 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@
 
 # define FALSE 0
 # define TRUE 1
-# define IN 0
-# define OUT 1
 
 // int	g_received_signal;
 
