@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 19:51:13 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 20:27:11 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ static void copy_old_exit_value(int old_exit_value, char *new_str, long *new_cnt
 	--old_exit_value_num_of_digits;
 	while(old_exit_value_num_of_digits >= 0)
 	{
-		new_str[*new_cnt + old_exit_value_num_of_digits] = old_exit_value % 10;
+		new_str[*new_cnt + old_exit_value_num_of_digits] = '0' + old_exit_value % 10;
 		old_exit_value = old_exit_value / 10;
 		--old_exit_value_num_of_digits;
 	}

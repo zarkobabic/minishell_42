@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 20:00:29 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/10 22:09:06 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,14 +91,8 @@ char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
 	while(args) //expansion for each t_ast_node args in args linked list
 	{
 		expanded_string = identifier_expand_variables_in_string(args->data.identifier.string_value, env);
-		//if(!empty_arg && expanded_string == NULL) error
-		// if(empty_str)
-		// {
-		// 	free(expanded_string);
-		// 	args = args->next;
-		// 	continue;
-		// }
-		//dodaj guard ako je expanded string == NULL
+		if(!expanded_string)
+			return NULL;
 		splitted_string = split_by_unquoted_space(expanded_string);
 		free(expanded_string);
 		i = 0;
@@ -207,9 +201,9 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 
 int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 {
-	static int	exit_value;
-
-	exit_value = 0;
+	static int	exit_value = 0; //TODO: Important: If 
+	//formater put this 0 down exit value needs to
+	// be initialized here static int exit_value = 0
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
 	env->old_exit_value = exit_value;
