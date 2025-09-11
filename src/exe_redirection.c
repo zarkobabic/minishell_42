@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 18:48:03 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 20:11:49 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,34 +64,6 @@ static int	f_redirect_in(char **target)
 	return (SUCCESS);
 }
 
-// static int	f_redirect_out(char **target)
-// {
-// 	int		file;
-
-// 	file = -1;
-// 	file = open(target[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 	if (file < 0)
-// 		return (perror(target[0]), FAIL);
-// 	else if (dup2(file, STDOUT_FILENO) == -1)
-// 		return (close(file), perror("dup2 redirect out"), ERROR);
-// 	close(file);
-// 	return (SUCCESS);
-// }
-
-// static int	f_redirect_append(char **target)
-// {
-// 	int	file;
-
-// 	file = -1;
-// 	file = open(target[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
-// 	if (file < 0)
-// 		return (perror(target[0]), FAIL);
-// 	else if (dup2(file, STDOUT_FILENO) == -1)
-// 		return (close(file), perror("dup2 redirect append"), ERROR);
-// 	close(file);
-// 	return (SUCCESS);
-// }
-
 static int	f_redirect_out_append(char **target, int mode)
 {
 	int	file;
@@ -127,18 +99,19 @@ static int	f_redirect_simple(t_ast_node *redirection, t_env *env)
 	return (return_value);
 }
 
-static int	f_redirect_heredoc(t_ast_node *redirection)
+static int	f_redirect_heredoc(t_ast_node *redirection, t_env *env)
 {
 	char	*input;
+	char	*temp;
 	int		temp_file;
-	// bool	expansion_flag;
 	size_t	target_len;
+	bool	expansion_flag;
 
-	// expansion_flag = !is_containing_quotes(redirection->data.redirection.target);
+	expansion_flag = !is_containing_quotes(redirection->data.redirection.target);
 	temp_file = open(HEREDOC_FILE_NAME, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (temp_file < 0)
 		return (perror("heredoc temp file creation"), FAIL);
-	// redirection->data.redirection.target = remove_quotes(redirection->data.redirection.target);
+	redirection->data.redirection.target = remove_quotes(redirection->data.redirection.target);
 	target_len = ft_strlen(redirection->data.redirection.target);
 	while (1)
 	{
@@ -148,10 +121,12 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 			free(input);
 			break ;
 		}
-		// if (expansion_flag)
-		// 	input = identifier_expand_variables_in_string(input);
-		// input_len = ft_strlen(input);
-		// write(temp_file, input, input_len);
+		if (expansion_flag)
+		{
+			temp = identifier_expand_variables_in_string(input, env, true);
+			free(input);
+			input = temp;
+		}
 		ft_putstr_fd_fail_safe(input, temp_file);
 		write(temp_file, "\n", 1);
 		free(input);
@@ -179,7 +154,6 @@ int	f_redirect(t_ast_node *redirections, t_env *env)
 
 	if (!redirections)
 		return (SUCCESS);
-	// TODO: variable expansion
 	return_value = SUCCESS;
 	while (redirections)
 	{
@@ -187,12 +161,8 @@ int	f_redirect(t_ast_node *redirections, t_env *env)
 			|| redirections->data.redirection.type == TYPE_REDIRECT_OUT
 			|| redirections->data.redirection.type == TYPE_REDIRECT_APPEND)
 			return_value = f_redirect_simple(redirections, env);
-		// else if (redirections->data.redirection.type == TYPE_REDIRECT_OUT)
-		// 	return_value = f_redirect_out(redirections, env);
-		// else if (redirections->data.redirection.type == TYPE_REDIRECT_APPEND)
-		// 	return_value = f_redirect_append(redirections/* , env */);
 		else if (redirections->data.redirection.type == TYPE_REDIRECT_HEREDOC)
-			return_value = f_redirect_heredoc(redirections/* , env */);
+			return_value = f_redirect_heredoc(redirections, env);
 		if (return_value != SUCCESS)
 			return (return_value);
 		redirections = redirections->next;
