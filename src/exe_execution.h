@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 00:00:28 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 03:36:23 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,9 @@ void	free_argv(char ***argv);
 
 //signals
 void	f_set_signals(int mode, t_env *env);
+
+
+char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env);
 
 
 #endif

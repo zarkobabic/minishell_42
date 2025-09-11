@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_environment_access.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:02:20 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 21:14:29 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 03:53:42 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	f_build_environ(char ***minienviron)
 				perror("environ creation copy"), ERROR);
 	}
 	(*minienviron)[i] = NULL;
+	// f_fill_default(); // TODO
 	return (SUCCESS);
 }
 

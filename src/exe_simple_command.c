@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_simple_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 20:00:04 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 03:35:46 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,9 @@ int	f_exec_external(t_cmd_ctx *ctx)
 // Prepare argv for command execution
 static int	f_prepare_argv(t_ast_node *simcmd, t_cmd_ctx *ctx)
 {
-	bool	empty_string;
-
-	empty_string = false;
 	ctx->argc = simcmd->data.command.arg_cnt;
-	ctx->argv = f_buildargv(simcmd->data.command.args, &ctx->argc, ctx->env, &empty_string);
-	if (!ctx->argv && !empty_string)
+	ctx->argv = identifier_process_arguments(simcmd->data.command.args, &ctx->argc, ctx->env);
+	if (!ctx->argv && ctx->argc != 0)
 		return (perror("argument building failed"), ERROR);
 	return (SUCCESS);
 }

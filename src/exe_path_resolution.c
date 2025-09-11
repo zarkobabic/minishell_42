@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 00:39:51 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 02:00:31 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 03:49:20 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*handle_executable_from_path_env(const char *command, char *path_cpy)
 /// returns string that you can and should free, doesnt free command argument
 /// @param command
 /// @return
-char	*resolve_executable_path(/* char **environ,  */const char *command)
+char	*resolve_executable_path(char **environ, const char *command)
 {
 	char	*path_env;
 	long	path_len;
@@ -99,7 +99,7 @@ char	*resolve_executable_path(/* char **environ,  */const char *command)
 
 	if (ft_strchr(command, '/') != NULL)
 		return (handle_absolute_relative_path(command));
-	path_env = /* f_ */getenv(/* environ,  */"PATH"); // FIXME: use newly implemented environment functions or stick to systemPATH?
+	path_env = f_getenv(environ, "PATH");
 	if (!path_env)
 		return (NULL);
 	path_len = ft_strlen(path_env);

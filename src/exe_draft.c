@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 01:16:51 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 03:36:58 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,17 +124,17 @@ char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
 	return result_array;
 }
 
-char	**f_buildargv(t_ast_node *args, long *argc, t_env *env, bool *empty_string)
-{
-	char **argv;
+// char	**f_buildargv(t_ast_node *args, long *argc, t_env *env, bool *empty_string)
+// {
+// 	char **argv;
 
-	if (!args || args->type != AST_IDENTIFIER)
-		return (NULL);
-	argv = identifier_process_arguments(args, argc, env);
-	if(*argc == 0)
-		*empty_string = true;
-	return (argv);
-}
+// 	if (!args || args->type != AST_IDENTIFIER)
+// 		return (NULL);
+// 	argv = identifier_process_arguments(args, argc, env);
+// 	if(*argc == 0)
+// 		*empty_string = true;
+// 	return (argv);
+// }
 
 int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 {
