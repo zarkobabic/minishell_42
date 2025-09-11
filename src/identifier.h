@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 20:16:22 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 22:45:47 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 # include "exe_environment.h"
 # include <stdbool.h>
+
+#define SINGLE_QUOTES 0
+#define DOUBLE_QUOTES 1
 
 typedef struct s_argument_linked_list_node
 {
