@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_environment.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:21:41 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:20:39 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 04:28:45 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 
 # include "ast_tree_structures.h"
 # include <stdbool.h>
+
 # define ENV_DELETE_ALL -1
+# define ENV_DEFAULT_HOME "/"
+# define ENV_DEFAULT_PATH "/usr/local/bin:/usr/bin:/bin"
 
 typedef struct s_environment_to_keep_track_of
 {
