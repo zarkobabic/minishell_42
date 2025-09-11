@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:12:43 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 01:10:17 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 01:13:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ static int	count_non_quotes(char *str, bool *in_quotes)
 }
 
 /// @brief removes quotes in a string
+/// (! does not free str !)
 /// (! does not free str !)
 /// @param str 
 /// @return 

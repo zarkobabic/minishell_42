@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 22:48:35 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 21:01:13 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ void	f_set_signals(int mode, t_env *env)
 		act_conf_sigint.sa_handler = f_signal_noninteractive_sigint;
 		act_conf_sigquit.sa_handler = f_signal_noninteractive_sigquit;
 	}
+	// else if (mode == HEREDOC)
+	// {
+	// 	act_conf_sigint.sa_handler =
+	// } // TODO
 	else if (mode >= INTERACTIVE)
 	{
 		act_conf_sigint.sa_handler = f_signal_reset_prompt;

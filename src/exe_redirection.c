@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 20:11:49 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 20:47:29 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ static int	f_redirect_heredoc(t_ast_node *redirection, t_env *env)
 {
 	char	*input;
 	char	*temp;
+	char	*stripped_target;
 	int		temp_file;
 	size_t	target_len;
 	bool	expansion_flag;
@@ -111,12 +112,15 @@ static int	f_redirect_heredoc(t_ast_node *redirection, t_env *env)
 	temp_file = open(HEREDOC_FILE_NAME, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (temp_file < 0)
 		return (perror("heredoc temp file creation"), FAIL);
-	redirection->data.redirection.target = remove_quotes(redirection->data.redirection.target);
-	target_len = ft_strlen(redirection->data.redirection.target);
+	stripped_target = remove_quotes(redirection->data.redirection.target);
+	if (!temp)
+		return (ERROR);
+	target_len = ft_strlen(stripped_target);
+	// TODO: f_set_signals(INTERACTIVE or special heredoc mode, env);
 	while (1)
 	{
 		input = readline("> ");
-		if (!input || ft_strncmp(input, redirection->data.redirection.target, target_len + 1) == 0)
+		if (!input || ft_strncmp(input, stripped_target, target_len + 1) == 0)
 		{
 			free(input);
 			break ;
@@ -131,6 +135,8 @@ static int	f_redirect_heredoc(t_ast_node *redirection, t_env *env)
 		write(temp_file, "\n", 1);
 		free(input);
 	}
+	// TODO: f_set_signals(NONINTERACTIVE, env);
+	free(stripped_target);
 	close(temp_file);
 	temp_file = open(HEREDOC_FILE_NAME, O_RDONLY);
 	unlink(HEREDOC_FILE_NAME);
