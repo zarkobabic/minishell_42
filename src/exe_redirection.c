@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 05:17:05 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 18:48:03 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,59 +50,81 @@ char	**f_expand_vars(t_ast_node *redirection, t_env *env)
 		return (expanded_result);
 }
 
-static int	f_redirect_in(t_ast_node *redirection)
+static int	f_redirect_in(char **target)
 {
 	int	file;
-	// int	var_expansion;
 
 	file = -1;
-	// var_expansion = f_expand_vars(&redirection->data.redirection.target);
-	// if (var_expansion != SUCCESS)
-	// 	return (var_expansion);
-	file = open(redirection->data.redirection.target, O_RDONLY);
+	file = open(target[0], O_RDONLY);
 	if (file < 0)
-		return (perror(redirection->data.redirection.target), FAIL);
+		return (perror(target[0]), FAIL);
 	else if (dup2(file, STDIN_FILENO) == -1)
-		return (perror("dup2 redirect in"), ERROR);
+		return (close(file), perror("dup2 redirect in"), ERROR);
 	close(file);
 	return (SUCCESS);
 }
 
-static int	f_redirect_out(t_ast_node *redirection, t_env *env)
-{
-	int		file;
-	char	**expanded_target;
+// static int	f_redirect_out(char **target)
+// {
+// 	int		file;
 
-	(void)env;
+// 	file = -1;
+// 	file = open(target[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+// 	if (file < 0)
+// 		return (perror(target[0]), FAIL);
+// 	else if (dup2(file, STDOUT_FILENO) == -1)
+// 		return (close(file), perror("dup2 redirect out"), ERROR);
+// 	close(file);
+// 	return (SUCCESS);
+// }
+
+// static int	f_redirect_append(char **target)
+// {
+// 	int	file;
+
+// 	file = -1;
+// 	file = open(target[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 	if (file < 0)
+// 		return (perror(target[0]), FAIL);
+// 	else if (dup2(file, STDOUT_FILENO) == -1)
+// 		return (close(file), perror("dup2 redirect append"), ERROR);
+// 	close(file);
+// 	return (SUCCESS);
+// }
+
+static int	f_redirect_out_append(char **target, int mode)
+{
+	int	file;
+
 	file = -1;
+	file = open(target[0], O_WRONLY | O_CREAT | mode, 0644);
+	if (file < 0)
+		return (perror(target[0]), FAIL);
+	else if (dup2(file, STDOUT_FILENO) == -1)
+		return (close(file), perror("dup2 redirect out/append"), ERROR);
+	close(file);
+	return (SUCCESS);
+
+}
+
+static int	f_redirect_simple(t_ast_node *redirection, t_env *env)
+{
+	char	**expanded_target;
+	int		return_value;
+
 	expanded_target = f_expand_vars(redirection, env);
 	if (!expanded_target)
 		return (FAIL);
-	file = open(expanded_target[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (redirection->data.redirection.type == TYPE_REDIRECT_IN)
+		return_value = f_redirect_in(expanded_target);
+	else if (redirection->data.redirection.type == TYPE_REDIRECT_OUT)
+		return_value = f_redirect_out_append(expanded_target, O_TRUNC);
+	else if (redirection->data.redirection.type == TYPE_REDIRECT_APPEND)
+	return_value = f_redirect_out_append(expanded_target, O_APPEND);
+	else
+		return (ERROR);
 	free_split(expanded_target);
-	if (file < 0)
-		return (perror(expanded_target[0]), FAIL);
-	else if (dup2(file, STDOUT_FILENO) == -1)
-		return (perror("dup2 redirect out"), ERROR);
-	close(file);
-	return (SUCCESS);
-}
-
-static int	f_redirect_append(t_ast_node *redirection)
-{
-	int	file;
-
-	file = -1;
-	// if (f_expand_vars(&redirection->data.redirection.target) != SUCCESS)
-	// 	return (FAIL);
-	file = open(redirection->data.redirection.target,
-		O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if (file < 0)
-		return (perror(redirection->data.redirection.target), FAIL);
-	else if (dup2(file, STDOUT_FILENO) == -1)
-		return (perror("dup2 redirect append"), ERROR);
-	close(file);
-	return (SUCCESS);
+	return (return_value);
 }
 
 static int	f_redirect_heredoc(t_ast_node *redirection)
@@ -146,7 +168,7 @@ static int	f_redirect_heredoc(t_ast_node *redirection)
 	// TODO:
 	/** signal handling for heredocs
 	 * variable expansion?
-	 * eroor checks for write calls?
+	 * error checks for write calls?
 	 * 
 	 */
 }
@@ -161,12 +183,14 @@ int	f_redirect(t_ast_node *redirections, t_env *env)
 	return_value = SUCCESS;
 	while (redirections)
 	{
-		if (redirections->data.redirection.type == TYPE_REDIRECT_IN)
-			return_value = f_redirect_in(redirections/* , env */);
-		else if (redirections->data.redirection.type == TYPE_REDIRECT_OUT)
-			return_value = f_redirect_out(redirections, env);
-		else if (redirections->data.redirection.type == TYPE_REDIRECT_APPEND)
-			return_value = f_redirect_append(redirections/* , env */);
+		if (redirections->data.redirection.type == TYPE_REDIRECT_IN
+			|| redirections->data.redirection.type == TYPE_REDIRECT_OUT
+			|| redirections->data.redirection.type == TYPE_REDIRECT_APPEND)
+			return_value = f_redirect_simple(redirections, env);
+		// else if (redirections->data.redirection.type == TYPE_REDIRECT_OUT)
+		// 	return_value = f_redirect_out(redirections, env);
+		// else if (redirections->data.redirection.type == TYPE_REDIRECT_APPEND)
+		// 	return_value = f_redirect_append(redirections/* , env */);
 		else if (redirections->data.redirection.type == TYPE_REDIRECT_HEREDOC)
 			return_value = f_redirect_heredoc(redirections/* , env */);
 		if (return_value != SUCCESS)
