@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 19:22:19 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 20:52:48 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ enum			e_exit_value
 enum	e_sigmode
 {
 	NONINTERACTIVE = 0,
+	HEREDOC,
 	INTERACTIVE,
 	SILENT
 };
