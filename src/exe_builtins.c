@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 00:13:57 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 02:13:50 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,16 @@
 #define PATHLENGTH 256
 #define ENV_ARGC_ERRMSG "minishell: env: too many arguments for this \
 	minishell implementation\n"
+
+int	f_handle_n_flag(bool n_flag)
+{
+	if (!n_flag)
+	{
+		if (-1 == write(STDOUT_FILENO, "\n", 1))
+			return (perror("write"), FAIL);
+	}
+	return (SUCCESS);
+}
 
 int	f_echo(long argc, char **argv)
 {
@@ -40,12 +50,13 @@ int	f_echo(long argc, char **argv)
 		}
 		++i;
 	}
-	if (!n_flag)
-	{
-		if (-1 == write(STDOUT_FILENO, "\n", 1))
-			return (perror("write"), FAIL);
-	}
-	return (SUCCESS);
+	return (f_handle_n_flag(n_flag));
+	// if (!n_flag)
+	// {
+	// 	if (-1 == write(STDOUT_FILENO, "\n", 1))
+	// 		return (perror("write"), FAIL);
+	// }
+	// return (SUCCESS);
 }
 
 int	f_pwd(void)
