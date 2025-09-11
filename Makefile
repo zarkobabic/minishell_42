@@ -52,6 +52,7 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				identifier_var_expansion.c \
 				identifier_wildcard_curr_dir.c \
 				identifier_wildcard.c \
+				identifier.c \
 
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))

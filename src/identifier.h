@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 22:37:11 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 04:20:31 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ bool									arg_list_append(t_arg_list *list,
 											char *string_value);
 void									arg_list_free_shallow(t_arg_list *list);
 char									**arg_list_to_array_shallow(t_arg_list *list);
+void									arg_list_free_deep(t_arg_list *list);
 
 //identifier_expansion
 char									*identifier_expand_variables_in_string(char *str,

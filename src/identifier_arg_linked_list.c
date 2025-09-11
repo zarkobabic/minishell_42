@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 15:14:33 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 22:25:56 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 04:14:09 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,28 @@ void	arg_list_free_shallow(t_arg_list *list)
 	while (current)
 	{
 		next = current->next;
+		free(current);
+		current = next;
+	}
+	list->head = NULL;
+	list->tail = NULL;
+}
+
+/// @brief Free all nodes in the argument list
+/// @param list Pointer to the list structure to free
+void	arg_list_free_deep(t_arg_list *list)
+{
+	t_arg_node	*current;
+	t_arg_node	*next;
+
+	if (!list)
+		return ;
+	current = list->head;
+	while (current)
+	{
+		next = current->next;
+		if(current->string_value)
+			free(current->string_value);
 		free(current);
 		current = next;
 	}
