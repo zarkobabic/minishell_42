@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 04:40:20 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 04:53:07 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 20:17:50 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static char	**expand_and_split_argument(char *string_value, t_env *env)
 	char	*expanded_string;
 	char	**splitted_string;
 
-	expanded_string = identifier_expand_variables_in_string(string_value, env);
+	expanded_string = identifier_expand_variables_in_string(string_value, env, false);
 	if (!expanded_string)
 		return (NULL);
 	splitted_string = split_by_unquoted_space(expanded_string);

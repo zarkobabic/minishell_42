@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 20:27:11 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 20:15:24 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static void	handle_regular_char(char c, bool *in_single_quotes, long *char_cnt)
 		*in_single_quotes = !(*in_single_quotes);
 }
 
-long	identifier_count_new_string_len(char *str, t_env *env)
+long	identifier_count_new_string_len(char *str, t_env *env, bool heredoc_single_quotes)
 {
 	long	char_cnt;
 	long	i;
@@ -114,7 +114,7 @@ long	identifier_count_new_string_len(char *str, t_env *env)
 	char_cnt = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && !in_single_quotes)
+		if(str[i] == '$' && (!in_single_quotes || heredoc_single_quotes))
 		{
 			result = handle_env_var_expansion(str, &i, &char_cnt, env);
 			if (result < 0)
@@ -208,7 +208,7 @@ static void copy_old_exit_value(int old_exit_value, char *new_str, long *new_cnt
 	*new_cnt += old_exit_value_num_of_digits_copy;
 }
 
-bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env)
+bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env, bool heredoc_single_quotes)
 {
 	bool	in_single_quotes;
 	long	i;
@@ -219,7 +219,7 @@ bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env)
 	new_cnt = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && !in_single_quotes)
+		if(str[i] == '$' && (!in_single_quotes || heredoc_single_quotes))
 		{
 			if(str[i + 1] && str[i+1] == '?')
 				copy_old_exit_value(env->old_exit_value, new_str, &new_cnt, &i);
@@ -235,7 +235,7 @@ bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env)
 	return (true);
 }
 
-char	*identifier_expand_environment_variables(char *str, long new_size, t_env *env)
+char	*identifier_expand_environment_variables(char *str, long new_size, t_env *env, bool heredoc_single_quotes)
 {
 	char	*new_string;
 
@@ -243,7 +243,7 @@ char	*identifier_expand_environment_variables(char *str, long new_size, t_env *e
 	if (!new_string)
 		return (NULL);
 	new_string[new_size] = '\0';
-	if (!identifier_expand_var_to_string(str, new_string, env))
+	if (!identifier_expand_var_to_string(str, new_string, env, heredoc_single_quotes))
 		return (free(new_string), NULL);
 	return (new_string);
 }
@@ -265,19 +265,19 @@ bool	is_containing_quotes(char *str)
 /// @brief Returns NULL if the allocation failed; do not free input string
 /// @param str do not free this, because they are part of ast
 /// @return
-char	*identifier_expand_variables_in_string(char *str, t_env *env)
+char	*identifier_expand_variables_in_string(char *str, t_env *env, bool heredoc_single_quotes)
 {
 	long	new_size;
 	char	*new_str;
 
 	if (!str)
 		return (NULL);
-	new_size = identifier_count_new_string_len(str, env);
+	new_size = identifier_count_new_string_len(str, env, heredoc_single_quotes);
 	// if(new_size == 0)
 	// 	return (*empty_str = true, NULL);
 	if (new_size < 0)
 		return (NULL);
-	new_str = identifier_expand_environment_variables(str, new_size, env);
+	new_str = identifier_expand_environment_variables(str, new_size, env, heredoc_single_quotes);
 	if (!new_str)
 		return (NULL);
 	return (new_str);

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 04:56:45 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 20:16:22 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,17 +41,19 @@ void									arg_list_free_deep(t_arg_list *list);
 
 //identifier_expansion
 char									*identifier_expand_variables_in_string(char *str,
-											t_env *env);
+											t_env *env,
+											bool heredoc_single_quotes);
 char									**split_by_unquoted_space(const char *str);
 void									free_split(char **split);
 char									*remove_quotes(char *str);
 
-bool									wildcard_check_if_matches(char *input,
-											char *pattern);
+bool	wildcard_check_if_matches(char *input,
+								char *pattern);
 char									**get_all_matched_names(char *pattern);
 bool									is_containing_quotes(char *str);
 
 //redirections
-char	**identifier_process_redirection(t_ast_node *redirection, long *argc, t_env *env);
+char									**identifier_process_redirection(t_ast_node *redirection,
+											long *argc, t_env *env);
 
 #endif
