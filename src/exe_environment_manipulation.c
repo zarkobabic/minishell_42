@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_environment_manipulation.c                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:57:35 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/08 19:33:40 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 18:59:01 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*f_environ_find_entry(char **environ, const char *name)
 	int	i;
 	int	name_len;
 
+	if (!environ)
+		return (NULL);
 	name_len = ft_strlen(name);
 	i = -1;
 	while (environ[++i])

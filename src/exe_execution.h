@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 03:36:23 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 19:22:19 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	f_unset(char ***environ, long argc, char **argv);
 //send this to pipeline
 int		f_exec_pipeline(t_ast_node *pipeline, t_env *env);
 
-char	*resolve_executable_path(/* char **environ,  */const char *command);
+char	*resolve_executable_path(char **environ, const char *command);
 
 //exe_draft
 int		f_execute_ast(t_env *env);

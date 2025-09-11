@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 04:59:51 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 19:22:04 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	f_exec_external(t_cmd_ctx *ctx)
 
 	if (!ctx->argc || !ctx->argv[0])
 		return (FAIL);
-	exe_path = resolve_executable_path(/* ctx->env->minienviron,  */ctx->argv[0]);
+	exe_path = resolve_executable_path(ctx->env->minienviron, ctx->argv[0]);
 	if (!exe_path)
 		return (perror("path resolution"), FAIL);
 	exit_value = execve(exe_path, ctx->argv, ctx->env->minienviron);
