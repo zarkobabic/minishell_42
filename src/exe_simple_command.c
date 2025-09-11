@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 19:22:04 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 19:40:41 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ static int	f_exec_builtin_parent(t_cmd_ctx *ctx)
 	if (f_setup_builtin_parent_fds(ctx) == ERROR)
 		return (ERROR);
 	exit_value = SUCCESS;
-	// exit_value = f_redirect(ctx->redirections);
+	exit_value = f_redirect(ctx->redirections, ctx->env);
 	if (exit_value == SUCCESS)
 		exit_value = f_exec_builtin(ctx);
 	if (dup2(ctx->orig_fds[IN], STDIN_FILENO) == -1)
@@ -145,7 +145,7 @@ static int	f_exec_in_pipeline(t_cmd_ctx *ctx)
 	int	exit_value;
 
 	exit_value = SUCCESS;
-	// exit_value = f_redirect(ctx->redirections);
+	exit_value = f_redirect(ctx->redirections, ctx->env);
 	if (exit_value != SUCCESS)
 		return (exit_value);
 	if (f_is_builtin(ctx->argv[0]))
@@ -169,8 +169,8 @@ int	f_exec_simple_cmd(t_ast_node *simcmd, t_env *env, int in_pipeline)
 	ctx.in_pipeline = in_pipeline;
 	if (f_prepare_argv(simcmd, &ctx) == ERROR)
 		return (ERROR);
-	if(!ctx.argv) //empty string
-		return (0);
+	if(!ctx.argv)
+		return (SUCCESS);
 	if (!in_pipeline && f_is_builtin_parent(ctx.argv[0]))
 		exit_value = f_exec_builtin_parent(&ctx);
 	else if (!in_pipeline)

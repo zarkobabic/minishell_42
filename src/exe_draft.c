@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 04:30:10 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/11 19:43:15 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
+#include "exe_redirection.h"
 #include <sys/wait.h>
 
 int		f_exec_logic_expr(t_ast_node *expr, t_env *env);
@@ -84,7 +85,7 @@ int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 	if (pid == 0)
 	{
 		exit_value = SUCCESS;
-		// exit_value = f_redirect(subshell->data.subshell.redirections);
+		exit_value = f_redirect(subshell->data.subshell.redirections, env);
 		if (exit_value == SUCCESS)
 			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr,
 					env);
