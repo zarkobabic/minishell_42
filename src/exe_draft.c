@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 03:36:58 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 04:30:10 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	f_cleanup_child(t_ast_node *root, char **argv)
 	ast_free_tree(root);
 	if (argv)
 		free_argv(&argv);
-		//free(argv);
 }
 
 int	f_wait_for_child(pid_t pid)
@@ -76,66 +75,6 @@ int	f_wait_for_child(pid_t pid)
 	return (exit_value);
 }
 
-char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
-{
-	char	*expanded_string;
-	t_arg_list	arg_list;
-	char	**splitted_string;
-	long	i;
-	long	j;
-	char	**temp_matched;
-	char	*temp;
-	char	**result_array;
-
-	arg_list_initialize(&arg_list);
-	while(args)
-	{
-		expanded_string = identifier_expand_variables_in_string(args->data.identifier.string_value, env);
-		if(!expanded_string)
-			return NULL;
-		splitted_string = split_by_unquoted_space(expanded_string);
-		free(expanded_string);
-		if(!splitted_string)
-			return NULL;
-		i = 0;
-		while (splitted_string[i])
-		{
-			j = 0;
-			temp_matched = get_all_matched_names(splitted_string[i]);
-			if(!temp_matched)
-				return (free_split(splitted_string), NULL);
-			while(temp_matched[j])
-			{
-				temp = remove_quotes(temp_matched[j]);
-				if(!temp)
-					return (free_split(temp_matched), free_split(splitted_string), NULL);
-				arg_list_append(&arg_list, temp);
-				++j;
-			}
-			free_split(temp_matched);
-			++i;
-		}
-		free_split(splitted_string);
-		args = args->next;
-	}
-	result_array = arg_list_to_array_shallow(&arg_list);
-	*argc = arg_list.size;
-	arg_list_free_shallow(&arg_list);
-	return result_array;
-}
-
-// char	**f_buildargv(t_ast_node *args, long *argc, t_env *env, bool *empty_string)
-// {
-// 	char **argv;
-
-// 	if (!args || args->type != AST_IDENTIFIER)
-// 		return (NULL);
-// 	argv = identifier_process_arguments(args, argc, env);
-// 	if(*argc == 0)
-// 		*empty_string = true;
-// 	return (argv);
-// }
-
 int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 {
 	pid_t	pid;
@@ -147,7 +86,8 @@ int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 		exit_value = SUCCESS;
 		// exit_value = f_redirect(subshell->data.subshell.redirections);
 		if (exit_value == SUCCESS)
-			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr, env);
+			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr,
+					env);
 		ast_free_tree(env->ast_root);
 		mini_exit(exit_value, env);
 	}
@@ -189,7 +129,7 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 
 int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 {
-	static int	exit_value = 0; //TODO: Important: If 
+	static int	exit_value = 0; //TODO: Important: If
 	//formater put this 0 down exit value needs to
 	// be initialized here static int exit_value = 0
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
