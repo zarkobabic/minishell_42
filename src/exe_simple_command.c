@@ -6,11 +6,12 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 03:35:46 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 04:59:51 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
+#include "exe_redirection.h"
 
 void	free_argv(char ***argv)
 {
@@ -106,7 +107,7 @@ static int	f_handle_child_process(t_cmd_ctx *ctx)
 	int	exit_value;
 
 	exit_value = SUCCESS;
-	// exit_value = f_redirect(ctx->redirections);
+	exit_value = f_redirect(ctx->redirections, ctx->env);
 	if (exit_value == SUCCESS)
 	{
 		if (f_is_builtin_child(ctx->argv[0]))

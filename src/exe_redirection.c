@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 03:26:21 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/11 05:17:05 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,28 +36,19 @@ int	f_check_ambiguity(char *target)
 	return (false);
 }
 
-// int	f_expand_vars(t_ast_node *redirection, t_env *env)
-// {
-// 	long	arbitrary_argc;
-// 	char	**expanded_result;
+char	**f_expand_vars(t_ast_node *redirection, t_env *env)
+{
+	long	arbitrary_argc;
+	char	**expanded_result;
 
-// 	// target = identifier_expand_variables_in_string(target);
-// 	// identifier_process_arguments(t_ast_node *args, long *argc, t_env *env)
-// 	expanded_result = identifier_process_redirection(redirection, &arbitrary_argc, env);
-// 	if (!expanded_result)
-// 		return (FAIL);
-// 	free(expanded_result);
-// 	if (arbitrary_argc > 1)
-// 		return (printf("minishell: %s: ambiguous redirection\n", redirection->data.redirection.target), FAIL);
-// 	else
-// 		return (SUCCESS);
-// 	// ambiguity = f_check_ambiguity(target);
-// 	// if (ambiguity == 1)
-// 	// 	return (printf("minishell: %s: ambiguous redirection\n", target), FAIL);
-// 	// else if (ambiguity == -1)
-// 	// 	return (perror("redirection var expansion"), ERROR);
-// 	// *target = remove_quotes(*target);
-// }
+	expanded_result = identifier_process_redirection(redirection, &arbitrary_argc, env);
+	if (!expanded_result)
+		return (NULL);
+	if (arbitrary_argc > 1)
+		return (free_split(expanded_result), printf("minishell: %s: ambiguous redirection\n", redirection->data.redirection.target), NULL);
+	else
+		return (expanded_result);
+}
 
 static int	f_redirect_in(t_ast_node *redirection)
 {
@@ -79,16 +70,18 @@ static int	f_redirect_in(t_ast_node *redirection)
 
 static int	f_redirect_out(t_ast_node *redirection, t_env *env)
 {
-	int	file;
+	int		file;
+	char	**expanded_target;
 
 	(void)env;
 	file = -1;
-	// if (f_expand_vars(redirection->data.redirection.target, env) != SUCCESS)
-	// 	return (FAIL);
-	file = open(redirection->data.redirection.target,
-		O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	expanded_target = f_expand_vars(redirection, env);
+	if (!expanded_target)
+		return (FAIL);
+	file = open(expanded_target[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	free_split(expanded_target);
 	if (file < 0)
-		return (perror(redirection->data.redirection.target), FAIL);
+		return (perror(expanded_target[0]), FAIL);
 	else if (dup2(file, STDOUT_FILENO) == -1)
 		return (perror("dup2 redirect out"), ERROR);
 	close(file);
