@@ -6,15 +6,18 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 22:45:42 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 04:24:18 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft/libft.h"
 #include "exe_environment.h"
+#include "identifier.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include "identifier.h"
+
+#define NEW 0
+#define ORIGINAL 1
 
 bool	check_env_var_naming(char *str)
 {
@@ -74,7 +77,8 @@ long	count_env_var(char *str, long var_name_len, t_env *env)
 	return ((long)(ft_strlen(sys_env_string)));
 }
 
-static long	handle_env_var_expansion(char *str, long *i, long *char_cnt, t_env *env)
+static long	handle_env_var_expansion(char *str, long *i, long *char_cnt,
+		t_env *env)
 {
 	long	var_name_len;
 	long	var_cnt;
@@ -98,12 +102,13 @@ static void	handle_regular_char(char c, bool *in_quotes, long *char_cnt)
 {
 	++(*char_cnt);
 	if (c == '\'' && !in_quotes[DOUBLE_QUOTES])
-		in_quotes[SINGLE_QUOTES]= !in_quotes[SINGLE_QUOTES];
+		in_quotes[SINGLE_QUOTES] = !in_quotes[SINGLE_QUOTES];
 	else if (c == '\"' && !in_quotes[SINGLE_QUOTES])
 		in_quotes[DOUBLE_QUOTES] = !in_quotes[DOUBLE_QUOTES];
 }
 
-long	identifier_count_new_string_len(char *str, t_env *env, bool heredoc_single_quotes)
+long	identifier_count_new_string_len(char *str, t_env *env,
+		bool heredoc_single_quotes)
 {
 	long	char_cnt;
 	long	i;
@@ -118,7 +123,8 @@ long	identifier_count_new_string_len(char *str, t_env *env, bool heredoc_single_
 	char_cnt = 0;
 	while (str[i])
 	{
-		if(str[i] == '$' && (!in_quotes[SINGLE_QUOTES] || heredoc_single_quotes))
+		if (str[i] == '$' && (!in_quotes[SINGLE_QUOTES]
+				|| heredoc_single_quotes))
 		{
 			result = handle_env_var_expansion(str, &i, &char_cnt, env);
 			if (result < 0)
@@ -134,7 +140,8 @@ long	identifier_count_new_string_len(char *str, t_env *env, bool heredoc_single_
 // We have error_flag here because functions can return NULL
 // as valid value when returning the value for the
 // environment variable that is not set
-char	*get_env_var_value(char *str, long var_name_len, bool *error_flag, t_env *env)
+char	*get_env_var_value(char *str, long var_name_len, bool *error_flag,
+		t_env *env)
 {
 	char	*var_name;
 	char	*sys_env_string;
@@ -155,7 +162,7 @@ static void	copy_regular_char(char c, char *new_str, long *new_cnt,
 	new_str[*new_cnt] = c;
 	++(*new_cnt);
 	if (c == '\'' && !in_quotes[DOUBLE_QUOTES])
-		in_quotes[SINGLE_QUOTES]= !in_quotes[SINGLE_QUOTES];
+		in_quotes[SINGLE_QUOTES] = !in_quotes[SINGLE_QUOTES];
 	else if (c == '\"' && !in_quotes[SINGLE_QUOTES])
 		in_quotes[DOUBLE_QUOTES] = !in_quotes[DOUBLE_QUOTES];
 }
@@ -174,47 +181,52 @@ void	copy_var_to_new_str(char *str, char *var_value, long *new_cnt)
 
 // else part is when we have bad or nonexistant variable naming,
 // then we should just copy only the $ sign
-static bool	copy_expanded_var(char *str, char *new_str, long *i, long *new_cnt, t_env *env)
+static bool	copy_expanded_var(char **strings, long *i, long *new_cnt,
+		t_env *env)
 {
 	long	var_name_len;
 	char	*var_value;
 	bool	error_flag;
 
 	error_flag = false;
-	var_name_len = get_env_var_name_len(&str[*i + 1]);
+	var_name_len = get_env_var_name_len(&strings[ORIGINAL][*i + 1]);
 	if (var_name_len > 0)
 	{
 		++(*i);
-		var_value = get_env_var_value(&str[*i], var_name_len, &error_flag, env);
+		var_value = get_env_var_value(&strings[ORIGINAL][*i], var_name_len,
+				&error_flag, env);
 		if (error_flag)
 			return (false);
-		copy_var_to_new_str(&new_str[*new_cnt], var_value, new_cnt);
+		copy_var_to_new_str(&strings[NEW][*new_cnt], var_value, new_cnt);
 		*i += (var_name_len - 1);
 	}
 	else
-		new_str[(*new_cnt)++] = str[*i];
+		strings[NEW][(*new_cnt)++] = strings[ORIGINAL][*i];
 	return (true);
 }
 
-static void copy_old_exit_value(int old_exit_value, char *new_str, long *new_cnt, long *i)
+static void	copy_old_exit_value(int old_exit_value, char *new_str,
+		long *new_cnt, long *i)
 {
-	int		old_exit_value_num_of_digits;
-	int		old_exit_value_num_of_digits_copy;
-	
-	++(*i); 
+	int	old_exit_value_num_of_digits;
+	int	old_exit_value_num_of_digits_copy;
+
+	++(*i);
 	old_exit_value_num_of_digits = count_digits(old_exit_value);
 	old_exit_value_num_of_digits_copy = old_exit_value_num_of_digits;
 	--old_exit_value_num_of_digits;
-	while(old_exit_value_num_of_digits >= 0)
+	while (old_exit_value_num_of_digits >= 0)
 	{
-		new_str[*new_cnt + old_exit_value_num_of_digits] = '0' + old_exit_value % 10;
+		new_str[*new_cnt + old_exit_value_num_of_digits] = '0' + old_exit_value
+			% 10;
 		old_exit_value = old_exit_value / 10;
 		--old_exit_value_num_of_digits;
 	}
 	*new_cnt += old_exit_value_num_of_digits_copy;
 }
 
-bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env, bool heredoc_single_quotes)
+bool	identifier_expand_var_to_string(char **strs, t_env *env,
+		bool heredoc_single_quotes)
 {
 	bool	in_quotes[2];
 	long	i;
@@ -224,17 +236,18 @@ bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env, bool 
 	in_quotes[DOUBLE_QUOTES] = false;
 	i = 0;
 	new_cnt = 0;
-	while (str[i])
+	while (strs[ORIGINAL][i])
 	{
-		if(str[i] == '$' && (!in_quotes[SINGLE_QUOTES] || heredoc_single_quotes))
+		if (strs[ORIGINAL][i] == '$' && (!in_quotes[SINGLE_QUOTES]
+				|| heredoc_single_quotes))
 		{
-			if(str[i + 1] && str[i+1] == '?')
-				copy_old_exit_value(env->old_exit_value, new_str, &new_cnt, &i);
-			else if (!copy_expanded_var(str, new_str, &i, &new_cnt, env))
+			if (strs[ORIGINAL][i + 1] && strs[ORIGINAL][i + 1] == '?')
+				copy_old_exit_value(env->old_exit_value, strs[0], &new_cnt, &i);
+			else if (!copy_expanded_var(strs, &i, &new_cnt, env))
 				return (false);
 		}
 		else
-			copy_regular_char(str[i], new_str, &new_cnt, in_quotes);
+			copy_regular_char(strs[1][i], strs[NEW], &new_cnt, in_quotes);
 		++i;
 	}
 	if (in_quotes[SINGLE_QUOTES] || in_quotes[DOUBLE_QUOTES])
@@ -242,17 +255,19 @@ bool	identifier_expand_var_to_string(char *str, char *new_str, t_env *env, bool 
 	return (true);
 }
 
-char	*identifier_expand_environment_variables(char *str, long new_size, t_env *env, bool heredoc_single_quotes)
+char	*identifier_expand_environment_variables(char *str, long new_size,
+		t_env *env, bool heredoc_single_quotes)
 {
-	char	*new_string;
+	char	*strings[2];
 
-	new_string = (char *)malloc((new_size + 1));
-	if (!new_string)
+	strings[NEW] = (char *)malloc((new_size + 1));
+	strings[ORIGINAL] = str;
+	if (!strings[NEW])
 		return (NULL);
-	new_string[new_size] = '\0';
-	if (!identifier_expand_var_to_string(str, new_string, env, heredoc_single_quotes))
-		return (free(new_string), NULL);
-	return (new_string);
+	strings[NEW][new_size] = '\0';
+	if (!identifier_expand_var_to_string(strings, env, heredoc_single_quotes))
+		return (free(strings[NEW]), NULL);
+	return (strings[NEW]);
 }
 
 bool	is_containing_quotes(char *str)
@@ -260,19 +275,20 @@ bool	is_containing_quotes(char *str)
 	long	cnt;
 
 	cnt = 0;
-	while(str[cnt])
+	while (str[cnt])
 	{
-		if(str[cnt] == '\"' || str[cnt] == '\'')
-			return true;
+		if (str[cnt] == '\"' || str[cnt] == '\'')
+			return (true);
 		++cnt;
 	}
-	return false;
+	return (false);
 }
 
 /// @brief Returns NULL if the allocation failed; do not free input string
 /// @param str do not free this, because they are part of ast
 /// @return
-char	*identifier_expand_variables_in_string(char *str, t_env *env, bool heredoc_single_quotes)
+char	*identifier_expand_variables_in_string(char *str, t_env *env,
+		bool heredoc_single_quotes)
 {
 	long	new_size;
 	char	*new_str;
@@ -280,11 +296,10 @@ char	*identifier_expand_variables_in_string(char *str, t_env *env, bool heredoc_
 	if (!str)
 		return (NULL);
 	new_size = identifier_count_new_string_len(str, env, heredoc_single_quotes);
-	// if(new_size == 0)
-	// 	return (*empty_str = true, NULL);
 	if (new_size < 0)
 		return (NULL);
-	new_str = identifier_expand_environment_variables(str, new_size, env, heredoc_single_quotes);
+	new_str = identifier_expand_environment_variables(str, new_size, env,
+			heredoc_single_quotes);
 	if (!new_str)
 		return (NULL);
 	return (new_str);
