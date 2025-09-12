@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 22:42:34 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 02:48:02 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+int	g_received_signal = -1;
 
 void	process_input(char *input, t_env *env)
 {
@@ -59,6 +61,7 @@ int	main(int argc, char **argv)
 	prompt = "minishell> ";
 	if(f_build_environ(&env.minienviron) != SUCCESS)
 		exit(FAIL);
+	env.old_exit_value = 0;
 	rl_catch_signals = 0;
 	is_terminal = isatty(STDIN_FILENO);
 	f_set_signals(NONINTERACTIVE, &env);
@@ -66,7 +69,7 @@ int	main(int argc, char **argv)
 	while (1)
 	{
 		if (is_terminal)
-			f_set_signals(INTERACTIVE, &env);			
+			f_set_signals(INTERACTIVE, &env);
 		input = readline(prompt);
 		if (!input)
 		{

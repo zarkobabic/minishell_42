@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 21:01:13 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 03:08:02 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,15 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#define MSG_SIGQUIT "Quit: 3\n"
+#define MSG_SIGQUIT "\nQuit: 3\n"
 #define MSG_SIGINT "^C\n"
+#define BASE_SIGNO 128
 
 static void	f_signal_noninteractive_sigquit(int signo)
 {
-	(void)signo;
+	extern int g_received_signal;
+
+	g_received_signal = BASE_SIGNO + signo;
 	// if (isatty(STDOUT_FILENO)) // FIXME: check condition
 		write(STDERR_FILENO, MSG_SIGQUIT, sizeof(MSG_SIGQUIT));
 	// rl_on_new_line();
@@ -31,7 +34,9 @@ static void	f_signal_noninteractive_sigquit(int signo)
 // FIXME: test, if behavior differs in interactive vs noninteractive; if not, remove this function
 static void	f_signal_noninteractive_sigint(int signo)
 {
-	(void)signo;
+	extern int g_received_signal;
+
+	g_received_signal = BASE_SIGNO + signo;
 	// if (isatty(STDOUT_FILENO)) // FIXME: check condition
 		write(STDERR_FILENO, "\n", 1);
 	// rl_on_new_line();
@@ -41,7 +46,9 @@ static void	f_signal_noninteractive_sigint(int signo)
 
 static void	f_signal_reset_prompt(int signo)
 {
-	(void)signo;
+	extern int g_received_signal;
+
+	g_received_signal = BASE_SIGNO + signo;
 	if (isatty(STDIN_FILENO))
 		write(STDERR_FILENO, MSG_SIGINT, sizeof(MSG_SIGINT));
 	rl_on_new_line();
