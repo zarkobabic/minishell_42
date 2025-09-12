@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 19:40:41 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 09:13:38 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ static int	f_exec_builtin_parent(t_cmd_ctx *ctx)
 	if (f_setup_builtin_parent_fds(ctx) == ERROR)
 		return (ERROR);
 	exit_value = SUCCESS;
-	exit_value = f_redirect(ctx->redirections, ctx->env);
+	exit_value = f_redirect(ctx->redirections, ctx->env, ctx->argv);
 	if (exit_value == SUCCESS)
 		exit_value = f_exec_builtin(ctx);
 	if (dup2(ctx->orig_fds[IN], STDIN_FILENO) == -1)
@@ -107,7 +107,7 @@ static int	f_handle_child_process(t_cmd_ctx *ctx)
 	int	exit_value;
 
 	exit_value = SUCCESS;
-	exit_value = f_redirect(ctx->redirections, ctx->env);
+	exit_value = f_redirect(ctx->redirections, ctx->env, ctx->argv);
 	if (exit_value == SUCCESS)
 	{
 		if (f_is_builtin_child(ctx->argv[0]))
@@ -145,7 +145,7 @@ static int	f_exec_in_pipeline(t_cmd_ctx *ctx)
 	int	exit_value;
 
 	exit_value = SUCCESS;
-	exit_value = f_redirect(ctx->redirections, ctx->env);
+	exit_value = f_redirect(ctx->redirections, ctx->env, ctx->argv);
 	if (exit_value != SUCCESS)
 		return (exit_value);
 	if (f_is_builtin(ctx->argv[0]))

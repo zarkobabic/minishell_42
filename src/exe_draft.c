@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 02:56:40 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 10:54:45 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 	if (pid == 0)
 	{
 		exit_value = SUCCESS;
-		exit_value = f_redirect(subshell->data.subshell.redirections, env);
+		exit_value = f_redirect(subshell->data.subshell.redirections, env, NULL); // FIXME: check if NULL is fine (should)
 		if (exit_value == SUCCESS)
 			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr,
 					env);

@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 02:31:55 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 03:55:59 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 09:10:01 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,6 @@
 
 # define HEREDOC_FILE_NAME "/tmp/.deEZ_guys_minishell_tempheredocfile.txt"
 
-int	f_redirect(t_ast_node *redirections, t_env *env);
+int	f_redirect(t_ast_node *redirections, t_env *env, char **argv);
 
 #endif

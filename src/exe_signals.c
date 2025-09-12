@@ -6,18 +6,14 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 03:08:02 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 11:07:40 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "exe_execution.h"
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "exe_signals.h"
 
 #define MSG_SIGQUIT "\nQuit: 3\n"
-#define MSG_SIGINT "^C\n"
-#define BASE_SIGNO 128
+#define MSG_SIGINT "\n"
 
 static void	f_signal_noninteractive_sigquit(int signo)
 {
@@ -38,7 +34,7 @@ static void	f_signal_noninteractive_sigint(int signo)
 
 	g_received_signal = BASE_SIGNO + signo;
 	// if (isatty(STDOUT_FILENO)) // FIXME: check condition
-		write(STDERR_FILENO, "\n", 1);
+		write(STDERR_FILENO, "nope\n", 1); // FIXME: remove debugging message
 	// rl_on_new_line();
 	// rl_replace_line("", FALSE);
 	// rl_redisplay();

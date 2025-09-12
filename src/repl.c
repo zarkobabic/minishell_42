@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 02:48:02 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 10:58:52 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 #include "parser.h"
 #include "ast_tree_translator.h"
 #include "exe_execution.h"
+#include "exe_signals.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <termios.h>
 
 int	g_received_signal = -1;
 
@@ -62,12 +64,14 @@ int	main(int argc, char **argv)
 	if(f_build_environ(&env.minienviron) != SUCCESS)
 		exit(FAIL);
 	env.old_exit_value = 0;
-	rl_catch_signals = 0;
 	is_terminal = isatty(STDIN_FILENO);
+	tcgetattr(STDIN_FILENO, &env.orig_term);
 	f_set_signals(NONINTERACTIVE, &env);
 	printf("Welcome to minishell!\n");
 	while (1)
 	{
+		tcsetattr(STDIN_FILENO, TCSANOW, &env.orig_term);
+		rl_catch_signals = 1;
 		if (is_terminal)
 			f_set_signals(INTERACTIVE, &env);
 		input = readline(prompt);
@@ -83,6 +87,7 @@ int	main(int argc, char **argv)
 			continue ;
 		}
 		add_history(input);
+		rl_catch_signals = 0;
 		if (ft_strnstr(input, "/minishell", 11))
 			f_set_signals(SILENT, &env);
 		else
