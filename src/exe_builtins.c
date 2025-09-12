@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 03:54:01 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 01:38:35 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ bool	f_isnumeric(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]))
+		if (!(ft_isdigit(str[i]) || (i == 0 && (str[i] == '-' || str[i] == '+'))))
 			return (false);
 		++i;
 	}
