@@ -6,17 +6,17 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:12:43 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 01:13:07 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 17:54:36 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include "identifier.h"
+#include <stdlib.h>
 
 void	update_in_quotes(bool *in_quotes, char c)
 {
 	if (c == '\'' && !in_quotes[DOUBLE_QUOTES])
-		in_quotes[SINGLE_QUOTES]= !in_quotes[SINGLE_QUOTES];
+		in_quotes[SINGLE_QUOTES] = !in_quotes[SINGLE_QUOTES];
 	else if (c == '\"' && !in_quotes[SINGLE_QUOTES])
 		in_quotes[DOUBLE_QUOTES] = !in_quotes[DOUBLE_QUOTES];
 }
@@ -32,8 +32,8 @@ static int	count_non_quotes(char *str, bool *in_quotes)
 	count = 0;
 	while (str[i])
 	{
-		if (!((str[i] == '\'' && !in_quotes[DOUBLE_QUOTES]) || 
-			(str[i] == '\"' && !in_quotes[SINGLE_QUOTES])))
+		if (!((str[i] == '\'' && !in_quotes[DOUBLE_QUOTES])
+				|| (str[i] == '\"' && !in_quotes[SINGLE_QUOTES])))
 			count++;
 		update_in_quotes(in_quotes, str[i]);
 		i++;
@@ -46,8 +46,8 @@ static int	count_non_quotes(char *str, bool *in_quotes)
 /// @brief removes quotes in a string
 /// (! does not free str !)
 /// (! does not free str !)
-/// @param str 
-/// @return 
+/// @param str
+/// @return
 char	*remove_quotes(char *str)
 {
 	char	*result;
@@ -66,7 +66,8 @@ char	*remove_quotes(char *str)
 	j = 0;
 	while (str[i])
 	{
-		if (!((str[i] == '\'' && !in_quotes[DOUBLE_QUOTES]) || (str[i] == '\"' && !in_quotes[SINGLE_QUOTES])))
+		if (!((str[i] == '\'' && !in_quotes[DOUBLE_QUOTES]) || (str[i] == '\"'
+					&& !in_quotes[SINGLE_QUOTES])))
 			result[j++] = str[i];
 		update_in_quotes(in_quotes, str[i]);
 		i++;

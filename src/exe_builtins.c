@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 16:26:43 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 16:37:01 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int	f_pwd(void)
 	if (!working_dir)
 		return (perror("getcwd"), FAIL);
 	ft_putendl_fd(working_dir, STDOUT_FILENO);
-	// printf("%s\n", working_dir);
 	free(working_dir);
 	return (SUCCESS);
 }
@@ -99,7 +98,7 @@ int	f_export(char ***environ, long argc, char **argv)
 		if (!f_is_valid_name(argv[i]))
 		{
 			printf(EXPORT_INV_IDENT, argv[i]);
-			return FAIL;
+			return (FAIL);
 		}
 		eq_sign = ft_strchr(argv[i], '=');
 		if (!eq_sign)
@@ -137,7 +136,8 @@ bool	f_isnumeric(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (!(ft_isdigit(str[i]) || (i == 0 && (str[i] == '-' || str[i] == '+'))))
+		if (!(ft_isdigit(str[i]) || (i == 0 && (str[i] == '-'
+						|| str[i] == '+'))))
 			return (false);
 		++i;
 	}
@@ -151,7 +151,8 @@ int	f_exit(long argc, char **argv, bool *error)
 			FAIL);
 	if (argc == 2 && !f_isnumeric(argv[1]))
 		return (*error = true,
-			printf("minishell: exit: numeric argument required\n"), FAIL);
+			printf("minishell: exit: numeric argument required\n"),
+			FAIL);
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	if (argc == 2)
 		return (ft_atoi(argv[1]));

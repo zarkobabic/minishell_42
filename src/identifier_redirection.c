@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 04:40:20 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 20:17:50 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 17:55:54 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ static char	**expand_and_split_argument(char *string_value, t_env *env)
 	char	*expanded_string;
 	char	**splitted_string;
 
-	expanded_string = identifier_expand_variables_in_string(string_value, env, false);
+	expanded_string = identifier_expand_variables_in_string(
+			string_value, env, false);
 	if (!expanded_string)
 		return (NULL);
 	splitted_string = split_by_unquoted_space(expanded_string);
@@ -27,7 +28,7 @@ static char	**expand_and_split_argument(char *string_value, t_env *env)
 }
 
 static bool	process_splitted_string_element(char *splitted_string_el,
-		t_arg_list *list)
+											t_arg_list *list)
 {
 	char	**temp_matched;
 	long	i;
@@ -69,13 +70,16 @@ static bool	handle_redirection_target_processing(char *target, t_arg_list *list,
 	return (true);
 }
 
-char	**identifier_process_redirection(t_ast_node *redirection, long *argc, t_env *env)
+char	**identifier_process_redirection(t_ast_node *redirection, long *argc,
+		t_env *env)
 {
 	t_arg_list	arg_list;
 	char		**result_array;
 
 	arg_list_initialize(&arg_list);
-	if (!handle_redirection_target_processing(redirection->data.redirection.target, &arg_list, env))
+	if (!handle_redirection_target_processing(
+			redirection->data.redirection.target,
+			&arg_list, env))
 		return (arg_list_free_deep(&arg_list), NULL);
 	result_array = arg_list_to_array_shallow(&arg_list);
 	*argc = arg_list.size;

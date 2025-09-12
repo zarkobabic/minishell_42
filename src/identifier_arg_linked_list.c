@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 15:14:33 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 04:14:09 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 17:47:16 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	arg_list_free_deep(t_arg_list *list)
 	while (current)
 	{
 		next = current->next;
-		if(current->string_value)
+		if (current->string_value)
 			free(current->string_value);
 		free(current);
 		current = next;
