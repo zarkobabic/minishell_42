@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:21:41 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 04:28:45 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 07:47:17 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_environment_to_keep_track_of
 	int			old_exit_value;
 }				t_env;
 
-// environment table management
+// environ table management
 
 int				f_build_environ(char ***minienviron);
 void			f_destroy_environ(char ***environ, unsigned int entryno);
@@ -35,8 +35,9 @@ int				f_environ_add_entry(char ***environ, char *new_entry);
 char			*f_environ_build_entry(const char *name, const char *value);
 int				f_environ_del_entry(char ***environ, const char *name);
 char			*f_environ_find_entry(char **environ, const char *name);
+bool			f_is_valid_name(const char *name);
 
-// env access
+// environ access
 
 char			*f_getenv(char **environ, const char *name);
 int				f_setenv(char ***environ, const char *name, const char *value,

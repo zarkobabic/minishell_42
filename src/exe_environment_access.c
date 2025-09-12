@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:02:20 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 04:36:11 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 07:36:41 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,22 @@ char	*f_getenv(char **environ, const char *name)
 	return (value);
 }
 
+bool	f_is_valid_name(const char *name)
+{
+	int	i;
+
+	if (!name || !(ft_isalpha(name[0]) || name[0] == '_'))
+		return (false);
+	i = 1;
+	while (name[i])
+	{
+		if (!(ft_isalnum(name[i]) || name[i] == '_'))
+			return (false);
+		++i;
+	}
+	return (true);
+}
+
 int	f_setenv(char ***environ, const char *name, const char *value,
 		bool overwrite)
 {
@@ -84,6 +100,8 @@ int	f_setenv(char ***environ, const char *name, const char *value,
 	char		*new_var;
 	char		*entry_to_set;
 
+	if (!f_is_valid_name(name))
+		return (FAIL);
 	new_var = f_environ_build_entry(name, value);
 	entry_to_set = f_environ_find_entry(*environ, name);
 	if (!entry_to_set)

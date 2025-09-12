@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 02:37:22 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 07:00:35 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,6 @@ bool	f_is_builtin_parent(char *call);
 
 //exe_simple_cmd
 void	free_argv(char ***argv);
-
-//signals
-void	f_set_signals(int mode, t_env *env);
-
 
 char** identifier_process_arguments(t_ast_node *args, long *argc, t_env *env);
 

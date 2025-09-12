@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 01:38:35 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 07:48:38 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #define ENV_ARGC_ERRMSG "minishell: env: too many arguments for this \
 	minishell implementation\n"
+
+#define EXPORT_INV_IDENT "minishell: export: `%s': not a valid identifier\n"
 
 int	f_handle_n_flag(bool n_flag)
 {
@@ -100,6 +102,11 @@ int	f_export(char ***environ, long argc, char **argv)
 			continue ;
 		*eq_sign = '\0';
 		name = argv[i];
+		if (!f_is_valid_name(name))
+		{
+			printf(EXPORT_INV_IDENT, argv[i]);
+			continue ;
+		}
 		value = eq_sign + 1;
 		exit_value = f_setenv(environ, name, value, true);
 		if (exit_value != SUCCESS)
