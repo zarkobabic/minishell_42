@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 19:43:15 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 02:56:40 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,23 +130,30 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 
 int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 {
-	static int	exit_value = 0; //TODO: Important: If
-	//formater put this 0 down exit value needs to
-	// be initialized here static int exit_value = 0
+	extern int	g_received_signal;
+
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	env->old_exit_value = exit_value;
-	exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env);
-	env->old_exit_value = exit_value;
-	if ((expr->data.logical_expr.type == TYPE_AND && exit_value == SUCCESS)
-		|| (expr->data.logical_expr.type == TYPE_OR && exit_value != SUCCESS))
-		exit_value = f_exec_logic_expr(expr->next, env);
-	return (exit_value);
+	env->old_exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env);
+	if (g_received_signal != -1)
+		env->old_exit_value = g_received_signal;
+	if ((expr->data.logical_expr.type == TYPE_AND && env->old_exit_value == SUCCESS)
+		|| (expr->data.logical_expr.type == TYPE_OR && (env->old_exit_value == FAIL || env->old_exit_value == ERROR)))
+		env->old_exit_value = f_exec_logic_expr(expr->next, env);
+	return (env->old_exit_value);
 }
 
 int	f_execute_ast(t_env *env)
 {
+	extern int g_received_signal;
+
 	if (!env->ast_root || env->ast_root->type != AST_LOGICAL_EXPR)
 		return (ERROR);
-	return (f_exec_logic_expr(env->ast_root, env));
+	if (g_received_signal != -1)
+		env->old_exit_value = g_received_signal;
+	g_received_signal = -1;
+	f_exec_logic_expr(env->ast_root, env);
+	if (g_received_signal != -1)
+		env->old_exit_value = g_received_signal;
+	return (env->old_exit_value);
 }
