@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_environment_access.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:02:20 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 07:36:41 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 16:04:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ bool	f_is_valid_name(const char *name)
 	if (!name || !(ft_isalpha(name[0]) || name[0] == '_'))
 		return (false);
 	i = 1;
-	while (name[i])
+	while (name[i] && name[i] != '=')
 	{
 		if (!(ft_isalnum(name[i]) || name[i] == '_'))
 			return (false);

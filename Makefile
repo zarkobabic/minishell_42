@@ -44,6 +44,7 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				exe_environment_manipulation.c \
 				exe_builtins_cd.c \
 				exe_signals.c \
+				exe_signals_child.c \
 				exe_path_resolution.c \
 				exe_redirection.c \
 				identifier_arg_linked_list.c \

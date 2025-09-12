@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 07:48:38 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/12 16:26:43 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ int	f_export(char ***environ, long argc, char **argv)
 {
 	int		i;
 	int		exit_value;
-	char	*name;
 	char	*value;
 	char	*eq_sign;
 
@@ -97,18 +96,17 @@ int	f_export(char ***environ, long argc, char **argv)
 	i = 0;
 	while (++i < argc)
 	{
+		if (!f_is_valid_name(argv[i]))
+		{
+			printf(EXPORT_INV_IDENT, argv[i]);
+			return FAIL;
+		}
 		eq_sign = ft_strchr(argv[i], '=');
 		if (!eq_sign)
 			continue ;
 		*eq_sign = '\0';
-		name = argv[i];
-		if (!f_is_valid_name(name))
-		{
-			printf(EXPORT_INV_IDENT, argv[i]);
-			continue ;
-		}
 		value = eq_sign + 1;
-		exit_value = f_setenv(environ, name, value, true);
+		exit_value = f_setenv(environ, argv[i], value, true);
 		if (exit_value != SUCCESS)
 			return (exit_value);
 	}
