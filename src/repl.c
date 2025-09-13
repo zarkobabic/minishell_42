@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/13 02:25:06 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/13 03:42:30 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ int	main(int argc, char **argv)
 	if (argc != 1)
 		return (printf("ERROR: invalid arguments\n"), 1);
 	(void)argv;
+	ft_bzero(&env, sizeof(env));
 	prompt = "minishell> ";
 	if(f_build_environ(&env.minienviron) != SUCCESS)
 		exit(FAIL);

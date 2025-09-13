@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:25:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 02:20:31 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 08:47:14 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,5 @@ int	f_exec_pipeline(t_ast_node *pipeline, t_env *env)
 		return (ERROR);
 	exit_value = f_wait_for_pipeline(ctx.pid_list,
 			pipeline->data.pipeline.cmd_cnt);
-	free(ctx.pid_list);
-	return (exit_value);
+	return (free(ctx.pid_list), exit_value);
 }

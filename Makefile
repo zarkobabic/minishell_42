@@ -6,6 +6,7 @@ LIBFT_DIR = libft/
 LIBFT = $(LIBFT_DIR)libft.a
 SOURCE_FOLDER = src/
 OBJECTS_FOLDER = obj/
+TEMP_FOLDER = .tmp/
 INCLUDES_FOLDER = $(SOURCE_FOLDER)
 INCLUDES = -I$(LIBFT_DIR) -I$(INCLUDES_FOLDER)
 REMOVE = rm -rf
@@ -45,6 +46,8 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				exe_builtins_cd.c \
 				exe_signals.c \
 				exe_signals_child.c \
+				exe_heredoc_list.c \
+				exe_heredoc_build.c \
 				exe_path_resolution.c \
 				exe_redirection.c \
 				identifier_arg_linked_list.c \
@@ -59,7 +62,7 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 
 MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
 
-all: $(LIBFT) $(NAME)
+all: $(LIBFT) $(NAME) | $(TEMP_FOLDER)
 
 $(NAME): $(MY_OBJECTS) $(LIBFT)
 	$(CC) $(CFLAGS) $(DEBUG_ENABLED) $^ $(LFLAGS) -o $@
@@ -71,12 +74,16 @@ $(OBJECTS_FOLDER)%.o: $(SOURCE_FOLDER)%.c
 	@mkdir -p $(OBJECTS_FOLDER)
 	$(CC) $(CFLAGS) $(DEBUG_ENABLED) $(INCLUDES) -c $< -o $@
 
+$(TEMP_FOLDER):
+	@mkdir -p $@
+
 clean:
 	$(MAKE) -C $(LIBFT_DIR) clean
 	$(REMOVE) $(OBJECTS_FOLDER)
 
 fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(REMOVE) $(TEMP_FOLDER)
 	$(REMOVE) $(NAME)
 
 re: fclean all

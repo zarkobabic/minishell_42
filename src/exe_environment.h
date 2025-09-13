@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:21:41 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 10:30:07 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 09:27:19 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,25 @@
 # define ENV_DELETE_ALL -1
 # define ENV_DEFAULT_HOME "/"
 # define ENV_DEFAULT_PATH "/usr/local/bin:/usr/bin:/bin"
+# define HEREDOC_COUNT 100
+# define HEREDOC_NAME_SIZE 16
+// # define HEREDOC_NAME_PREFIX "/temp/.r"
+# define HEREDOC_NAME_PREFIX "./.tmp/.r"
+# define HEREDOC_NAME_SUFFIX ".txt"
+
+
+typedef struct s_heredoc
+{
+	t_ast_node *redir_ptr;
+	char		name[HEREDOC_NAME_SIZE];
+}	t_heredoc;
 
 typedef struct s_environment_to_keep_track_of
 {
 	char			**minienviron;
 	t_ast_node		*ast_root;
 	int				old_exit_value;
+	t_heredoc		heredoclist[HEREDOC_COUNT];
 	struct termios	orig_term;
 }				t_env;
 

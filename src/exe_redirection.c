@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 02:55:57 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 07:55:51 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,122 +122,122 @@ static int	f_redirect_simple(t_ast_node *redirection, t_env *env)
 // 	return (result);
 // }
 
-static int	f_redirect_heredoc(char *delimiter, t_env *env, char **argv)
-{
-	char			*temp;
-	char			*stripped_target;
-	int				exit_value;
-	size_t			target_len;
-	bool			expansion_flag;
-	int				pipe_fd[2];
-	int				tty;
-	pid_t			pid;
-	t_child			*data;
+// static int	f_redirect_heredoc(char *delimiter, t_env *env, char **argv)
+// {
+// 	char			*temp;
+// 	char			*stripped_target;
+// 	int				exit_value;
+// 	size_t			target_len;
+// 	bool			expansion_flag;
+// 	int				pipe_fd[2];
+// 	int				tty;
+// 	pid_t			pid;
+// 	t_child			*data;
 
-	expansion_flag = !is_containing_quotes(delimiter);
-	stripped_target = remove_quotes(delimiter);
-	if (!stripped_target)
-		return (ERROR);
-	target_len = ft_strlen(stripped_target);
-	if (pipe(pipe_fd) < 0)
-		return (perror("heredoc pipe"), ERROR);
-	tty = open("/dev/tty", O_RDWR);
-	if (tty < 0)
-		return (perror("fd tty opening"), FAIL);
-	pid = fork();
-	if (pid == 0)
-	{
-		close(pipe_fd[IN]);
-		if (!isatty(STDIN_FILENO))
-		{
-			close(STDIN_FILENO);
-			dup2(tty, STDIN_FILENO);
-		}
-		if (!isatty(STDOUT_FILENO))
-		{
-			close(STDOUT_FILENO);
-			dup2(tty, STDOUT_FILENO);
-		}
-		close(tty);
-		// if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
-		// {
-		// 	close(pipe_fd[OUT]);
-		// 	free(stripped_target);
-		// 	perror("heredoc dup2 write");
-		// 	mini_exit(ERROR, env);
-		// }
-		// close(pipe_fd[OUT]);
-		rl_catch_signals = 1;
-		data = f_get_struct();
-		data->env = env;
-		data->argv = argv;
-		data->fd = pipe_fd;
-		data->target = stripped_target;
-		data->input = NULL;
-		f_register_birth_control(env, data);
-		while (1)
-		{
-			// ft_putstr_fd("> ", STDIN_FILENO);
-			// data->input = get_next_line(STDIN_FILENO);
-			// tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
-			data->input = readline("> ");
-			if (!data->input)
-			{
-				free(data->input);
-				data->input = NULL;
-				break ;
-			}
-			// data->input = f_strip_newline(data->input);
-			if (ft_strncmp(data->input, data->target, target_len + 1) == 0)
-			{
-				free(data->input);
-				data->input = NULL;
-				break ;
-			}
-			if (expansion_flag)
-			{
-				temp = identifier_expand_variables_in_string(data->input, env, true);
-				free(data->input);
-				data->input = temp;
-			}
-			ft_putendl_fd(data->input, pipe_fd[OUT]);
-			free(data->input);
-			data->input = NULL;
-			rl_on_new_line();
-			rl_replace_line("", 0);
-		}
-		// if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
-		// {
-		// 	close(pipe_fd[OUT]);
-		// 	free(stripped_target);
-		// 	perror("heredoc dup2 write");
-		// 	mini_exit(ERROR, env);
-		// }
-		close(pipe_fd[OUT]);
-		f_wash_child(data);
-		mini_exit(SUCCESS, env);
-	}
-	else if (pid > 0)
-	{
-		close(tty);
-		close(pipe_fd[OUT]);
-		free(stripped_target);
-		signal(SIGINT, SIG_IGN); // ignore signals
-		signal(SIGQUIT, SIG_IGN); // ignore signals
-		exit_value = f_wait_for_child(pid);
-		f_set_signals(NONINTERACTIVE, env); // restore signals
-		tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
-		if (exit_value != SUCCESS)
-			return (exit_value);
-		if (dup2(pipe_fd[IN], STDIN_FILENO) < 0)
-			return (close(pipe_fd[IN]), perror("heredoc dup2 read"), ERROR);
-		close(pipe_fd[IN]);
-		return (exit_value);
-	}
-	else
-		return (perror("heredoc fork"), ERROR);
-	return (SUCCESS);
-}
+// 	expansion_flag = !is_containing_quotes(delimiter);
+// 	stripped_target = remove_quotes(delimiter);
+// 	if (!stripped_target)
+// 		return (ERROR);
+// 	target_len = ft_strlen(stripped_target);
+// 	if (pipe(pipe_fd) < 0)
+// 		return (perror("heredoc pipe"), ERROR);
+// 	tty = open("/dev/tty", O_RDWR);
+// 	if (tty < 0)
+// 		return (perror("fd tty opening"), FAIL);
+// 	pid = fork();
+// 	if (pid == 0)
+// 	{
+// 		close(pipe_fd[IN]);
+// 		if (!isatty(STDIN_FILENO))
+// 		{
+// 			close(STDIN_FILENO);
+// 			dup2(tty, STDIN_FILENO);
+// 		}
+// 		if (!isatty(STDOUT_FILENO))
+// 		{
+// 			close(STDOUT_FILENO);
+// 			dup2(tty, STDOUT_FILENO);
+// 		}
+// 		close(tty);
+// 		// if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
+// 		// {
+// 		// 	close(pipe_fd[OUT]);
+// 		// 	free(stripped_target);
+// 		// 	perror("heredoc dup2 write");
+// 		// 	mini_exit(ERROR, env);
+// 		// }
+// 		// close(pipe_fd[OUT]);
+// 		rl_catch_signals = 1;
+// 		data = f_get_struct();
+// 		data->env = env;
+// 		data->argv = argv;
+// 		data->fd = pipe_fd;
+// 		data->target = stripped_target;
+// 		data->input = NULL;
+// 		f_register_birth_control(env, data);
+// 		while (1)
+// 		{
+// 			// ft_putstr_fd("> ", STDIN_FILENO);
+// 			// data->input = get_next_line(STDIN_FILENO);
+// 			// tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
+// 			data->input = readline("> ");
+// 			if (!data->input)
+// 			{
+// 				free(data->input);
+// 				data->input = NULL;
+// 				break ;
+// 			}
+// 			// data->input = f_strip_newline(data->input);
+// 			if (ft_strncmp(data->input, data->target, target_len + 1) == 0)
+// 			{
+// 				free(data->input);
+// 				data->input = NULL;
+// 				break ;
+// 			}
+// 			if (expansion_flag)
+// 			{
+// 				temp = identifier_expand_variables_in_string(data->input, env, true);
+// 				free(data->input);
+// 				data->input = temp;
+// 			}
+// 			ft_putendl_fd(data->input, pipe_fd[OUT]);
+// 			free(data->input);
+// 			data->input = NULL;
+// 			rl_on_new_line();
+// 			rl_replace_line("", 0);
+// 		}
+// 		// if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
+// 		// {
+// 		// 	close(pipe_fd[OUT]);
+// 		// 	free(stripped_target);
+// 		// 	perror("heredoc dup2 write");
+// 		// 	mini_exit(ERROR, env);
+// 		// }
+// 		close(pipe_fd[OUT]);
+// 		f_wash_child(data);
+// 		mini_exit(SUCCESS, env);
+// 	}
+// 	else if (pid > 0)
+// 	{
+// 		close(tty);
+// 		close(pipe_fd[OUT]);
+// 		free(stripped_target);
+// 		signal(SIGINT, SIG_IGN); // ignore signals
+// 		signal(SIGQUIT, SIG_IGN); // ignore signals
+// 		exit_value = f_wait_for_child(pid);
+// 		f_set_signals(NONINTERACTIVE, env); // restore signals
+// 		tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
+// 		if (exit_value != SUCCESS)
+// 			return (exit_value);
+// 		if (dup2(pipe_fd[IN], STDIN_FILENO) < 0)
+// 			return (close(pipe_fd[IN]), perror("heredoc dup2 read"), ERROR);
+// 		close(pipe_fd[IN]);
+// 		return (exit_value);
+// 	}
+// 	else
+// 		return (perror("heredoc fork"), ERROR);
+// 	return (SUCCESS);
+// }
 
 // static int	f_redirect_heredoc(char *delimiter, t_env *env)
 // {
@@ -296,10 +296,42 @@ static int	f_redirect_heredoc(char *delimiter, t_env *env, char **argv)
 // 	 */
 // }
 
+static char	*f_heredoc_find_entry(t_ast_node *target, t_env *env)
+{
+	int	i;
+
+	i = 0;
+	while (i < HEREDOC_COUNT)
+	{
+		if (env->heredoclist[i].redir_ptr == target)
+			return (env->heredoclist[i].name);
+		++i;
+	}
+	return (NULL);
+}
+
+int	f_redirect_heredoc_new(t_ast_node *redirection, t_env *env)
+{
+	int		file;
+	char	*filename;
+
+	filename = f_heredoc_find_entry(redirection, env);
+	if (!filename)
+		return (GENERAL);
+	file = open(filename, O_RDONLY);
+	if (file < 0)
+		return (perror("heredoc file"), GENERAL);
+	if (dup2(file, STDIN_FILENO) == -1)
+		return (close(file), perror("dup2 heredoc"), GENERAL);
+	close(file);
+	return (SUCCESS);
+}
+
 int	f_redirect(t_ast_node *redirections, t_env *env, char **argv)
 {
 	int	return_value;
 
+	(void)argv; // FIXME: remove later
 	if (!redirections)
 		return (SUCCESS);
 	return_value = SUCCESS;
@@ -310,7 +342,8 @@ int	f_redirect(t_ast_node *redirections, t_env *env, char **argv)
 			|| redirections->data.redirection.type == TYPE_REDIRECT_APPEND)
 			return_value = f_redirect_simple(redirections, env);
 		else if (redirections->data.redirection.type == TYPE_REDIRECT_HEREDOC)
-			return_value = f_redirect_heredoc(redirections->data.redirection.target, env, argv);
+			// return_value = f_redirect_heredoc(redirections->data.redirection.target, env, argv);
+			return_value = f_redirect_heredoc_new(redirections, env);
 		else
 			ft_putstr_fd_fail_safe("invalid redirection type\n", STDERR_FILENO);
 		if (return_value != SUCCESS)

@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 10:54:45 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 09:19:30 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,8 +152,13 @@ int	f_execute_ast(t_env *env)
 	if (g_received_signal != -1)
 		env->old_exit_value = g_received_signal;
 	g_received_signal = -1;
+	ft_bzero(env->heredoclist, sizeof(env->heredoclist));
+	f_build_heredoc_logical_expr(env->ast_root, env);
+	// if (f_setup_heredocs(env->ast_root, env) != SUCCESS)
+	// 	return (GENERAL);
 	f_exec_logic_expr(env->ast_root, env);
 	if (g_received_signal != -1)
 		env->old_exit_value = g_received_signal;
+	f_delete_heredoc_files(env);
 	return (env->old_exit_value);
 }
