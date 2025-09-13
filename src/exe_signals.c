@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 11:07:40 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 01:56:43 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	f_signal_noninteractive_sigint(int signo)
 
 	g_received_signal = BASE_SIGNO + signo;
 	// if (isatty(STDOUT_FILENO)) // FIXME: check condition
-		write(STDERR_FILENO, "nope\n", 1); // FIXME: remove debugging message
+		write(STDERR_FILENO, "\n", 1); // FIXME: remove debugging message
 	// rl_on_new_line();
 	// rl_replace_line("", FALSE);
 	// rl_redisplay();

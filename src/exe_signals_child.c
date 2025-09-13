@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 05:25:11 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 10:52:35 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 02:03:28 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,14 @@ void	f_wash_child(t_child *data)
 
 static void	f_kill_child(int signo)
 {
-	t_child	*data;
-	t_env	*env;
+	extern int	g_received_signal;
+	t_child		*data;
+	t_env		*env;
 
+	g_received_signal = BASE_SIGNO + signo;
+	// write(STDOUT_FILENO, "\n", 1);
+	// rl_replace_line("", 0);
+	// rl_on_new_line();
 	data = f_get_struct();
 	env = data->env;
 	f_wash_child(data);

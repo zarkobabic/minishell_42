@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 11:05:39 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 02:55:57 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ static int	f_redirect_heredoc(char *delimiter, t_env *env, char **argv)
 	size_t			target_len;
 	bool			expansion_flag;
 	int				pipe_fd[2];
+	int				tty;
 	pid_t			pid;
 	t_child			*data;
 
@@ -140,10 +141,24 @@ static int	f_redirect_heredoc(char *delimiter, t_env *env, char **argv)
 	target_len = ft_strlen(stripped_target);
 	if (pipe(pipe_fd) < 0)
 		return (perror("heredoc pipe"), ERROR);
+	tty = open("/dev/tty", O_RDWR);
+	if (tty < 0)
+		return (perror("fd tty opening"), FAIL);
 	pid = fork();
 	if (pid == 0)
 	{
 		close(pipe_fd[IN]);
+		if (!isatty(STDIN_FILENO))
+		{
+			close(STDIN_FILENO);
+			dup2(tty, STDIN_FILENO);
+		}
+		if (!isatty(STDOUT_FILENO))
+		{
+			close(STDOUT_FILENO);
+			dup2(tty, STDOUT_FILENO);
+		}
+		close(tty);
 		// if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
 		// {
 		// 	close(pipe_fd[OUT]);
@@ -191,23 +206,26 @@ static int	f_redirect_heredoc(char *delimiter, t_env *env, char **argv)
 			rl_on_new_line();
 			rl_replace_line("", 0);
 		}
-		if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
-		{
-			close(pipe_fd[OUT]);
-			free(stripped_target);
-			perror("heredoc dup2 write");
-			mini_exit(ERROR, env);
-		}
-		// close(pipe_fd[OUT]);
+		// if (dup2(pipe_fd[OUT], STDOUT_FILENO) < 0)
+		// {
+		// 	close(pipe_fd[OUT]);
+		// 	free(stripped_target);
+		// 	perror("heredoc dup2 write");
+		// 	mini_exit(ERROR, env);
+		// }
+		close(pipe_fd[OUT]);
 		f_wash_child(data);
 		mini_exit(SUCCESS, env);
 	}
 	else if (pid > 0)
 	{
+		close(tty);
 		close(pipe_fd[OUT]);
 		free(stripped_target);
-		// signal(SIGINT, SIG_IGN);
+		signal(SIGINT, SIG_IGN); // ignore signals
+		signal(SIGQUIT, SIG_IGN); // ignore signals
 		exit_value = f_wait_for_child(pid);
+		f_set_signals(NONINTERACTIVE, env); // restore signals
 		tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
 		if (exit_value != SUCCESS)
 			return (exit_value);
@@ -293,6 +311,8 @@ int	f_redirect(t_ast_node *redirections, t_env *env, char **argv)
 			return_value = f_redirect_simple(redirections, env);
 		else if (redirections->data.redirection.type == TYPE_REDIRECT_HEREDOC)
 			return_value = f_redirect_heredoc(redirections->data.redirection.target, env, argv);
+		else
+			ft_putstr_fd_fail_safe("invalid redirection type\n", STDERR_FILENO);
 		if (return_value != SUCCESS)
 			return (return_value);
 		redirections = redirections->next;

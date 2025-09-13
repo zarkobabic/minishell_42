@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 09:13:38 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 00:47:48 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,6 @@ static int	f_exec_in_pipeline(t_cmd_ctx *ctx)
 {
 	int	exit_value;
 
-	exit_value = SUCCESS;
 	exit_value = f_redirect(ctx->redirections, ctx->env, ctx->argv);
 	if (exit_value != SUCCESS)
 		return (exit_value);
