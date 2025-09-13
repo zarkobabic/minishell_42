@@ -6,12 +6,47 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 04:40:20 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 17:55:54 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/13 00:11:55 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "identifier.h"
 #include <stdlib.h>
+
+// #include <sys/stat.h>
+// #include <sys/types.h>
+// bool	f_check_is_directory(char *path)
+// {
+// 	struct stat path_stat;
+// 	if (stat(path, &path_stat) == 0)
+// 	{
+// 		if (S_ISDIR(path_stat.st_mode))
+// 			return true;
+// 		else
+// 			return false;
+// 	}
+// }
+
+
+// if(f_check_is_directory(path_cpy))
+// return(ft_putstr_fd_fail_safe("minishell: ", STDERR_FILENO), 
+// 	ft_putstr_fd_fail_safe(path_cpy, STDERR_FILENO), 
+// 	ft_putstr_fd_fail_safe(": Is a directory\n", STDERR_FILENO), 
+// 	NULL);
+#include <dirent.h>
+bool	f_check_is_directory(const char *path)
+{
+	DIR *dir;
+	
+	dir = opendir(path);
+	if (dir != NULL)
+	{
+		closedir(dir);
+		return true;
+	}
+	else
+		return false;
+}
 
 static char	**expand_and_split_argument(char *string_value, t_env *env)
 {

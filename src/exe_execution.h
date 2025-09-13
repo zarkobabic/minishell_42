@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 17:44:13 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/12 22:09:31 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,13 @@
 
 enum			e_exit_value
 {
+	SUCCESS = 0,
 	ERROR = -1,
-	SUCCESS,
-	FAIL
+	FAIL = 1,
+	GENERAL = 1,
+	MISUSE = 2,
+	PERMISSION = 126,
+	NOT_FOUND = 127
 };
 
 enum			e_sigmode

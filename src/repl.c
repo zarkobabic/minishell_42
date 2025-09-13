@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 10:58:52 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 02:25:06 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,13 @@ void	process_input(char *input, t_env *env)
 
 	tree = parse_tree(input);
 	if (!tree)
+	{
+		env->old_exit_value = 2;
 		return ;
+	}
 	ast_tree = ast_create_tree(tree);
 	env->ast_root = ast_tree;
-	ast_tree_print(ast_tree);
+	//ast_tree_print(ast_tree);
 	free_parse_tree(tree);
 	f_execute_ast(env);
 	ast_free_tree(ast_tree);
@@ -67,7 +70,7 @@ int	main(int argc, char **argv)
 	is_terminal = isatty(STDIN_FILENO);
 	tcgetattr(STDIN_FILENO, &env.orig_term);
 	f_set_signals(NONINTERACTIVE, &env);
-	printf("Welcome to minishell!\n");
+	//printf("Welcome to minishell!\n");
 	while (1)
 	{
 		tcsetattr(STDIN_FILENO, TCSANOW, &env.orig_term);
@@ -92,6 +95,7 @@ int	main(int argc, char **argv)
 			f_set_signals(SILENT, &env);
 		else
 			f_set_signals(NONINTERACTIVE, &env);
+		
 		process_input(input, &env);
 		free(input);
 		rl_on_new_line();

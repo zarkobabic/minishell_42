@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins_cd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 20:40:38 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/10 02:07:48 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 02:23:00 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ static int	f_change_directory_and_update_env(char ***environ, char *path)
 	char	*old_pwd;
 	char	*new_pwd;
 
-	if (chdir(path) == -1)
-		return (perror("minishell: cd"), FAIL);
+	if (access(path, F_OK) == 0 || chdir(path) == -1)
+		return (perror("minishell: cd"), GENERAL);
 	old_pwd = f_getenv(*environ, "PWD");
 	if (old_pwd)
 		f_setenv(environ, "OLDPWD", old_pwd, true);
@@ -69,7 +69,7 @@ int	f_cd(char ***environ, long argc, char **argv)
 	char	*target_path;
 
 	if (argc > 2)
-		return (printf("minishell: cd: too many arguments\n"), FAIL);
+		return (ft_putstr_fd_fail_safe("minishell: cd: too many arguments\n", STDERR_FILENO), MISUSE);
 	ft_bzero(custom_path, PATHLENGTH);
 	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
 		target_path = f_handle_home_directory(environ);
