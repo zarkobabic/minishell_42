@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 09:20:04 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 12:31:17 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,11 +106,6 @@ void			free_argv(char ***argv);
 
 char			**identifier_process_arguments(t_ast_node *args, long *argc,
 					t_env *env);
-
-void	f_build_heredoc_logical_expr(t_ast_node *ast_logical_expr, t_env *env);
-int		f_setup_heredocs(t_ast_node *cmd, t_env *env);
-void	f_delete_heredoc_files(t_env *env);
-
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 09:19:30 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 12:29:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	f_exec_subshell(t_ast_node *subshell, t_env *env)
 	if (pid == 0)
 	{
 		exit_value = SUCCESS;
-		exit_value = f_redirect(subshell->data.subshell.redirections, env, NULL); // FIXME: check if NULL is fine (should)
+		exit_value = f_redirect(subshell->data.subshell.redirections, env);
 		if (exit_value == SUCCESS)
 			exit_value = f_exec_logic_expr(subshell->data.subshell.logical_expr,
 					env);
@@ -153,12 +153,13 @@ int	f_execute_ast(t_env *env)
 		env->old_exit_value = g_received_signal;
 	g_received_signal = -1;
 	ft_bzero(env->heredoclist, sizeof(env->heredoclist));
-	f_build_heredoc_logical_expr(env->ast_root, env);
-	// if (f_setup_heredocs(env->ast_root, env) != SUCCESS)
-	// 	return (GENERAL);
+	if (f_heredoc_build_logical_expr(env->ast_root, env) != SUCCESS)
+		return (GENERAL);
+	if (g_received_signal != -1)
+		return (env->old_exit_value = g_received_signal, env->old_exit_value);
 	f_exec_logic_expr(env->ast_root, env);
 	if (g_received_signal != -1)
 		env->old_exit_value = g_received_signal;
-	f_delete_heredoc_files(env);
+	f_heredoc_delete_files(env);
 	return (env->old_exit_value);
 }

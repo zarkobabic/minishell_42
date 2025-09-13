@@ -6,13 +6,15 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 07:55:51 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/13 12:17:45 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_redirection.h"
 #include "identifier.h"
 #include "exe_signals.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 #include <termios.h>
 
 int	f_check_ambiguity(char *target)
@@ -301,7 +303,7 @@ static char	*f_heredoc_find_entry(t_ast_node *target, t_env *env)
 	int	i;
 
 	i = 0;
-	while (i < HEREDOC_COUNT)
+	while (i < HEREDOC_COUNT_MAX)
 	{
 		if (env->heredoclist[i].redir_ptr == target)
 			return (env->heredoclist[i].name);
@@ -310,7 +312,7 @@ static char	*f_heredoc_find_entry(t_ast_node *target, t_env *env)
 	return (NULL);
 }
 
-int	f_redirect_heredoc_new(t_ast_node *redirection, t_env *env)
+int	f_redirect_heredoc_new(t_ast_node *redirection, t_env *env) // FIXME: change function name after cleaning up the code
 {
 	int		file;
 	char	*filename;
@@ -327,11 +329,10 @@ int	f_redirect_heredoc_new(t_ast_node *redirection, t_env *env)
 	return (SUCCESS);
 }
 
-int	f_redirect(t_ast_node *redirections, t_env *env, char **argv)
+int	f_redirect(t_ast_node *redirections, t_env *env)
 {
 	int	return_value;
 
-	(void)argv; // FIXME: remove later
 	if (!redirections)
 		return (SUCCESS);
 	return_value = SUCCESS;
@@ -343,7 +344,7 @@ int	f_redirect(t_ast_node *redirections, t_env *env, char **argv)
 			return_value = f_redirect_simple(redirections, env);
 		else if (redirections->data.redirection.type == TYPE_REDIRECT_HEREDOC)
 			// return_value = f_redirect_heredoc(redirections->data.redirection.target, env, argv);
-			return_value = f_redirect_heredoc_new(redirections, env);
+			return_value = f_redirect_heredoc_new(redirections, env); // FIXME: change function name after cleaning up the code
 		else
 			ft_putstr_fd_fail_safe("invalid redirection type\n", STDERR_FILENO);
 		if (return_value != SUCCESS)
