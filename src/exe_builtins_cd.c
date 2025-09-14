@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 20:40:38 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 01:08:19 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 06:46:17 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,11 @@ static int	f_change_directory_and_update_env(char ***environ, char *path)
 	if (chdir(path) == -1)
 	{
 		if (errno == ENOENT)
-			return (perror("minishell: cd"), NOT_FOUND);
+			return (perror("cd"), NOT_FOUND);
 		else if (errno == EACCES)
-			return (perror("minishell: cd"), PERMISSION);
+			return (perror("cd"), PERMISSION);
 		else
-			perror("minishell: cd");
+			perror("cd");
 		return GENERAL;
 	}
 	old_pwd = f_getenv(*environ, "PWD");
@@ -79,7 +79,7 @@ int	f_cd(char ***environ, long argc, char **argv)
 	char	*target_path;
 
 	if (argc > 2)
-		return (ft_putstr_fd_fail_safe("minishell: cd: too many arguments\n", STDERR_FILENO), MISUSE);
+		return (ft_putstr_fd_fail_safe("cd: " ERR_MSG_TOOMANYARGS, STDERR_FILENO), MISUSE);
 	ft_bzero(custom_path, PATHLENGTH);
 	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
 		target_path = f_handle_home_directory(environ);

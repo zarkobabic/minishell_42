@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 02:52:07 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 06:46:21 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,11 @@
 # define TRUE 1
 # define PROMPT "minishell> "
 
-extern int g_received_signal;
+# define ERR_MSG_TOOMANYARGS "too many arguments\n"
+# define ENV_ARGC_ERRMSG "env: " ERR_MSG_TOOMANYARGS
+# define EXPORT_INV_IDENT "export: `%s': not a valid identifier\n"
+
+extern volatile sig_atomic_t g_received_signal;
 
 enum			e_exit_value
 {
@@ -40,14 +44,6 @@ enum			e_exit_value
 	MISUSE = 2,
 	PERMISSION = 126,
 	NOT_FOUND = 127
-};
-
-enum			e_sigmode
-{
-	NONINTERACTIVE = 0,
-	HEREDOC,
-	INTERACTIVE,
-	SILENT
 };
 
 typedef struct s_cmd_ctx

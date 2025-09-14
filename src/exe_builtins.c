@@ -6,16 +6,12 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 04:15:01 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 07:02:27 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_environment.h"
 #include "exe_execution.h"
-
-#define ENV_ARGC_ERRMSG "minishell: env: too many arguments\n"
-
-#define EXPORT_INV_IDENT "minishell: export: `%s': not a valid identifier\n"
 
 int	f_handle_n_flag(bool n_flag)
 {
@@ -71,7 +67,7 @@ int	f_env(char **environ, long argc, bool export_call)
 	int	i;
 
 	if (argc > 1)
-		return (printf(ENV_ARGC_ERRMSG), FAIL);
+		return (ft_putstr_fd_fail_safe(ENV_ARGC_ERRMSG, STDERR_FILENO), MISUSE); // FIXME
 	i = -1;
 	while (environ[++i])
 	{
@@ -111,7 +107,7 @@ int	f_export(char ***environ, long argc, char **argv)
 	{
 		if (!f_is_valid_name(argv[i]))
 		{
-			ft_putstr_fd_fail_safe("minishell: export: ", STDERR_FILENO);
+			ft_putstr_fd_fail_safe("export: ", STDERR_FILENO);
 			ft_putstr_fd_fail_safe(argv[i], STDERR_FILENO);
 			ft_putstr_fd_fail_safe(": not a valid identifier\n", STDERR_FILENO);
 			failed = true;
@@ -200,12 +196,12 @@ int	f_exit(long argc, char **argv, bool *error)
 	if (argc > 1 && !f_isnumeric(argv[1]))
 		return (*error = true,
 			ft_putstr_fd_fail_safe(
-				"minishell: exit: numeric argument required\n", STDERR_FILENO),
+				"exit: numeric argument required\n", STDERR_FILENO),
 			MISUSE);
 	if (argc > 2)
 		return (*error = true,
 			ft_putstr_fd_fail_safe(
-				"minishell: exit: too many arguments\n", STDERR_FILENO),
+				"exit: " ERR_MSG_TOOMANYARGS, STDERR_FILENO),
 			MISUSE);
 	if (argc == 2)
 		return (ft_atoi(argv[1]));

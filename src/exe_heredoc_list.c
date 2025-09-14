@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_heredoc_list.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 03:25:16 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 12:27:38 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 06:57:29 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,25 +37,15 @@ int	f_heredoc_read_input(t_env *env, int i, char *delimiter)
 	expansion_flag = !is_containing_quotes(delimiter);
 	stripped_delim = remove_quotes(delimiter);
 	delim_len = ft_strlen(stripped_delim);
-	f_set_signals(INTERACTIVE, env);
+	f_set_signals(HEREDOC, env);
 	rl_catch_signals = 1;
 	while (1)
 	{
 		input = readline("> ");
 		if (g_received_signal != -1)
-		{
-			// free(input);
-			free(stripped_delim);
-			close(file);
-			f_set_signals(NONINTERACTIVE, env);
-			f_heredoc_delete_files(env);
-			return (GENERAL);
-		}
-		if (!input || ft_strncmp(input, stripped_delim, delim_len + 1) == 0)
-		{
-			free(input);
 			break ;
-		}
+		if (!input || ft_strncmp(input, stripped_delim, delim_len + 1) == 0)
+			break ;
 		if(expansion_flag)
 		{
 			temp = identifier_expand_variables_in_string(input, env, true);
@@ -65,13 +55,17 @@ int	f_heredoc_read_input(t_env *env, int i, char *delimiter)
 		ft_putendl_fd(input, file);
 		free(input);
 	}
+	free(input);
 	free(stripped_delim);
 	close(file);
+	tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
 	f_set_signals(NONINTERACTIVE, env);
+	if (g_received_signal != -1)
+		return (f_heredoc_delete_files(env), GENERAL);
 	return (SUCCESS);
 }
 
-void	f_heredoc_populate_file_name_entry(t_env *env, int i)
+void	f_heredoc_populate_entry_file_name(t_env *env, int i)
 {
 	char	*nbr;
 	// char	nbr[HEREDOC_COUNT_DIGITS];
@@ -100,7 +94,7 @@ int	f_heredoc_setup_files(t_ast_node *cmd, t_env *env)
 		if (temp_redir->data.redirection.type == TYPE_REDIRECT_HEREDOC)
 		{
 			env->heredoclist[hrdc_counter].redir_ptr = temp_redir;
-			f_heredoc_populate_file_name_entry(env, hrdc_counter);
+			f_heredoc_populate_entry_file_name(env, hrdc_counter);
 			if (f_heredoc_read_input(env, hrdc_counter, temp_redir->data.redirection.target) != SUCCESS)
 				return (GENERAL);
 			++hrdc_counter;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_draft.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 22:13:45 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 12:29:31 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 06:56:37 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,8 +130,6 @@ void	f_cleanup_pipeline(pid_t *pid_list, int created_processes, int temp_fd)
 
 int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 {
-	extern int	g_received_signal;
-
 	if (!expr || expr->type != AST_LOGICAL_EXPR)
 		return (ERROR);
 	env->old_exit_value = f_exec_pipeline(expr->data.logical_expr.pipeline, env);
@@ -145,8 +143,6 @@ int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 
 int	f_execute_ast(t_env *env)
 {
-	extern int g_received_signal;
-
 	if (!env->ast_root || env->ast_root->type != AST_LOGICAL_EXPR)
 		return (ERROR);
 	if (g_received_signal != -1)

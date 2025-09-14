@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_signals_child.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 05:25:11 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 02:03:28 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 06:17:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	f_wash_child(t_child *data)
 
 static void	f_kill_child(int signo)
 {
-	extern int	g_received_signal;
+	// extern int	g_received_signal;
 	t_child		*data;
 	t_env		*env;
 

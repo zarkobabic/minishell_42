@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 03:52:51 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 06:16:25 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <string.h>
 #include <termios.h>
 
-int	g_received_signal = -1;
+volatile sig_atomic_t	g_received_signal = -1;
 
 void	process_input(char *input, t_env *env)
 {
