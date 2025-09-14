@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 18:21:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 06:37:32 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 07:13:20 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ static void	f_signal_noninteractive_sigint(int signo)
 static void	f_signal_heredoc(int signo)
 {
 	g_received_signal = BASE_SIGNO + signo;
-	rl_done = 1;
-	write(STDERR_FILENO, MSG_SIGINT, sizeof(MSG_SIGINT));
-	rl_replace_line("", true);
-	rl_on_new_line();
-	rl_set_prompt(PROMPT);
-	rl_redisplay();
+	// rl_done = 1;
+	// write(STDERR_FILENO, MSG_SIGINT, sizeof(MSG_SIGINT));
+	// rl_replace_line("", true);
+	// rl_on_new_line();
+	// rl_set_prompt(PROMPT);
+	// rl_redisplay();
 }
 
 static void	f_signal_reset_prompt(int signo)

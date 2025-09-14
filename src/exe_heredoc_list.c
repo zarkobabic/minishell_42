@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 03:25:16 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 06:57:29 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 07:11:53 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,17 @@ void	f_heredoc_delete_files(t_env *env)
 	i = -1;
 	while(++i < HEREDOC_COUNT_MAX)
 		unlink(env->heredoclist[i].name);
+}
+
+int	f_check_for_signal(void)
+{
+	if (g_received_signal != -1)
+	{
+		rl_done = 1;
+		rl_replace_line("", false);
+		rl_stuff_char('\n');
+	}
+	return (0);
 }
 
 int	f_heredoc_read_input(t_env *env, int i, char *delimiter)
@@ -39,6 +50,7 @@ int	f_heredoc_read_input(t_env *env, int i, char *delimiter)
 	delim_len = ft_strlen(stripped_delim);
 	f_set_signals(HEREDOC, env);
 	rl_catch_signals = 1;
+	rl_event_hook = f_check_for_signal;
 	while (1)
 	{
 		input = readline("> ");
@@ -55,6 +67,7 @@ int	f_heredoc_read_input(t_env *env, int i, char *delimiter)
 		ft_putendl_fd(input, file);
 		free(input);
 	}
+	rl_event_hook = NULL;
 	free(input);
 	free(stripped_delim);
 	close(file);
