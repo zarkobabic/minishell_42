@@ -2,12 +2,12 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LFLAGS = -lreadline -lcurses
 NAME = minishell
-LIBFT_DIR = libft/
-LIBFT = $(LIBFT_DIR)libft.a
-SOURCE_FOLDER = src/
-OBJECTS_FOLDER = obj/
-TEMP_FOLDER = .tmp/
-INCLUDES_FOLDER = inc/
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+SOURCE_FOLDER = src
+OBJECTS_FOLDER = obj
+TEMP_FOLDER = .tmp
+INCLUDES_FOLDER = inc
 INCLUDES = -I$(LIBFT_DIR) -I$(INCLUDES_FOLDER)
 REMOVE = rm -rf
 DEBUG_ENABLED = -g
@@ -37,6 +37,7 @@ MY_C_SOURCES =	repl.c \
 				execution_tree/exe_simple_cmd.c \
 				identifier_expansion/identifier_arg_linked_list.c \
 				identifier_expansion/identifier_arg_linked_list_cleanup.c \
+				identifier_expansion/identifier_bash_sort.c \
 				identifier_expansion/identifier_quote_remove.c \
 				identifier_expansion/identifier_unquoted_space_split.c \
 				identifier_expansion/identifier_unquoted_space_utils.c \
@@ -68,7 +69,7 @@ MY_C_SOURCES =	repl.c \
 				redirection/exe_redirection.c \
 
 
-MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(MY_C_SOURCES:.c=.o))
+MY_OBJECTS = $(addprefix $(OBJECTS_FOLDER)/, $(MY_C_SOURCES:.c=.o))
 
 all: $(LIBFT) $(NAME) | $(TEMP_FOLDER)
 
@@ -78,7 +79,7 @@ $(NAME): $(MY_OBJECTS) $(LIBFT)
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
-$(OBJECTS_FOLDER)%.o: $(SOURCE_FOLDER)%.c | $(OBJECTS_FOLDER)
+$(OBJECTS_FOLDER)/%.o: $(SOURCE_FOLDER)/%.c | $(OBJECTS_FOLDER)
 	$(CC) $(CFLAGS) $(DEBUG_ENABLED) $(INCLUDES) -c $< -o $@
 
 $(OBJECTS_FOLDER):

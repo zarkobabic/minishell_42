@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 14:20:52 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 16:13:33 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ char	**identifier_process_arguments(t_ast_node *args, long *argc,
 
 void	free_split(char **split);
 char	*remove_quotes(char *str);
+void	bash_sort(char **array);
 
 // wildcard
 

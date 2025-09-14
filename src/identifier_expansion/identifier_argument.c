@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_argument.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 03:24:57 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 08:18:51 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 16:12:56 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ static bool	process_splitted_string_element(char *splitted_string_el,
 	temp_matched = get_all_matched_names(splitted_string_el);
 	if (!temp_matched)
 		return (false);
+	bash_sort(temp_matched);
 	i = 0;
 	while (temp_matched[i])
 	{
