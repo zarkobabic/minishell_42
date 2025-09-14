@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_var_expansion.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 04:24:18 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 12:20:29 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ static void	copy_old_exit_value(int old_exit_value, char *new_str,
 }
 
 bool	identifier_expand_var_to_string(char **strs, t_env *env,
-		bool heredoc_single_quotes)
+			bool heredoc_single_quotes)
 {
 	bool	in_quotes[2];
 	long	i;

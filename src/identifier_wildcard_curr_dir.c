@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_wildcard_curr_dir.c                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 16:40:40 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 23:03:14 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 12:34:33 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,64 +72,14 @@ static int	fill_matches(char **result, DIR *dir, char *pattern)
 	return (0);
 }
 
-// I have found on the internet that BASH uses normal
-// alphabetical sort just with a tweak that
-// _ (ASCII 95) is treated as less than . (ASCII 46)
-int	bashcmp(char *s1, char *s2)
-{
-	unsigned char	c1;
-	unsigned char	c2;
-
-	while (*s1 && *s2)
-	{
-		c1 = (unsigned char)*s1;
-		c2 = (unsigned char)*s2;
-		if (c1 != c2)
-		{
-			if (c1 == '_' && c2 == '.')
-				return (-1);
-			if (c1 == '.' && c2 == '_')
-				return (1);
-			return ((int)c1 - (int)c2);
-		}
-		s1++;
-		s2++;
-	}
-	return ((int)(unsigned char)*s1 - (int)(unsigned char)*s2);
-}
-
-void	bash_sort(char **array)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-
-	i = 0;
-	while (array[i + 1])
-	{
-		j = 0;
-		while (array[j + 1])
-		{
-			if (bashcmp(array[j], array[j + 1]) > 0)
-			{
-				tmp = array[j];
-				array[j] = array[j + 1];
-				array[j + 1] = tmp;
-			}
-			++j;
-		}
-		++i;
-	}
-}
-
 /// @brief Creates an array of strings with the pattern as
 /// a first element and then NULL. (This is implemented like this)
 /// to keep the compactibility with the result if we have matches.
 /// @param pattern Pattern to copy
-/// @return FAIL: NULL if allocation failed
+/// @return GENERAL_ERR: NULL if allocation failed
 /// SUCCESS: NULL terminated array of strings
 /// with original pattern as a first element
-char	**copy_original_pattern(char *pattern)
+static char	**copy_original_pattern(char *pattern)
 {
 	long	size;
 	char	*pattern_copy;
@@ -152,7 +102,7 @@ char	**copy_original_pattern(char *pattern)
 /// @brief Returns all the matched file or directory
 /// names from the current directory
 /// @param pattern
-/// @return FAIL: NULL if allocation failed.
+/// @return GENERAL_ERR: NULL if allocation failed.
 /// SUCCESS: NULL terminated array of strings that pattern
 /// matched for successfull result
 char	**get_all_matched_names(char *pattern)

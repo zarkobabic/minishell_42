@@ -6,11 +6,25 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:57:35 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/11 18:59:01 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 10:10:27 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
+
+void	f_environ_fill_default(char ***minienviron)
+{
+	char	*temp;
+
+	temp = getcwd(NULL, 0);
+	if (!f_getenv(*minienviron, "PATH"))
+		f_setenv(minienviron, "PATH", ENV_DEFAULT_PATH, true);
+	if (!f_getenv(*minienviron, "HOME"))
+		f_setenv(minienviron, "HOME", temp, true);
+	if (!f_getenv(*minienviron, "PWD"))
+		f_setenv(minienviron, "PWD", temp, true);
+	free(temp);
+}
 
 char	*f_environ_find_entry(char **environ, const char *name)
 {

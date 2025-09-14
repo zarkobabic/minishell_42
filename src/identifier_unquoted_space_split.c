@@ -3,97 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_unquoted_space_split.c                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 23:18:51 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/10 22:26:54 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 12:28:09 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "identifier.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
-void	handle_quote(const char *str, long *i, bool *in_word, long *count)
+void	free_split(char **split)
 {
-	char	quote;
-
-	quote = str[(*i)++];
-	if (!*in_word)
-	{
-		(*count)++;
-		*in_word = true;
-	}
-	while (str[*i] && str[*i] != quote)
-		(*i)++;
-	if (str[*i])
-		(*i)++;
-}
-
-long	count_words(const char *str)
-{
-	long	count;
 	long	i;
-	bool	in_word;
 
-	count = 0;
+	if (!split)
+		return ;
 	i = 0;
-	in_word = false;
-	while (str[i])
+	while (split[i])
 	{
-		if (str[i] == ' ')
-		{
-			in_word = false;
-			i++;
-		}
-		else if (str[i] == '\'' || str[i] == '"')
-			handle_quote(str, &i, &in_word, &count);
-		else
-		{
-			if (!in_word && ++count)
-				in_word = true;
-			i++;
-		}
+		free(split[i]);
+		i++;
 	}
-	return (count);
+	free(split);
 }
 
-void	handle_quote_len(const char *str, long *i, long *len)
-{
-	char	quote;
-
-	quote = str[(*i)++];
-	(*len)++;
-	while (str[*i] && str[*i] != quote)
-	{
-		(*len)++;
-		(*i)++;
-	}
-	if (str[*i])
-	{
-		(*len)++;
-		(*i)++;
-	}
-}
-
-long	get_word_len(const char *str, long *i)
-{
-	long	len;
-
-	len = 0;
-	while (str[*i] && str[*i] != ' ')
-	{
-		if (str[*i] == '\'' || str[*i] == '"')
-			handle_quote_len(str, i, &len);
-		else
-		{
-			len++;
-			(*i)++;
-		}
-	}
-	return (len);
-}
-
-char	*extract_word(const char *str, long start, long len)
+static char	*extract_word(const char *str, long start, long len)
 {
 	char	*word;
 	long	i;
@@ -114,22 +50,7 @@ char	*extract_word(const char *str, long start, long len)
 	return (word);
 }
 
-void	free_split(char **split)
-{
-	long	i;
-
-	if (!split)
-		return ;
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
-
-bool	fill_result_array(char **result, const char *str, long word_count)
+static bool	fill_result_array(char **result, const char *str, long word_count)
 {
 	long	i;
 	long	word_idx;

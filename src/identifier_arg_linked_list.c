@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_arg_linked_list.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 15:14:33 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 17:47:16 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 12:44:57 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	arg_list_initialize(t_arg_list *list)
 /// @param string_value The string to store in the node,
 /// (will not be duplicated, original will be used)
 /// @return Pointer to the new node, or NULL if allocation fails
-t_arg_node	*arg_node_create(char *string_value)
+static t_arg_node	*arg_node_create(char *string_value)
 {
 	t_arg_node	*new_node;
 
@@ -61,48 +61,6 @@ bool	arg_list_append(t_arg_list *list, char *string_value)
 	list->tail = new_node;
 	list->size += 1;
 	return (true);
-}
-
-/// @brief Free all nodes in the argument list (but doesnt free their strings)
-/// @param list Pointer to the list structure to free
-void	arg_list_free_shallow(t_arg_list *list)
-{
-	t_arg_node	*current;
-	t_arg_node	*next;
-
-	if (!list)
-		return ;
-	current = list->head;
-	while (current)
-	{
-		next = current->next;
-		free(current);
-		current = next;
-	}
-	list->head = NULL;
-	list->tail = NULL;
-}
-
-/// @brief Free all nodes in the argument list
-/// @param list Pointer to the list structure to free
-void	arg_list_free_deep(t_arg_list *list)
-{
-	t_arg_node	*current;
-	t_arg_node	*next;
-
-	if (!list)
-		return ;
-	current = list->head;
-	while (current)
-	{
-		next = current->next;
-		if (current->string_value)
-			free(current->string_value);
-		free(current);
-		current = next;
-	}
-	list->head = NULL;
-	list->tail = NULL;
 }
 
 char	**arg_list_to_array_shallow(t_arg_list *list)

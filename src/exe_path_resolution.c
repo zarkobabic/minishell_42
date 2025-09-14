@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_path_resolution.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 00:39:51 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 02:44:13 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 11:52:25 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-bool	f_check_is_directory(const char *path)
+static bool	f_check_is_directory(const char *path)
 {
 	struct stat	path_stat;
 
@@ -32,7 +32,7 @@ bool	f_check_is_directory(const char *path)
 	return (false);
 }
 
-char	*handle_absolute_relative_path(const char *command, int *exit_value)
+static char	*handle_absolute_relative_path(const char *command, int *exit_value)
 {
 	long	command_len;
 	char	*full_path;
@@ -49,14 +49,14 @@ char	*handle_absolute_relative_path(const char *command, int *exit_value)
 	}
 	*exit_value = PERMISSION;
 	if (f_check_is_directory(command))
-		return (ft_putstr_fd_fail_safe((char*)command, STDERR_FILENO),
+		return (ft_putstr_fd_fail_safe((char *)command, STDERR_FILENO),
 			ft_putstr_fd_fail_safe(": Is a directory\n", STDERR_FILENO), NULL);
 	else
 		return (perror(command), NULL);
 }
 
-char	*check_is_executable_dir_cmd_path(char *curr_dir_path, long dir_str_len,
-		const char *command)
+static char	*check_is_executable_dir_cmd_path(char *curr_dir_path,
+	long dir_str_len, const char *command)
 {
 	char	*full_path;
 	long	need_slash;
@@ -80,7 +80,8 @@ char	*check_is_executable_dir_cmd_path(char *curr_dir_path, long dir_str_len,
 	return (NULL);
 }
 
-char	*handle_executable_from_path_env(const char *command, char *path_cpy)
+static char	*handle_executable_from_path_env(const char *command,
+	char *path_cpy)
 {
 	char	*curr_dir_path;
 	char	*next_colon_pos;
@@ -97,7 +98,7 @@ char	*handle_executable_from_path_env(const char *command, char *path_cpy)
 		if (dir_str_len > 0)
 		{
 			cmd_full_path = check_is_executable_dir_cmd_path(
-				curr_dir_path, dir_str_len, command);
+					curr_dir_path, dir_str_len, command);
 			if (cmd_full_path)
 				return (free(path_cpy), cmd_full_path);
 		}

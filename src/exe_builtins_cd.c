@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   exe_builtins_cd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 20:40:38 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 06:46:17 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 10:13:10 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_environment.h"
 #include "exe_execution.h"
+#include <errno.h>
+
 #define PATHLENGTH 256
 
 static char	*f_handle_home_directory(char ***environ)
@@ -47,13 +49,11 @@ static char	*f_handle_oldpwd(char ***environ)
 	return (oldpwd_path);
 }
 
-#include "errno.h"
-
 static int	f_change_directory_and_update_env(char ***environ, char *path)
 {
 	char	*old_pwd;
 	char	*new_pwd;
-	
+
 	if (chdir(path) == -1)
 	{
 		if (errno == ENOENT)
@@ -62,7 +62,7 @@ static int	f_change_directory_and_update_env(char ***environ, char *path)
 			return (perror("cd"), PERMISSION);
 		else
 			perror("cd");
-		return GENERAL;
+		return (GENERAL_ERR);
 	}
 	old_pwd = f_getenv(*environ, "PWD");
 	if (old_pwd)
@@ -79,7 +79,8 @@ int	f_cd(char ***environ, long argc, char **argv)
 	char	*target_path;
 
 	if (argc > 2)
-		return (ft_putstr_fd_fail_safe("cd: " ERR_MSG_TOOMANYARGS, STDERR_FILENO), MISUSE);
+		return (ft_putstr_fd_fail_safe("cd: " ERR_MSG_TOOMANYARGS,
+				STDERR_FILENO), MISUSE);
 	ft_bzero(custom_path, PATHLENGTH);
 	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
 		target_path = f_handle_home_directory(environ);

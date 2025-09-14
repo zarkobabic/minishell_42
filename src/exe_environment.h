@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:21:41 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 12:30:05 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 12:03:49 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@
 # define ENV_DEFAULT_HOME "/"
 # define ENV_DEFAULT_PATH "/usr/local/bin:/usr/bin:/bin"
 # define HEREDOC_COUNT_MAX 100
-# define HEREDOC_COUNT_DIGITS 2
+# define HEREDOC_DIGITS_COUNT 2
 # define HEREDOC_NAME_SIZE 16
 # define HEREDOC_NAME_PREFIX "./.tmp/.r"
 # define HEREDOC_NAME_SUFFIX ".txt"
 
 typedef struct s_heredoc
 {
-	t_ast_node *redir_ptr;
+	t_ast_node	*redir_ptr;
 	char		name[HEREDOC_NAME_SIZE];
 }	t_heredoc;
 
@@ -43,18 +43,19 @@ typedef struct s_wider_environment
 
 // environ table management
 
-int				f_build_environ(char ***minienviron);
-void			f_destroy_environ(char ***environ, unsigned int entryno);
-int				f_environ_add_entry(char ***environ, char *new_entry);
-char			*f_environ_build_entry(const char *name, const char *value);
-int				f_environ_del_entry(char ***environ, const char *name);
-char			*f_environ_find_entry(char **environ, const char *name);
-bool			f_is_valid_name(const char *name);
+int		f_environ_build(char ***minienviron);
+void	f_environ_destroy(char ***environ, unsigned int entryno);
+int		f_environ_add_entry(char ***environ, char *new_entry);
+char	*f_environ_build_entry(const char *name, const char *value);
+int		f_environ_del_entry(char ***environ, const char *name);
+void	f_environ_fill_default(char ***minienviron);
+char	*f_environ_find_entry(char **environ, const char *name);
+bool	f_is_valid_name(const char *name);
 
 // environ access
 
-char			*f_getenv(char **environ, const char *name);
-int				f_setenv(char ***environ, const char *name, const char *value,
-					bool overwrite);
+char	*f_getenv(char **environ, const char *name);
+int		f_setenv(char ***environ, const char *name, const char *value,
+			bool overwrite);
 
 #endif

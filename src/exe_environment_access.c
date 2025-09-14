@@ -3,31 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   exe_environment_access.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:02:20 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/12 16:04:07 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 12:12:03 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_execution.h"
 #include "exe_environment.h"
 
-static void	f_fill_defaults(char ***minienviron)
-{
-	char	*temp;
-
-	temp = getcwd(NULL, 0);
-	if (!f_getenv(*minienviron, "PATH"))
-		f_setenv(minienviron, "PATH", ENV_DEFAULT_PATH, true);
-	if (!f_getenv(*minienviron, "HOME"))
-		f_setenv(minienviron, "HOME", temp, true);
-	if (!f_getenv(*minienviron, "PWD"))
-		f_setenv(minienviron, "PWD", temp, true);
-	free(temp);
-}
-
-int	f_build_environ(char ***minienviron)
+int	f_environ_build(char ***minienviron)
 {
 	extern char	**environ;
 	int			i;
@@ -43,11 +29,11 @@ int	f_build_environ(char ***minienviron)
 	{
 		(*minienviron)[i] = ft_strdup(environ[i]);
 		if (!(*minienviron)[i])
-			return (f_destroy_environ(minienviron, i),
+			return (f_environ_destroy(minienviron, i),
 				perror("environ creation copy"), ERROR);
 	}
 	(*minienviron)[i] = NULL;
-	f_fill_defaults(minienviron);
+	f_environ_fill_default(minienviron);
 	return (SUCCESS);
 }
 
@@ -55,7 +41,7 @@ int	f_build_environ(char ***minienviron)
 /// (unsigned underflow to high number, so basically infinitely high)
 /// @param environ 
 /// @param entryno 
-void	f_destroy_environ(char ***environ, unsigned int entryno)
+void	f_environ_destroy(char ***environ, unsigned int entryno)
 {
 	unsigned int	i;
 
@@ -101,7 +87,7 @@ int	f_setenv(char ***environ, const char *name, const char *value,
 	char		*entry_to_set;
 
 	if (!f_is_valid_name(name))
-		return (FAIL);
+		return (GENERAL_ERR);
 	new_var = f_environ_build_entry(name, value);
 	entry_to_set = f_environ_find_entry(*environ, name);
 	if (!entry_to_set)
@@ -114,7 +100,7 @@ int	f_setenv(char ***environ, const char *name, const char *value,
 			if (overwrite)
 				return (free((*environ)[i]), (*environ)[i] = new_var, SUCCESS);
 			else
-				return (free(new_var), FAIL);
+				return (free(new_var), GENERAL_ERR);
 		}
 	}
 	return (perror("setenv"), ERROR);

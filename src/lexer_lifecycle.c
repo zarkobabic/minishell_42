@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_lifecycle.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 19:15:19 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 03:51:39 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 10:13:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /// @brief Creates a new lexer
 /// @param
 /// @return SUCCESS: reference to newly created lexer on heap
-/// FAIL: NULL (allocation failed)
+/// GENERAL_ERR: NULL (allocation failed)
 t_lexer	*lexer_create(void)
 {
 	t_lexer	*new_lexer;

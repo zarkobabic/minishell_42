@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 09:12:00 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 12:51:28 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 volatile sig_atomic_t	g_received_signal = -1;
 
-void	process_input(char *input, t_env *env)
+static void	process_input(char *input, t_env *env)
 {
 	t_command_line	*tree;
 	t_ast_node		*ast_tree;
@@ -42,25 +42,18 @@ void	process_input(char *input, t_env *env)
 	ast_free_tree(ast_tree);
 }
 
-void	mini_exit(int exit_status, t_env *env)
-{
-	f_destroy_environ(&env->minienviron, ENV_DELETE_ALL);
-	clear_history();
-	exit(exit_status);
-}
-
-int	f_init_shell(t_env *env)
+static int	f_init_shell(t_env *env)
 {
 	ft_bzero(env, sizeof(*env));
-	if (f_build_environ(&env->minienviron) != SUCCESS)
-		exit(GENERAL);
+	if (f_environ_build(&env->minienviron) != SUCCESS)
+		exit(GENERAL_ERR);
 	env->old_exit_value = 0;
 	tcgetattr(STDIN_FILENO, &env->orig_term);
 	f_set_signals(NONINTERACTIVE, env);
 	return (SUCCESS);
 }
 
-int	f_handle_input(char *input, t_env *env, int is_terminal)
+static int	f_handle_input(char *input, t_env *env, int is_terminal)
 {
 	if (!input)
 	{
@@ -85,7 +78,7 @@ int	f_handle_input(char *input, t_env *env, int is_terminal)
 	return (1);
 }
 
-void	f_shell_loop(t_env *env, int is_terminal)
+static void	f_shell_loop(t_env *env, int is_terminal)
 {
 	char	*input;
 	int		continue_loop;

@@ -1,63 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exe_redirection.c                                  :+:      :+:    :+:   */
+/*   exe_redirection_modes.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 09:17:22 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 10:22:12 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft/libft.h"
 #include "exe_redirection.h"
-#include "exe_signals.h"
 #include "identifier.h"
-#include <readline/history.h>
-#include <readline/readline.h>
-#include <termios.h>
 
-int	f_check_ambiguity(char *target)
+static int	f_redirect_heredoc(t_ast_node *redirection, t_env *env)
 {
-	char	**target_list;
-	int		i;
+	int		file;
+	char	*filename;
 
-	i = -1;
-	while (target[++i])
-	{
-		if (target[i] == ' ')
-			return (true);
-	}
-	target_list = get_all_matched_names(target);
-	if (!target_list)
-		return (ERROR);
-	if (target_list[0] && target_list[1])
-		return (true);
-	i = 0;
-	while (target_list[i])
-		free(target_list[i++]);
-	free(target_list);
-	return (false);
-}
-
-char	**f_expand_vars(t_ast_node *redirection, t_env *env)
-{
-	long	arbitrary_argc;
-	char	**expanded_result;
-
-	expanded_result = identifier_process_redirection(redirection,
-			&arbitrary_argc, env);
-	if (!expanded_result)
-		return (NULL);
-	if (arbitrary_argc > 1)
-		return (free_split(expanded_result),
-			ft_putstr_fd(redirection->data.redirection.target,
-				STDERR_FILENO),
-			ft_putstr_fd(": ambiguous redirection\n", STDERR_FILENO),
-			NULL);
-	else
-		return (expanded_result);
+	filename = f_heredoc_find_entry(redirection, env);
+	if (!filename)
+		return (GENERAL_ERR);
+	file = open(filename, O_RDONLY);
+	if (file < 0)
+		return (perror("heredoc file"), GENERAL_ERR);
+	if (dup2(file, STDIN_FILENO) == -1)
+		return (close(file), perror("dup2 heredoc"), GENERAL_ERR);
+	close(file);
+	return (SUCCESS);
 }
 
 static int	f_redirect_in(char **target)
@@ -67,7 +38,7 @@ static int	f_redirect_in(char **target)
 	file = -1;
 	file = open(target[0], O_RDONLY);
 	if (file < 0)
-		return (perror(target[0]), FAIL);
+		return (perror(target[0]), GENERAL_ERR);
 	else if (dup2(file, STDIN_FILENO) == -1)
 		return (close(file), perror("dup2 redirect in"), ERROR);
 	close(file);
@@ -81,7 +52,7 @@ static int	f_redirect_out_append(char **target, int mode)
 	file = -1;
 	file = open(target[0], O_WRONLY | O_CREAT | mode, 0644);
 	if (file < 0)
-		return (perror(target[0]), FAIL);
+		return (perror(target[0]), GENERAL_ERR);
 	else if (dup2(file, STDOUT_FILENO) == -1)
 		return (close(file), perror("dup2 redirect out/append"), ERROR);
 	close(file);
@@ -95,7 +66,7 @@ static int	f_redirect_simple(t_ast_node *redirection, t_env *env)
 
 	expanded_target = f_expand_vars(redirection, env);
 	if (!expanded_target)
-		return (FAIL);
+		return (GENERAL_ERR);
 	if (redirection->data.redirection.type == TYPE_REDIRECT_IN)
 		return_value = f_redirect_in(expanded_target);
 	else if (redirection->data.redirection.type == TYPE_REDIRECT_OUT)
@@ -106,37 +77,6 @@ static int	f_redirect_simple(t_ast_node *redirection, t_env *env)
 		return (ERROR);
 	free_split(expanded_target);
 	return (return_value);
-}
-
-static char	*f_heredoc_find_entry(t_ast_node *target, t_env *env)
-{
-	int	i;
-
-	i = 0;
-	while (i < HEREDOC_COUNT_MAX)
-	{
-		if (env->heredoclist[i].redir_ptr == target)
-			return (env->heredoclist[i].name);
-		++i;
-	}
-	return (NULL);
-}
-
-int	f_redirect_heredoc(t_ast_node *redirection, t_env *env)
-{
-	int		file;
-	char	*filename;
-
-	filename = f_heredoc_find_entry(redirection, env);
-	if (!filename)
-		return (GENERAL);
-	file = open(filename, O_RDONLY);
-	if (file < 0)
-		return (perror("heredoc file"), GENERAL);
-	if (dup2(file, STDIN_FILENO) == -1)
-		return (close(file), perror("dup2 heredoc"), GENERAL);
-	close(file);
-	return (SUCCESS);
 }
 
 int	f_redirect(t_ast_node *redirections, t_env *env)

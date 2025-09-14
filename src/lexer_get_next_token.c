@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_get_next_token.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:30:59 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 03:33:15 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 10:13:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ static t_token	*lex_identifier(t_lexer *lexer)
 /// @brief Lexes next token using the lexer passed as argument
 /// @param lexer lexer to use for lexing
 /// @return SUCCESS: Next token that is lexed from the lexer input
-/// FAIL: NULL if the allocation for some token failed,
+/// GENERAL_ERR: NULL if the allocation for some token failed,
 /// TOKEN_UNDEFINED if the syntax is wrong
 t_token	*lexer_get_next_token(t_lexer *lexer)
 {

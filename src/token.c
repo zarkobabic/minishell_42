@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:17:05 by zbabic            #+#    #+#             */
-/*   Updated: 2025/07/31 03:46:26 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 10:13:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /// @brief Creates and returns a token with specified type, value is set to NULL
 /// @param type type of the token
-/// @return FAIL: NULL(Failed to allocate space for new token)
+/// @return GENERAL_ERR: NULL(Failed to allocate space for new token)
 /// | SUCCESS: New token
 t_token	*token_create(t_token_type type)
 {
@@ -34,7 +34,7 @@ t_token	*token_create(t_token_type type)
 /// @param token Token to add new value to
 /// @param src input string that is currently lexing
 /// @param len number of characters to copy from source to value of the token
-/// @return FAIL: false if the source is NULL or len is less than 0
+/// @return GENERAL_ERR: false if the source is NULL or len is less than 0
 ///, or the allocation of the copy of the string failed.
 /// SUCCESS: true
 bool	token_add_value(t_token *token, const char *src, long len)
@@ -82,7 +82,7 @@ void	token_free_shallow(t_token **token)
 /// @param src source for the value
 /// @param len length of the value
 /// @return SUCCESS: Simple token that has type passed as argument,
-/// FAIL: NULL (Allocation for token or string failed)
+/// GENERAL_ERR: NULL (Allocation for token or string failed)
 t_token	*token_create_simple_with_value(t_token_type type, const char *src,
 		size_t len)
 {

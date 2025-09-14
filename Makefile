@@ -37,22 +37,30 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				repl.c \
 				token_print.c \
 				token.c \
+				exe_builtins_cd.c \
+				exe_builtins_parent.c \
 				exe_builtins.c \
-				exe_draft.c \
-				exe_pipeline.c \
-				exe_simple_command.c \
+				exe_child_process_management.c \
 				exe_environment_access.c \
 				exe_environment_manipulation.c \
-				exe_builtins_cd.c \
-				exe_signals.c \
-				exe_signals_child.c \
-				exe_heredoc_list.c \
-				exe_heredoc_build.c \
+				exe_execution_tree_leafs.c \
+				exe_execution_tree_traversal.c \
+				exe_execution_utils.c \
 				exe_path_resolution.c \
+				exe_pipeline_utils.c \
+				exe_pipeline.c \
+				exe_redirection_heredoc_build_array.c \
+				exe_redirection_heredoc_file_setup.c \
+				exe_redirection_utils.c \
 				exe_redirection.c \
+				exe_signals.c \
+				exe_simple_cmd_utils.c \
+				exe_simple_cmd.c \
 				identifier_arg_linked_list.c \
+				identifier_arg_linked_list_cleanup.c \
 				identifier_quote_remove.c \
 				identifier_unquoted_space_split.c \
+				identifier_unquoted_space_utils.c \
 				identifier_var_expansion.c \
 				identifier_wildcard_curr_dir.c \
 				identifier_wildcard.c \
