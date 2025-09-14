@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 14:18:31 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 15:01:11 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define EXE_EXECUTION_H
 
 # include "../libft/libft.h"
-# include "../src/identifier.h"
+# include "identifier.h"
 # include "ast_tree_structures.h"
 # include "ast_tree_translator.h"
 # include "exe_environment.h"

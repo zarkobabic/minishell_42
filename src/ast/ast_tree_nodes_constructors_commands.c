@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_nodes_constructors_commands.c                  :+:      :+:    :+:   */
+/*   ast_tree_nodes_constructors_commands.c             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 18:30:34 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 18:35:42 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 14:31:52 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
