@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   identifier_quote_remove.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:12:43 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 17:54:36 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 20:43:46 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ static int	count_non_quotes(char *str, bool *in_quotes)
 }
 
 /// @brief removes quotes in a string
-/// (! does not free str !)
 /// (! does not free str !)
 /// @param str
 /// @return
