@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 20:40:38 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 02:23:00 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 01:08:19 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,23 @@ static char	*f_handle_oldpwd(char ***environ)
 	return (oldpwd_path);
 }
 
+#include "errno.h"
+
 static int	f_change_directory_and_update_env(char ***environ, char *path)
 {
 	char	*old_pwd;
 	char	*new_pwd;
-
-	if (access(path, F_OK) == 0 || chdir(path) == -1)
-		return (perror("minishell: cd"), GENERAL);
+	
+	if (chdir(path) == -1)
+	{
+		if (errno == ENOENT)
+			return (perror("minishell: cd"), NOT_FOUND);
+		else if (errno == EACCES)
+			return (perror("minishell: cd"), PERMISSION);
+		else
+			perror("minishell: cd");
+		return GENERAL;
+	}
 	old_pwd = f_getenv(*environ, "PWD");
 	if (old_pwd)
 		f_setenv(environ, "OLDPWD", old_pwd, true);

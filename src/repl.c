@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/13 03:42:30 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 03:52:51 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void	mini_exit(int exit_status, t_env *env)
 int	main(int argc, char **argv)
 {
 	char	*input;
-	char	*prompt;
 	int		is_terminal;
 	t_env	env;
 
@@ -64,9 +63,8 @@ int	main(int argc, char **argv)
 		return (printf("ERROR: invalid arguments\n"), 1);
 	(void)argv;
 	ft_bzero(&env, sizeof(env));
-	prompt = "minishell> ";
 	if(f_build_environ(&env.minienviron) != SUCCESS)
-		exit(FAIL);
+		exit(GENERAL);
 	env.old_exit_value = 0;
 	is_terminal = isatty(STDIN_FILENO);
 	tcgetattr(STDIN_FILENO, &env.orig_term);
@@ -78,7 +76,7 @@ int	main(int argc, char **argv)
 		rl_catch_signals = 1;
 		if (is_terminal)
 			f_set_signals(INTERACTIVE, &env);
-		input = readline(prompt);
+		input = readline(PROMPT);
 		if (!input)
 		{
 			if(is_terminal)

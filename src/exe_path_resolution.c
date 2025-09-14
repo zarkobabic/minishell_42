@@ -3,19 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   exe_path_resolution.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 00:39:51 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/11 03:49:20 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 02:44:13 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft/libft.h"
-#include "exe_environment.h"
+#include "exe_execution.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
-char	*handle_absolute_relative_path(const char *command)
+bool	f_check_is_directory(const char *path)
+{
+	struct stat	path_stat;
+
+	if (stat(path, &path_stat) == 0)
+	{
+		if (S_ISDIR(path_stat.st_mode))
+			return (true);
+		else
+			return (false);
+	}
+	return (false);
+}
+
+char	*handle_absolute_relative_path(const char *command, int *exit_value)
 {
 	long	command_len;
 	char	*full_path;
@@ -30,7 +47,12 @@ char	*handle_absolute_relative_path(const char *command)
 		full_path[command_len] = '\0';
 		return (full_path);
 	}
-	return (NULL);
+	*exit_value = PERMISSION;
+	if (f_check_is_directory(command))
+		return (ft_putstr_fd_fail_safe((char*)command, STDERR_FILENO),
+			ft_putstr_fd_fail_safe(": Is a directory\n", STDERR_FILENO), NULL);
+	else
+		return (perror(command), NULL);
 }
 
 char	*check_is_executable_dir_cmd_path(char *curr_dir_path, long dir_str_len,
@@ -74,8 +96,8 @@ char	*handle_executable_from_path_env(const char *command, char *path_cpy)
 		dir_str_len = ft_strlen(curr_dir_path);
 		if (dir_str_len > 0)
 		{
-			cmd_full_path = check_is_executable_dir_cmd_path(curr_dir_path,
-					dir_str_len, command);
+			cmd_full_path = check_is_executable_dir_cmd_path(
+				curr_dir_path, dir_str_len, command);
 			if (cmd_full_path)
 				return (free(path_cpy), cmd_full_path);
 		}
@@ -91,14 +113,16 @@ char	*handle_executable_from_path_env(const char *command, char *path_cpy)
 /// returns string that you can and should free, doesnt free command argument
 /// @param command
 /// @return
-char	*resolve_executable_path(char **environ, const char *command)
+char	*resolve_executable_path(char **environ, const char *command,
+		int *exit_value)
 {
 	char	*path_env;
 	long	path_len;
 	char	*path_cpy;
+	char	*res_path;
 
 	if (ft_strchr(command, '/') != NULL)
-		return (handle_absolute_relative_path(command));
+		return (handle_absolute_relative_path(command, exit_value));
 	path_env = f_getenv(environ, "PATH");
 	if (!path_env)
 		return (NULL);
@@ -108,5 +132,12 @@ char	*resolve_executable_path(char **environ, const char *command)
 		return (NULL);
 	ft_memcpy(path_cpy, path_env, path_len);
 	path_cpy[path_len] = '\0';
-	return (handle_executable_from_path_env(command, path_cpy));
+	res_path = handle_executable_from_path_env(command, path_cpy);
+	if (!res_path)
+	{
+		*exit_value = NOT_FOUND;
+		ft_putstr_fd((char *)command, STDERR_FILENO);
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+	}
+	return (res_path);
 }

@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 04:40:20 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/13 00:11:55 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 02:40:20 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,20 +33,22 @@
 // 	ft_putstr_fd_fail_safe(path_cpy, STDERR_FILENO), 
 // 	ft_putstr_fd_fail_safe(": Is a directory\n", STDERR_FILENO), 
 // 	NULL);
-#include <dirent.h>
-bool	f_check_is_directory(const char *path)
-{
-	DIR *dir;
+
+
+// #include <dirent.h>
+// bool	f_check_is_directory(const char *path)
+// {
+// 	DIR *dir;
 	
-	dir = opendir(path);
-	if (dir != NULL)
-	{
-		closedir(dir);
-		return true;
-	}
-	else
-		return false;
-}
+// 	dir = opendir(path);
+// 	if (dir != NULL)
+// 	{
+// 		closedir(dir);
+// 		return true;
+// 	}
+// 	else
+// 		return false;
+// }
 
 static char	**expand_and_split_argument(char *string_value, t_env *env)
 {

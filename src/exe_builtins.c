@@ -6,15 +6,14 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:28:56 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 02:21:30 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 04:15:01 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_environment.h"
 #include "exe_execution.h"
 
-#define ENV_ARGC_ERRMSG "minishell: env: too many arguments for this \
-	minishell implementation\n"
+#define ENV_ARGC_ERRMSG "minishell: env: too many arguments\n"
 
 #define EXPORT_INV_IDENT "minishell: export: `%s': not a valid identifier\n"
 

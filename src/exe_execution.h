@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_execution.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 12:31:17 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 02:52:07 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 
 # define FALSE 0
 # define TRUE 1
+# define PROMPT "minishell> "
 
 extern int g_received_signal;
 
@@ -82,7 +83,7 @@ int				f_unset(char ***environ, long argc, char **argv);
 //send this to pipeline
 int				f_exec_pipeline(t_ast_node *pipeline, t_env *env);
 
-char			*resolve_executable_path(char **environ, const char *command);
+char			*resolve_executable_path(char **environ, const char *command, int *exit_value);
 
 //exe_draft
 int				f_execute_ast(t_env *env);

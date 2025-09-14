@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   exe_redirection.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:07:07 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 12:17:45 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 02:48:54 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_redirection.h"
 #include "identifier.h"
 #include "exe_signals.h"
+#include "../libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <termios.h>
@@ -45,11 +46,14 @@ char	**f_expand_vars(t_ast_node *redirection, t_env *env)
 	long	arbitrary_argc;
 	char	**expanded_result;
 
-	expanded_result = identifier_process_redirection(redirection, &arbitrary_argc, env);
+	expanded_result = identifier_process_redirection(redirection,
+		&arbitrary_argc, env);
 	if (!expanded_result)
 		return (NULL);
 	if (arbitrary_argc > 1)
-		return (free_split(expanded_result), printf("minishell: %s: ambiguous redirection\n", redirection->data.redirection.target), NULL);
+		return (free_split(expanded_result),
+			ft_putstr_fd(redirection->data.redirection.target, STDERR_FILENO),
+			ft_putstr_fd(": ambiguous redirection\n", STDERR_FILENO), NULL);
 	else
 		return (expanded_result);
 }

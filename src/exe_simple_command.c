@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_simple_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 19:04:18 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/13 11:36:05 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 05:35:19 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,18 @@ int	f_exec_external(t_cmd_ctx *ctx)
 	int			exit_value;
 
 	if (!ctx->argc || !ctx->argv[0])
-		return (FAIL);
-	exe_path = resolve_executable_path(ctx->env->minienviron, ctx->argv[0]);
+		return (SUCCESS);
+	exit_value = SUCCESS;
+	exe_path = resolve_executable_path(ctx->env->minienviron, ctx->argv[0], &exit_value);
 	if (!exe_path)
-		return (perror("path resolution"), FAIL);
+		return (exit_value);
 	exit_value = execve(exe_path, ctx->argv, ctx->env->minienviron);
 	if (exit_value != SUCCESS)
 	{
-		perror("execve");
+		exit_value = PERMISSION;
 		free(exe_path);
+		ft_putstr_fd_fail_safe(exe_path, STDERR_FILENO);
+		ft_putstr_fd_fail_safe(": Is a directory\n", STDERR_FILENO);
 	}
 	return (exit_value);
 }
@@ -154,14 +157,22 @@ static int	f_exec_in_pipeline(t_cmd_ctx *ctx)
 	return (exit_value);
 }
 
+void	create_empty_argv(char ***argv)
+{
+	*argv = malloc(2 * sizeof(char*));
+	(*argv)[0] = malloc(1);
+	(*argv)[0][0] = '\0';
+	(*argv)[1] = NULL;
+}
+
 // Main simple command execution function
 int	f_exec_simple_cmd(t_ast_node *simcmd, t_env *env, int in_pipeline)
 {
 	t_cmd_ctx	ctx;
 	int			exit_value;
 
-	if (simcmd->data.command.arg_cnt <= 0 || !simcmd->data.command.args)
-		return (SUCCESS);
+	// if (simcmd->data.command.arg_cnt <= 0 || !simcmd->data.command.args)
+	// 	return (SUCCESS);
 	ctx.env = env;
 	ctx.error = false;
 	ctx.redirections = simcmd->data.command.redirections;
@@ -169,7 +180,7 @@ int	f_exec_simple_cmd(t_ast_node *simcmd, t_env *env, int in_pipeline)
 	if (f_prepare_argv(simcmd, &ctx) == ERROR)
 		return (ERROR);
 	if(!ctx.argv)
-		return (SUCCESS);
+		create_empty_argv(&ctx.argv);
 	if (!in_pipeline && f_is_builtin_parent(ctx.argv[0]))
 		exit_value = f_exec_builtin_parent(&ctx);
 	else if (!in_pipeline)
