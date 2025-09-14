@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 21:04:03 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 12:20:29 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 14:01:44 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,50 +15,6 @@
 #include "identifier.h"
 #include <stdbool.h>
 #include <stdlib.h>
-
-#define NEW 0
-#define ORIGINAL 1
-
-bool	check_env_var_naming(char *str)
-{
-	if (!str)
-		return (false);
-	if (str[0] == '?')
-		return (true);
-	if (!(ft_isalpha(str[0]) || str[0] == '_'))
-		return (false);
-	return (true);
-}
-
-long	get_env_var_name_len(char *str)
-{
-	long	i;
-
-	if (!str || !check_env_var_naming(str))
-		return (0);
-	i = 0;
-	if (str[0] == '?')
-		return (1);
-	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-		++i;
-	return (i);
-}
-
-// Cannot be negative in bash
-int	count_digits(int num)
-{
-	int	digits_cnt;
-
-	digits_cnt = 0;
-	if (num == 0)
-		return (1);
-	while (num)
-	{
-		++digits_cnt;
-		num = num / 10;
-	}
-	return (digits_cnt);
-}
 
 long	count_env_var(char *str, long var_name_len, t_env *env)
 {
@@ -75,66 +31,6 @@ long	count_env_var(char *str, long var_name_len, t_env *env)
 	sys_env_string = f_getenv(env->minienviron, var_name);
 	free(var_name);
 	return ((long)(ft_strlen(sys_env_string)));
-}
-
-static long	handle_env_var_expansion(char *str, long *i, long *char_cnt,
-		t_env *env)
-{
-	long	var_name_len;
-	long	var_cnt;
-
-	var_name_len = get_env_var_name_len(&str[*i + 1]);
-	if (var_name_len > 0)
-	{
-		++(*i);
-		var_cnt = count_env_var(&str[*i], var_name_len, env);
-		if (var_cnt < 0)
-			return (var_cnt);
-		*char_cnt += var_cnt;
-		*i += (var_name_len - 1);
-	}
-	else
-		*char_cnt += 1;
-	return (0);
-}
-
-static void	handle_regular_char(char c, bool *in_quotes, long *char_cnt)
-{
-	++(*char_cnt);
-	if (c == '\'' && !in_quotes[DOUBLE_QUOTES])
-		in_quotes[SINGLE_QUOTES] = !in_quotes[SINGLE_QUOTES];
-	else if (c == '\"' && !in_quotes[SINGLE_QUOTES])
-		in_quotes[DOUBLE_QUOTES] = !in_quotes[DOUBLE_QUOTES];
-}
-
-long	identifier_count_new_string_len(char *str, t_env *env,
-		bool heredoc_single_quotes)
-{
-	long	char_cnt;
-	long	i;
-	bool	in_quotes[2];
-	long	result;
-
-	if (!str)
-		return (0);
-	in_quotes[SINGLE_QUOTES] = false;
-	in_quotes[DOUBLE_QUOTES] = false;
-	i = 0;
-	char_cnt = 0;
-	while (str[i])
-	{
-		if (str[i] == '$' && (!in_quotes[SINGLE_QUOTES]
-				|| heredoc_single_quotes))
-		{
-			result = handle_env_var_expansion(str, &i, &char_cnt, env);
-			if (result < 0)
-				return (result);
-		}
-		else
-			handle_regular_char(str[i], in_quotes, &char_cnt);
-		++i;
-	}
-	return (char_cnt);
 }
 
 // We have error_flag here because functions can return NULL
@@ -156,7 +52,7 @@ char	*get_env_var_value(char *str, long var_name_len, bool *error_flag,
 	return (sys_env_string);
 }
 
-static void	copy_regular_char(char c, char *new_str, long *new_cnt,
+void	copy_regular_char(char c, char *new_str, long *new_cnt,
 		bool *in_quotes)
 {
 	new_str[*new_cnt] = c;
@@ -165,123 +61,6 @@ static void	copy_regular_char(char c, char *new_str, long *new_cnt,
 		in_quotes[SINGLE_QUOTES] = !in_quotes[SINGLE_QUOTES];
 	else if (c == '\"' && !in_quotes[SINGLE_QUOTES])
 		in_quotes[DOUBLE_QUOTES] = !in_quotes[DOUBLE_QUOTES];
-}
-
-void	copy_var_to_new_str(char *str, char *var_value, long *new_cnt)
-{
-	long	var_value_len;
-
-	var_value_len = ft_strlen(var_value);
-	if (var_value)
-	{
-		ft_memcpy(str, var_value, var_value_len);
-		(*new_cnt) += var_value_len;
-	}
-}
-
-// else part is when we have bad or nonexistant variable naming,
-// then we should just copy only the $ sign
-static bool	copy_expanded_var(char **strings, long *i, long *new_cnt,
-		t_env *env)
-{
-	long	var_name_len;
-	char	*var_value;
-	bool	error_flag;
-
-	error_flag = false;
-	var_name_len = get_env_var_name_len(&strings[ORIGINAL][*i + 1]);
-	if (var_name_len > 0)
-	{
-		++(*i);
-		var_value = get_env_var_value(&strings[ORIGINAL][*i], var_name_len,
-				&error_flag, env);
-		if (error_flag)
-			return (false);
-		copy_var_to_new_str(&strings[NEW][*new_cnt], var_value, new_cnt);
-		*i += (var_name_len - 1);
-	}
-	else
-		strings[NEW][(*new_cnt)++] = strings[ORIGINAL][*i];
-	return (true);
-}
-
-static void	copy_old_exit_value(int old_exit_value, char *new_str,
-		long *new_cnt, long *i)
-{
-	int	old_exit_value_num_of_digits;
-	int	old_exit_value_num_of_digits_copy;
-
-	++(*i);
-	old_exit_value_num_of_digits = count_digits(old_exit_value);
-	old_exit_value_num_of_digits_copy = old_exit_value_num_of_digits;
-	--old_exit_value_num_of_digits;
-	while (old_exit_value_num_of_digits >= 0)
-	{
-		new_str[*new_cnt + old_exit_value_num_of_digits] = '0' + old_exit_value
-			% 10;
-		old_exit_value = old_exit_value / 10;
-		--old_exit_value_num_of_digits;
-	}
-	*new_cnt += old_exit_value_num_of_digits_copy;
-}
-
-bool	identifier_expand_var_to_string(char **strs, t_env *env,
-			bool heredoc_single_quotes)
-{
-	bool	in_quotes[2];
-	long	i;
-	long	new_cnt;
-
-	in_quotes[SINGLE_QUOTES] = false;
-	in_quotes[DOUBLE_QUOTES] = false;
-	i = 0;
-	new_cnt = 0;
-	while (strs[ORIGINAL][i])
-	{
-		if (strs[ORIGINAL][i] == '$' && (!in_quotes[SINGLE_QUOTES]
-				|| heredoc_single_quotes))
-		{
-			if (strs[ORIGINAL][i + 1] && strs[ORIGINAL][i + 1] == '?')
-				copy_old_exit_value(env->old_exit_value, strs[0], &new_cnt, &i);
-			else if (!copy_expanded_var(strs, &i, &new_cnt, env))
-				return (false);
-		}
-		else
-			copy_regular_char(strs[1][i], strs[NEW], &new_cnt, in_quotes);
-		++i;
-	}
-	if (in_quotes[SINGLE_QUOTES] || in_quotes[DOUBLE_QUOTES])
-		return (false);
-	return (true);
-}
-
-char	*identifier_expand_environment_variables(char *str, long new_size,
-		t_env *env, bool heredoc_single_quotes)
-{
-	char	*strings[2];
-
-	strings[NEW] = (char *)malloc((new_size + 1));
-	strings[ORIGINAL] = str;
-	if (!strings[NEW])
-		return (NULL);
-	strings[NEW][new_size] = '\0';
-	if (!identifier_expand_var_to_string(strings, env, heredoc_single_quotes))
-		return (free(strings[NEW]), NULL);
-	return (strings[NEW]);
-}
-
-bool	is_containing_quotes(char *str)
-{
-	long	cnt;
-
-	cnt = 0;
-	while (str[cnt])
-	{
-		if (str[cnt] == '\"' || str[cnt] == '\'')
-			return (true);
-		++cnt;
-	}
-	return (false);
 }
 
 /// @brief Returns NULL if the allocation failed; do not free input string

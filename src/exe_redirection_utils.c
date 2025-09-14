@@ -6,37 +6,13 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 10:14:54 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 11:12:54 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 13:15:14 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft/libft.h"
 #include <unistd.h>
-// #include "exe_redirection.h"
 #include "identifier.h"
-
-// static int	f_check_ambiguity(char *target)
-// {
-// 	char	**target_list;
-// 	int		i;
-
-// 	i = -1;
-// 	while (target[++i])
-// 	{
-// 		if (target[i] == ' ')
-// 			return (true);
-// 	}
-// 	target_list = get_all_matched_names(target);
-// 	if (!target_list)
-// 		return (ERROR);
-// 	if (target_list[0] && target_list[1])
-// 		return (true);
-// 	i = 0;
-// 	while (target_list[i])
-// 		free(target_list[i++]);
-// 	free(target_list);
-// 	return (false);
-// }
 
 char	**f_expand_vars(t_ast_node *redirection, t_env *env)
 {

@@ -61,6 +61,9 @@ MY_C_SOURCES =	ast_tree_nodes_constructors_commands.c \
 				identifier_quote_remove.c \
 				identifier_unquoted_space_split.c \
 				identifier_unquoted_space_utils.c \
+				identifier_var_expansion_entry_resolution.c \
+				identifier_var_expansion_populate.c \
+				identifier_var_expansion_utils.c \
 				identifier_var_expansion.c \
 				identifier_wildcard_curr_dir.c \
 				identifier_wildcard.c \
