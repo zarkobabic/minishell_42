@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 12:55:26 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 14:18:31 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <signal.h>
 
 # define PROMPT "minishell> "
 # define FALSE 0
@@ -34,7 +35,7 @@
 # define ERR_MSG_TOOMANYARGS "too many arguments\n"
 # define EXPORT_INV_IDENT "export: `%s': not a valid identifier\n"
 
-extern volatile int	g_received_signal;
+extern volatile sig_atomic_t	g_received_signal;
 
 enum			e_exit_value
 {

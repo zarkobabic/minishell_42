@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 14:02:02 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 14:20:52 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ typedef struct s_argument_list
 // arg_list
 
 void	arg_list_initialize(t_arg_list *list);
-// t_arg_node	*arg_node_create(char *string_value); TODO: delete
 bool	arg_list_append(t_arg_list *list, char *string_value);
 void	arg_list_free_shallow(t_arg_list *list);
 char	**arg_list_to_array_shallow(t_arg_list *list);

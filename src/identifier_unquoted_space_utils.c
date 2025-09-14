@@ -6,12 +6,11 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 12:25:01 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 13:16:34 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 14:20:46 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h>
-// #include <stdlib.h> // TODO: remove
 
 static void	handle_quote(const char *str, long *i, bool *in_word, long *count)
 {

@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 11:03:46 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 11:40:40 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 14:15:23 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ int	f_exec_external(t_cmd_ctx *ctx)
 	if (exit_value != SUCCESS)
 	{
 		exit_value = PERMISSION;
-		free(exe_path);
 		ft_putstr_fd_fail_safe(exe_path, STDERR_FILENO);
 		ft_putstr_fd_fail_safe(": Is a directory\n", STDERR_FILENO);
+		free(exe_path);
 	}
 	return (exit_value);
 }

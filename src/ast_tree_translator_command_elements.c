@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_tree_translator_command_elements.c             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 18:48:56 by zbabic            #+#    #+#             */
-/*   Updated: 2025/08/05 19:28:49 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 14:21:30 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	ast_add_identifier_list_to_cmd(t_ast_node *ast_identifier_curr,
 	}
 }
 
-//TODO: add ambigous check here
 t_ast_node	*ast_parse_redirection(t_redirection *redirection)
 {
 	t_ast_node	*ast_redirection;

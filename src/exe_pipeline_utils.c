@@ -6,11 +6,12 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 10:23:54 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 12:14:18 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/14 14:16:03 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exe_pipeline.h"
+#include <sys/wait.h>
 
 // Setup pipes for child process
 int	f_pipeline_setup_child_pipes(t_pipeline_ctx *ctx, t_ast_node *temp_cmd)
