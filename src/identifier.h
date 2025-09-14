@@ -6,7 +6,7 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 00:19:46 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/12 17:46:46 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 09:09:26 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ char									*identifier_expand_variables_in_string(
 											char *str,
 											t_env *env,
 											bool heredoc_single_quotes);
+int										count_digits(int num);
 char									**split_by_unquoted_space(
 											const char *str);
 void									free_split(char **split);

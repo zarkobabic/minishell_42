@@ -6,15 +6,15 @@
 /*   By: zbabic <zbabic@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:39:27 by zbabic            #+#    #+#             */
-/*   Updated: 2025/09/14 06:16:25 by zbabic           ###   ########.fr       */
+/*   Updated: 2025/09/14 09:12:00 by zbabic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "parser.h"
 #include "ast_tree_translator.h"
 #include "exe_execution.h"
 #include "exe_signals.h"
+#include "lexer.h"
+#include "parser.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -37,7 +37,6 @@ void	process_input(char *input, t_env *env)
 	}
 	ast_tree = ast_create_tree(tree);
 	env->ast_root = ast_tree;
-	//ast_tree_print(ast_tree);
 	free_parse_tree(tree);
 	f_execute_ast(env);
 	ast_free_tree(ast_tree);
@@ -50,55 +49,75 @@ void	mini_exit(int exit_status, t_env *env)
 	exit(exit_status);
 }
 
-// Dont forget to add -lreadline flag in compilation
-// for readline functions to work,
-// TODO: delete plsexit here, only for testing purposes
-int	main(int argc, char **argv)
+int	f_init_shell(t_env *env)
+{
+	ft_bzero(env, sizeof(*env));
+	if (f_build_environ(&env->minienviron) != SUCCESS)
+		exit(GENERAL);
+	env->old_exit_value = 0;
+	tcgetattr(STDIN_FILENO, &env->orig_term);
+	f_set_signals(NONINTERACTIVE, env);
+	return (SUCCESS);
+}
+
+int	f_handle_input(char *input, t_env *env, int is_terminal)
+{
+	if (!input)
+	{
+		if (is_terminal)
+			write(STDERR_FILENO, "exit\n", 5);
+		return (0);
+	}
+	if (ft_strlen(input) == 0)
+	{
+		free(input);
+		return (1);
+	}
+	add_history(input);
+	rl_catch_signals = 0;
+	if (ft_strnstr(input, "/minishell", 11))
+		f_set_signals(SILENT, env);
+	else
+		f_set_signals(NONINTERACTIVE, env);
+	process_input(input, env);
+	free(input);
+	rl_on_new_line();
+	return (1);
+}
+
+void	f_shell_loop(t_env *env, int is_terminal)
 {
 	char	*input;
-	int		is_terminal;
+	int		continue_loop;
+
+	while (1)
+	{
+		tcsetattr(STDIN_FILENO, TCSANOW, &env->orig_term);
+		rl_catch_signals = 1;
+		if (is_terminal)
+			f_set_signals(INTERACTIVE, env);
+		input = readline(PROMPT);
+		continue_loop = f_handle_input(input, env, is_terminal);
+		if (!continue_loop)
+			break ;
+	}
+}
+
+// Needs -lreadline flag in compilation and 
+// -lcurses flag in linking process
+// for readline functions to work
+int	main(int argc, char **argv)
+{
 	t_env	env;
+	int		is_terminal;
 
 	if (argc != 1)
 		return (printf("ERROR: invalid arguments\n"), 1);
 	(void)argv;
-	ft_bzero(&env, sizeof(env));
-	if(f_build_environ(&env.minienviron) != SUCCESS)
-		exit(GENERAL);
-	env.old_exit_value = 0;
+	if (f_init_shell(&env) != SUCCESS)
+		return (1);
 	is_terminal = isatty(STDIN_FILENO);
-	tcgetattr(STDIN_FILENO, &env.orig_term);
-	f_set_signals(NONINTERACTIVE, &env);
-	//printf("Welcome to minishell!\n");
-	while (1)
-	{
-		tcsetattr(STDIN_FILENO, TCSANOW, &env.orig_term);
-		rl_catch_signals = 1;
-		if (is_terminal)
-			f_set_signals(INTERACTIVE, &env);
-		input = readline(PROMPT);
-		if (!input)
-		{
-			if(is_terminal)
-				write(STDERR_FILENO, "exit\n", 5);
-			break ;
-		}
-		if (ft_strlen(input) == 0)
-		{
-			free(input);
-			continue ;
-		}
-		add_history(input);
-		rl_catch_signals = 0;
-		if (ft_strnstr(input, "/minishell", 11))
-			f_set_signals(SILENT, &env);
-		else
-			f_set_signals(NONINTERACTIVE, &env);
-		
-		process_input(input, &env);
-		free(input);
-		rl_on_new_line();
-	}
+	f_shell_loop(&env, is_terminal);
 	mini_exit(0, &env);
 	return (0);
 }
