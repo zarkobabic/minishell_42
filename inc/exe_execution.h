@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 00:29:30 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 15:01:11 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/16 16:07:00 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ enum			e_exit_value
 	GENERAL_ERR = 1,
 	MISUSE = 2,
 	PERMISSION = 126,
-	NOT_FOUND = 127
+	NOT_FOUND = 127,
+	CANCEL = 130,
+	QUIT = 131
 };
 
 typedef struct s_cmd_ctx

@@ -6,7 +6,7 @@
 /*   By: eberkau <eberkau@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 09:35:20 by eberkau           #+#    #+#             */
-/*   Updated: 2025/09/14 20:39:00 by eberkau          ###   ########.fr       */
+/*   Updated: 2025/09/16 16:07:07 by eberkau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ static int	f_exec_logic_expr(t_ast_node *expr, t_env *env)
 	if ((expr->data.logical_expr.type == TYPE_AND
 			&& env->old_exit_value == SUCCESS)
 		|| (expr->data.logical_expr.type == TYPE_OR
-			&& (env->old_exit_value == GENERAL_ERR
-				|| env->old_exit_value != SUCCESS)))
+			&& env->old_exit_value != SUCCESS
+			&& env->old_exit_value != CANCEL))
 		env->old_exit_value = f_exec_logic_expr(expr->next, env);
 	return (env->old_exit_value);
 }
